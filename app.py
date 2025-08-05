@@ -36,7 +36,18 @@ init_db()
 
 @app.route('/')
 def home():
-    return '''
+    # Получаем flash-сообщения для главной страницы (например, о выходе из системы)
+    messages = []
+    flashed_messages = get_flashed_messages(with_categories=True)
+    for category, message in flashed_messages:
+        if category == 'info' and 'вышли' in message:
+            color = '#d1ecf1'
+            text_color = '#0c5460'
+            messages.append(f'<div style="background: {color}; color: {text_color}; padding: 15px; margin: 20px 0; border-radius: 5px; text-align: center;">{message}</div>')
+    
+    messages_html = ''.join(messages)
+    
+    return f'''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
@@ -88,6 +99,8 @@ def home():
     <body>
         <div class="container">
             <h1>🎓 Система адаптивного обучения математике v2.0</h1>
+            
+            {messages_html}
             
             <div class="status">
                 ✅ Приложение с базой данных успешно запущено!
@@ -156,13 +169,15 @@ def register():
             return redirect(url_for('register'))
     
     # GET запрос - показываем форму регистрации
-    # Получаем flash-сообщения для отображения
+    # Получаем только релевантные flash-сообщения для страницы входа
     messages = []
     flashed_messages = get_flashed_messages(with_categories=True)
     for category, message in flashed_messages:
-        color = '#d4edda' if category == 'success' else '#f8d7da'
-        text_color = '#155724' if category == 'success' else '#721c24'
-        messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
+        # Показываем только ошибки входа, не приветствия и не сообщения о выходе
+        if category == 'error' or (category == 'success' and 'Добро пожаловать' not in message and 'вышли' not in message):
+            color = '#d4edda' if category == 'success' else '#f8d7da'
+            text_color = '#155724' if category == 'success' else '#721c24'
+            messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
     
     messages_html = ''.join(messages)
     
@@ -211,13 +226,15 @@ def login():
             flash(f'Ошибка при входе: {str(e)}', 'error')
             return redirect(url_for('login'))
     
-    # Получаем flash-сообщения для отображения
+    # Получаем только релевантные flash-сообщения для страницы входа
     messages = []
     flashed_messages = get_flashed_messages(with_categories=True)
     for category, message in flashed_messages:
-        color = '#d4edda' if category == 'success' else '#f8d7da'
-        text_color = '#155724' if category == 'success' else '#721c24'
-        messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
+        # Показываем только ошибки входа, не приветствия и не сообщения о выходе
+        if category == 'error' or (category == 'success' and 'Добро пожаловать' not in message and 'вышли' not in message):
+            color = '#d4edda' if category == 'success' else '#f8d7da'
+            text_color = '#155724' if category == 'success' else '#721c24'
+            messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
     
     messages_html = ''.join(messages)
     
