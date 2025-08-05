@@ -47,7 +47,7 @@ def home():
     
     messages_html = ''.join(messages)
     
-    return f'''
+    return '''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
@@ -100,7 +100,7 @@ def home():
         <div class="container">
             <h1>🎓 Система адаптивного обучения математике v2.0</h1>
             
-            {messages_html}
+            ''' + messages_html + '''
             
             <div class="status">
                 ✅ Приложение с базой данных успешно запущено!
