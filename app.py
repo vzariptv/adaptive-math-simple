@@ -1222,6 +1222,73 @@ D) Уменьшилась на 2%
         print(f"Ошибка при создании олимпиадных заданий: {e}")
         db.session.rollback()
 
+@app.route('/admin/create-olympiad-tasks')
+def admin_create_olympiad_tasks():
+    """Админский маршрут для создания олимпиадных заданий"""
+    try:
+        # Принудительно создаем олимпиадные задания
+        create_sample_tasks()
+        create_olympiad_tasks()
+        
+        # Подсчитываем количество заданий
+        total_tasks = MathTask.query.count()
+        olympiad_tasks = MathTask.query.filter(MathTask.title.contains('Олимпиада')).count()
+        
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Задания созданы</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <div class="form-title">✅ Задания успешно созданы!</div>
+                
+                <div class="status">
+                    🎉 В базе данных теперь {total_tasks} заданий, включая {olympiad_tasks} олимпиадных!
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #495057; margin-top: 0;">📊 Статистика:</h3>
+                    <p><strong>Общее количество заданий:</strong> {total_tasks}</p>
+                    <p><strong>Олимпиадных заданий:</strong> {olympiad_tasks}</p>
+                    <p><strong>Простых заданий:</strong> {total_tasks - olympiad_tasks}</p>
+                </div>
+                
+                <div style="text-align: center;">
+                    <a href="/tasks" class="btn btn-success">📚 Посмотреть все задания</a>
+                    <a href="/dashboard" class="btn">🏠 На главную</a>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Ошибка</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <div class="form-title">⚠️ Ошибка</div>
+                <div class="error">Ошибка при создании заданий: {str(e)}</div>
+                <div style="text-align: center;">
+                    <a href="/dashboard" class="btn">← На главную</a>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+
 if __name__ == '__main__':
     with app.app_context():
         # Создаем таблицы базы данных
