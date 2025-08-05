@@ -5,7 +5,11 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///math_learning.db')
+# Настройка базы данных с поддержкой PostgreSQL для продакшена
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///math_learning.db')
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Инициализация расширений
@@ -18,6 +22,16 @@ login_manager.login_message = 'Пожалуйста, войдите в сист�
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# Инициализация базы данных для продакшена
+def init_db():
+    """Инициализация базы данных"""
+    with app.app_context():
+        db.create_all()
+        print("Database tables created successfully!")
+
+# Вызываем инициализацию при импорте модуля
+init_db()
 
 @app.route('/')
 def home():
@@ -154,26 +168,33 @@ def register():
             return redirect(url_for('register'))
         
         # Создаем нового пользователя
-        user = User(
-            username=username,
-            email=email,
-            role=role,
-            first_name=first_name,
-            last_name=last_name
-        )
-        user.set_password(password)
-        
-        db.session.add(user)
-        db.session.commit()
-        
-        # Создаем профиль для студента
-        if role == 'student':
-            profile = StudentProfile(user_id=user.id)
-            db.session.add(profile)
+        try:
+            user = User(
+                username=username,
+                email=email,
+                role=role,
+                first_name=first_name,
+                last_name=last_name
+            )
+            user.set_password(password)
+            
+            db.session.add(user)
             db.session.commit()
-        
-        flash('Регистрация успешна! Теперь вы можете войти в систему.', 'success')
-        return redirect(url_for('login'))
+            
+            # Создаем профиль для студента
+            if role == 'student':
+                profile = StudentProfile(user_id=user.id)
+                db.session.add(profile)
+                db.session.commit()
+            
+            flash('Регистрация успешна! Теперь вы можете войти в систему.', 'success')
+            return redirect(url_for('login'))
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Registration error: {str(e)}")
+            flash(f'Ошибка при регистрации: {str(e)}', 'error')
+            return redirect(url_for('register'))
     
     # GET запрос - показываем форму регистрации
     return '''
