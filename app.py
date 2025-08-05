@@ -36,18 +36,15 @@ init_db()
 
 @app.route('/')
 def home():
-    # Получаем flash-сообщения для главной страницы (например, о выходе из системы)
-    messages = []
+    # Получаем flash-сообщения для главной страницы
+    messages_html = ''
     flashed_messages = get_flashed_messages(with_categories=True)
     for category, message in flashed_messages:
         if category == 'info' and 'вышли' in message:
-            color = '#d1ecf1'
-            text_color = '#0c5460'
-            messages.append(f'<div style="background: {color}; color: {text_color}; padding: 15px; margin: 20px 0; border-radius: 5px; text-align: center;">{message}</div>')
+            messages_html += f'<div style="background: #d1ecf1; color: #0c5460; padding: 15px; margin: 20px 0; border-radius: 5px; text-align: center;">{message}</div>'
     
-    messages_html = ''.join(messages)
-    
-    return '''
+    # Создаем HTML-страницу с вставкой flash-сообщений
+    html_content = f'''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
@@ -55,25 +52,25 @@ def home():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Система адаптивного обучения математике</title>
         <style>
-            body {
+            body {{
                 font-family: Arial, sans-serif;
                 max-width: 800px;
                 margin: 0 auto;
                 padding: 20px;
                 background-color: #f5f5f5;
-            }
-            .container {
+            }}
+            .container {{
                 background: white;
                 padding: 30px;
                 border-radius: 10px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            h1 {
+            }}
+            h1 {{
                 color: #2c3e50;
                 text-align: center;
                 margin-bottom: 30px;
-            }
-            .btn {
+            }}
+            .btn {{
                 display: inline-block;
                 background: #3498db;
                 color: white;
@@ -83,24 +80,24 @@ def home():
                 margin: 10px;
                 border: none;
                 cursor: pointer;
-            }
-            .btn:hover {
+            }}
+            .btn:hover {{
                 background: #2980b9;
-            }
-            .status {
+            }}
+            .status {{
                 background: #d4edda;
                 color: #155724;
                 padding: 15px;
                 border-radius: 5px;
                 margin: 20px 0;
-            }
+            }}
         </style>
     </head>
     <body>
         <div class="container">
             <h1>🎓 Система адаптивного обучения математике v2.0</h1>
             
-            ''' + messages_html + '''
+            {messages_html}
             
             <div class="status">
                 ✅ Приложение с базой данных успешно запущено!
@@ -118,6 +115,8 @@ def home():
     </body>
     </html>
     '''
+    
+    return html_content
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
