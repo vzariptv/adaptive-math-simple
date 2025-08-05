@@ -27,19 +27,24 @@ def load_user(user_id):
 # Инициализация базы данных для продакшена
 def init_db():
     """Инициализация базы данных"""
-    try:
-        with app.app_context():
-            db.create_all()
-            print("Database tables created successfully!")
-    except Exception as e:
-        print(f"Database initialization error: {e}")
+    with app.app_context():
+        db.create_all()
+        print("Database tables created successfully!")
 
 # Вызываем инициализацию при импорте модуля
 init_db()
 
 @app.route('/')
 def home():
-    return '''
+    # Получаем flash-сообщения для главной страницы
+    messages_html = ''
+    flashed_messages = get_flashed_messages(with_categories=True)
+    for category, message in flashed_messages:
+        if category == 'info' and 'вышли' in message:
+            messages_html += f'<div style="background: #d1ecf1; color: #0c5460; padding: 15px; margin: 20px 0; border-radius: 5px; text-align: center;">{message}</div>'
+    
+    # Создаем HTML-страницу с вставкой flash-сообщений
+    html_content = f'''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
@@ -47,25 +52,25 @@ def home():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Система адаптивного обучения математике</title>
         <style>
-            body {
+            body {{
                 font-family: Arial, sans-serif;
                 max-width: 800px;
                 margin: 0 auto;
                 padding: 20px;
                 background-color: #f5f5f5;
-            }
-            .container {
+            }}
+            .container {{
                 background: white;
                 padding: 30px;
                 border-radius: 10px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            h1 {
+            }}
+            h1 {{
                 color: #2c3e50;
                 text-align: center;
                 margin-bottom: 30px;
-            }
-            .btn {
+            }}
+            .btn {{
                 display: inline-block;
                 background: #3498db;
                 color: white;
@@ -75,25 +80,27 @@ def home():
                 margin: 10px;
                 border: none;
                 cursor: pointer;
-            }
-            .btn:hover {
+            }}
+            .btn:hover {{
                 background: #2980b9;
-            }
-            .status {
+            }}
+            .status {{
                 background: #d4edda;
                 color: #155724;
                 padding: 15px;
                 border-radius: 5px;
                 margin: 20px 0;
-            }
+            }}
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>🎓 Система адаптивного обучения математике v2.1</h1>
+            <h1>🎓 Система адаптивного обучения математике v2.0</h1>
+            
+            {messages_html}
             
             <div class="status">
-                ✅ Приложение работает стабильно!
+                ✅ Приложение с базой данных успешно запущено!
             </div>
             
             <div style="text-align: center;">
@@ -102,12 +109,14 @@ def home():
             </div>
             
             <p style="text-align: center; margin-top: 30px; color: #7f8c8d;">
-                Версия 2.1 - стабильная версия с базой данных
+                Версия 2.0 - с базой данных и регистрацией пользователей
             </p>
         </div>
     </body>
     </html>
     '''
+    
+    return html_content
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -123,10 +132,12 @@ def register():
             
             # Проверяем, что пользователь не существует
             if User.query.filter_by(username=username).first():
-                return '<h1>Ошибка</h1><p>Пользователь с таким именем уже существует!</p><a href="/register">Назад</a>'
+                flash('Пользователь с таким именем уже существует!', 'error')
+                return redirect(url_for('register'))
             
             if User.query.filter_by(email=email).first():
-                return '<h1>Ошибка</h1><p>Пользователь с таким email уже существует!</p><a href="/register">Назад</a>'
+                flash('Пользователь с таким email уже существует!', 'error')
+                return redirect(url_for('register'))
             
             # Создаем нового пользователя
             user = User(
@@ -147,15 +158,31 @@ def register():
                 db.session.add(profile)
                 db.session.commit()
             
-            return '<h1>Успех!</h1><p>Регистрация успешна!</p><a href="/login">Войти</a>'
+            flash('Регистрация успешна! Теперь вы можете войти в систему.', 'success')
+            return redirect(url_for('login'))
             
         except Exception as e:
             db.session.rollback()
-            return f'<h1>Ошибка</h1><p>Ошибка при регистрации: {str(e)}</p><a href="/register">Назад</a>'
+            print(f"Registration error: {str(e)}")
+            flash(f'Ошибка при регистрации: {str(e)}', 'error')
+            return redirect(url_for('register'))
     
     # GET запрос - показываем форму регистрации
-    return '''
+    # Получаем только релевантные flash-сообщения для страницы входа
+    messages = []
+    flashed_messages = get_flashed_messages(with_categories=True)
+    for category, message in flashed_messages:
+        # Показываем только ошибки входа, не приветствия и не сообщения о выходе
+        if category == 'error' or (category == 'success' and 'Добро пожаловать' not in message and 'вышли' not in message):
+            color = '#d4edda' if category == 'success' else '#f8d7da'
+            text_color = '#155724' if category == 'success' else '#721c24'
+            messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
+    
+    messages_html = ''.join(messages)
+    
+    return f'''
     <h1>📝 Регистрация</h1>
+    {messages_html}
     <form method="POST">
         <p><input type="text" name="username" placeholder="Имя пользователя" required></p>
         <p><input type="email" name="email" placeholder="Email" required></p>
@@ -184,18 +211,35 @@ def login():
             
             if user and user.check_password(password):
                 login_user(user)
+                # Упрощенное обновление времени последнего входа
                 user.last_login = datetime.utcnow()
                 db.session.commit()
+                flash(f'Добро пожаловать, {user.get_full_name()}!', 'success')
                 return redirect(url_for('dashboard'))
             else:
-                return '<h1>Ошибка</h1><p>Неверное имя пользователя или пароль!</p><a href="/login">Назад</a>'
+                flash('Неверное имя пользователя или пароль!', 'error')
                 
         except Exception as e:
             db.session.rollback()
-            return f'<h1>Ошибка</h1><p>Ошибка при входе: {str(e)}</p><a href="/login">Назад</a>'
+            print(f"Login error: {str(e)}")
+            flash(f'Ошибка при входе: {str(e)}', 'error')
+            return redirect(url_for('login'))
     
-    return '''
+    # Получаем только релевантные flash-сообщения для страницы входа
+    messages = []
+    flashed_messages = get_flashed_messages(with_categories=True)
+    for category, message in flashed_messages:
+        # Показываем только ошибки входа, не приветствия и не сообщения о выходе
+        if category == 'error' or (category == 'success' and 'Добро пожаловать' not in message and 'вышли' not in message):
+            color = '#d4edda' if category == 'success' else '#f8d7da'
+            text_color = '#155724' if category == 'success' else '#721c24'
+            messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
+    
+    messages_html = ''.join(messages)
+    
+    return f'''
     <h1>🔐 Вход в систему</h1>
+    {messages_html}
     <form method="POST">
         <p><input type="text" name="username" placeholder="Имя пользователя" required></p>
         <p><input type="password" name="password" placeholder="Пароль" required></p>
@@ -233,6 +277,7 @@ def dashboard():
 @login_required
 def logout():
     logout_user()
+    flash('Вы успешно вышли из системы.', 'info')
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
