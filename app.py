@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, get_flashed_messages
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import db, User, StudentProfile
 import os
@@ -156,8 +156,19 @@ def register():
             return redirect(url_for('register'))
     
     # GET запрос - показываем форму регистрации
-    return '''
+    # Получаем flash-сообщения для отображения
+    messages = []
+    flashed_messages = get_flashed_messages(with_categories=True)
+    for category, message in flashed_messages:
+        color = '#d4edda' if category == 'success' else '#f8d7da'
+        text_color = '#155724' if category == 'success' else '#721c24'
+        messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
+    
+    messages_html = ''.join(messages)
+    
+    return f'''
     <h1>📝 Регистрация</h1>
+    {messages_html}
     <form method="POST">
         <p><input type="text" name="username" placeholder="Имя пользователя" required></p>
         <p><input type="email" name="email" placeholder="Email" required></p>
@@ -200,8 +211,19 @@ def login():
             flash(f'Ошибка при входе: {str(e)}', 'error')
             return redirect(url_for('login'))
     
-    return '''
+    # Получаем flash-сообщения для отображения
+    messages = []
+    flashed_messages = get_flashed_messages(with_categories=True)
+    for category, message in flashed_messages:
+        color = '#d4edda' if category == 'success' else '#f8d7da'
+        text_color = '#155724' if category == 'success' else '#721c24'
+        messages.append(f'<div style="background: {color}; color: {text_color}; padding: 10px; margin: 10px 0; border-radius: 5px;">{message}</div>')
+    
+    messages_html = ''.join(messages)
+    
+    return f'''
     <h1>🔐 Вход в систему</h1>
+    {messages_html}
     <form method="POST">
         <p><input type="text" name="username" placeholder="Имя пользователя" required></p>
         <p><input type="password" name="password" placeholder="Пароль" required></p>
