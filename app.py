@@ -37,63 +37,147 @@ def init_db():
 # Вызываем инициализацию при импорте модуля
 init_db()
 
+def get_base_styles():
+    """Базовые CSS стили для всех страниц"""
+    return '''
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                line-height: 1.6;
+            }
+            .container {
+                background: white;
+                padding: 40px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                margin-bottom: 20px;
+            }
+            h1 {
+                color: #2c3e50;
+                text-align: center;
+                margin-bottom: 30px;
+                font-size: 2.2em;
+                font-weight: 300;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            input[type="text"], input[type="email"], input[type="password"], select {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e1e8ed;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: border-color 0.3s ease;
+                box-sizing: border-box;
+            }
+            input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+                outline: none;
+                border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            }
+            .btn {
+                display: inline-block;
+                background: linear-gradient(135deg, #3498db, #2980b9);
+                color: white;
+                padding: 12px 30px;
+                text-decoration: none;
+                border-radius: 8px;
+                margin: 10px 5px;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                text-align: center;
+                min-width: 120px;
+            }
+            .btn:hover {
+                background: linear-gradient(135deg, #2980b9, #1f5f8b);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            }
+            .btn-success {
+                background: linear-gradient(135deg, #27ae60, #229954);
+            }
+            .btn-success:hover {
+                background: linear-gradient(135deg, #229954, #1e8449);
+                box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+            }
+            .status {
+                background: linear-gradient(135deg, #d4edda, #c3e6cb);
+                color: #155724;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                text-align: center;
+                font-weight: 500;
+                border-left: 4px solid #28a745;
+            }
+            .error {
+                background: linear-gradient(135deg, #f8d7da, #f1aeb5);
+                color: #721c24;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                text-align: center;
+                font-weight: 500;
+                border-left: 4px solid #dc3545;
+            }
+            .nav-links {
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #e1e8ed;
+            }
+            .nav-links a {
+                color: #3498db;
+                text-decoration: none;
+                margin: 0 15px;
+                font-weight: 500;
+            }
+            .nav-links a:hover {
+                color: #2980b9;
+                text-decoration: underline;
+            }
+            .form-title {
+                text-align: center;
+                margin-bottom: 30px;
+                color: #2c3e50;
+                font-size: 1.8em;
+                font-weight: 400;
+            }
+            .welcome-text {
+                text-align: center;
+                margin-top: 30px;
+                color: #7f8c8d;
+                font-style: italic;
+            }
+        </style>
+    '''
+
 @app.route('/')
 def home():
-    return '''
+    return f'''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Система адаптивного обучения математике</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 20px;
-                background-color: #f5f5f5;
-            }
-            .container {
-                background: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            h1 {
-                color: #2c3e50;
-                text-align: center;
-                margin-bottom: 30px;
-            }
-            .btn {
-                display: inline-block;
-                background: #3498db;
-                color: white;
-                padding: 12px 24px;
-                text-decoration: none;
-                border-radius: 5px;
-                margin: 10px;
-                border: none;
-                cursor: pointer;
-            }
-            .btn:hover {
-                background: #2980b9;
-            }
-            .status {
-                background: #d4edda;
-                color: #155724;
-                padding: 15px;
-                border-radius: 5px;
-                margin: 20px 0;
-            }
-        </style>
+        {get_base_styles()}
     </head>
     <body>
         <div class="container">
-            <h1>🎓 Система адаптивного обучения математике v2.1</h1>
+            <h1>🎓 Система адаптивного обучения математике</h1>
             
             <div class="status">
-                ✅ Приложение работает стабильно!
+                ✅ Приложение работает стабильно и красиво!
             </div>
             
             <div style="text-align: center;">
@@ -101,9 +185,9 @@ def home():
                 <a href="/login" class="btn">🔐 Вход</a>
             </div>
             
-            <p style="text-align: center; margin-top: 30px; color: #7f8c8d;">
-                Версия 2.1 - стабильная версия с базой данных
-            </p>
+            <div class="welcome-text">
+                Версия 2.2 - стабильная версия с улучшенным дизайном
+            </div>
         </div>
     </body>
     </html>
@@ -123,10 +207,58 @@ def register():
             
             # Проверяем, что пользователь не существует
             if User.query.filter_by(username=username).first():
-                return '<h1>Ошибка</h1><p>Пользователь с таким именем уже существует!</p><a href="/register">Назад</a>'
+                return f'''
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Ошибка регистрации</title>
+                    {get_base_styles()}
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="form-title">⚠️ Ошибка регистрации</div>
+                        
+                        <div class="error">
+                            Пользователь с таким именем уже существует!
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <a href="/register" class="btn">← Попробовать снова</a>
+                            <a href="/login" class="btn">Уже есть аккаунт? Войти</a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                '''
             
             if User.query.filter_by(email=email).first():
-                return '<h1>Ошибка</h1><p>Пользователь с таким email уже существует!</p><a href="/register">Назад</a>'
+                return f'''
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Ошибка регистрации</title>
+                    {get_base_styles()}
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="form-title">⚠️ Ошибка регистрации</div>
+                        
+                        <div class="error">
+                            Пользователь с таким email уже существует!
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <a href="/register" class="btn">← Попробовать снова</a>
+                            <a href="/login" class="btn">Уже есть аккаунт? Войти</a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                '''
             
             # Создаем нового пользователя
             user = User(
@@ -147,30 +279,94 @@ def register():
                 db.session.add(profile)
                 db.session.commit()
             
-            return '<h1>Успех!</h1><p>Регистрация успешна!</p><a href="/login">Войти</a>'
+            return f'''
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Успешная регистрация</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <div class="form-title">✅ Успешная регистрация!</div>
+                    
+                    <div class="status">
+                        🎉 Поздравляем! Ваш аккаунт успешно создан.
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <p style="color: #6c757d;">Теперь вы можете войти в систему с вашими данными.</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="/login" class="btn btn-success">🔐 Войти в систему</a>
+                        <a href="/" class="btn">← На главную</a>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
             
         except Exception as e:
             db.session.rollback()
             return f'<h1>Ошибка</h1><p>Ошибка при регистрации: {str(e)}</p><a href="/register">Назад</a>'
     
     # GET запрос - показываем форму регистрации
-    return '''
-    <h1>📝 Регистрация</h1>
-    <form method="POST">
-        <p><input type="text" name="username" placeholder="Имя пользователя" required></p>
-        <p><input type="email" name="email" placeholder="Email" required></p>
-        <p><input type="password" name="password" placeholder="Пароль" required></p>
-        <p><input type="text" name="first_name" placeholder="Имя"></p>
-        <p><input type="text" name="last_name" placeholder="Фамилия"></p>
-        <p>
-            <select name="role">
-                <option value="student">Студент</option>
-                <option value="teacher">Преподаватель</option>
-            </select>
-        </p>
-        <p><button type="submit">Зарегистрироваться</button></p>
-    </form>
-    <p><a href="/">← Главная</a> | <a href="/login">Войти</a></p>
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Регистрация - Система адаптивного обучения</title>
+        {get_base_styles()}
+    </head>
+    <body>
+        <div class="container">
+            <div class="form-title">📝 Регистрация нового пользователя</div>
+            
+            <form method="POST">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Имя пользователя" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Пароль" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" name="first_name" placeholder="Имя (необязательно)">
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" name="last_name" placeholder="Фамилия (необязательно)">
+                </div>
+                
+                <div class="form-group">
+                    <select name="role">
+                        <option value="student">👨‍🎓 Студент</option>
+                        <option value="teacher">👨‍🏫 Преподаватель</option>
+                    </select>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+                </div>
+            </form>
+            
+            <div class="nav-links">
+                <a href="/">← Главная</a>
+                <a href="/login">Уже есть аккаунт? Войти</a>
+            </div>
+        </div>
+    </body>
+    </html>
     '''
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -188,20 +384,70 @@ def login():
                 db.session.commit()
                 return redirect(url_for('dashboard'))
             else:
-                return '<h1>Ошибка</h1><p>Неверное имя пользователя или пароль!</p><a href="/login">Назад</a>'
+                return f'''
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Ошибка входа</title>
+                    {get_base_styles()}
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="form-title">⚠️ Ошибка входа</div>
+                        
+                        <div class="error">
+                            Неверное имя пользователя или пароль!
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <a href="/login" class="btn">← Попробовать снова</a>
+                            <a href="/register" class="btn">Нет аккаунта? Регистрация</a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                '''
                 
         except Exception as e:
             db.session.rollback()
             return f'<h1>Ошибка</h1><p>Ошибка при входе: {str(e)}</p><a href="/login">Назад</a>'
     
-    return '''
-    <h1>🔐 Вход в систему</h1>
-    <form method="POST">
-        <p><input type="text" name="username" placeholder="Имя пользователя" required></p>
-        <p><input type="password" name="password" placeholder="Пароль" required></p>
-        <p><button type="submit">Войти</button></p>
-    </form>
-    <p><a href="/">← Главная</a> | <a href="/register">Регистрация</a></p>
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Вход - Система адаптивного обучения</title>
+        {get_base_styles()}
+    </head>
+    <body>
+        <div class="container">
+            <div class="form-title">🔐 Вход в систему</div>
+            
+            <form method="POST">
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Имя пользователя" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Пароль" required>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="submit" class="btn btn-success">Войти в систему</button>
+                </div>
+            </form>
+            
+            <div class="nav-links">
+                <a href="/">← Главная</a>
+                <a href="/register">Нет аккаунта? Регистрация</a>
+            </div>
+        </div>
+    </body>
+    </html>
     '''
 
 @app.route('/dashboard')
@@ -212,19 +458,75 @@ def dashboard():
         
         if current_user.role == 'student':
             return f'''
-            <h1>🎓 Панель студента</h1>
-            <p>Добро пожаловать, {user_name}!</p>
-            <p>Роль: {current_user.role}</p>
-            <p>Функциональность в разработке...</p>
-            <p><a href="/logout">Выйти</a></p>
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Панель студента - Система адаптивного обучения</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🎓 Панель студента</h1>
+                    
+                    <div class="status">
+                        🚀 Добро пожаловать, {user_name}!
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                        <h3 style="color: #495057; margin-top: 0;">📊 Ваша статистика:</h3>
+                        <p><strong>Роль:</strong> {current_user.role.title()}</p>
+                        <p><strong>Последний вход:</strong> {current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход'}</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <h3 style="color: #6c757d;">🛠️ Функционал в разработке</h3>
+                        <p style="color: #6c757d; font-style: italic;">Скоро здесь появятся математические задания и адаптивные алгоритмы!</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="/logout" class="btn">🚪 Выйти из системы</a>
+                    </div>
+                </div>
+            </body>
+            </html>
             '''
         else:
             return f'''
-            <h1>👨‍🏫 Панель преподавателя</h1>
-            <p>Добро пожаловать, {user_name}!</p>
-            <p>Роль: {current_user.role}</p>
-            <p>Функциональность в разработке...</p>
-            <p><a href="/logout">Выйти</a></p>
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Панель преподавателя - Система адаптивного обучения</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <h1>👨‍🏫 Панель преподавателя</h1>
+                    
+                    <div class="status">
+                        🎆 Добро пожаловать, {user_name}!
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                        <h3 style="color: #495057; margin-top: 0;">📊 Информация о профиле:</h3>
+                        <p><strong>Роль:</strong> {current_user.role.title()}</p>
+                        <p><strong>Последний вход:</strong> {current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход'}</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <h3 style="color: #6c757d;">🛠️ Инструменты преподавателя</h3>
+                        <p style="color: #6c757d; font-style: italic;">Скоро здесь появятся создание заданий, аналитика и управление студентами!</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="/logout" class="btn">🚪 Выйти из системы</a>
+                    </div>
+                </div>
+            </body>
+            </html>
             '''
     except Exception as e:
         return f'<h1>Ошибка панели управления</h1><p>Ошибка: {str(e)}</p><p><a href="/logout">Выйти</a></p>'
