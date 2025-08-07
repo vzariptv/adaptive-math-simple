@@ -1963,8 +1963,91 @@ def admin_tasks():
     if current_user.role != 'admin':
         return redirect(url_for('dashboard'))
     
-    # Перенаправляем на обычный список заданий (админ видит всё как преподаватель)
+    # Перенаправляем на страницу задач с админскими правами
     return redirect(url_for('tasks_list'))
+
+@app.route('/create-admin')
+def force_create_admin():
+    """Принудительное создание администратора (публичный маршрут для первого запуска)"""
+    try:
+        # Проверяем, существует ли админ
+        existing_admin = User.query.filter_by(username='CalmAndManage').first()
+        if existing_admin:
+            return f'''
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <title>Создание администратора</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <h1>✅ Администратор уже существует</h1>
+                    <p>Администратор с логином <strong>CalmAndManage</strong> уже создан в системе.</p>
+                    <p><a href="/login" class="btn btn-primary">Войти в систему</a></p>
+                    <p><a href="/" class="btn btn-secondary">На главную</a></p>
+                </div>
+            </body>
+            </html>
+            '''
+            
+        # Создаем администратора
+        admin = User(
+            username='CalmAndManage',
+            email='admin@mathsystem.local',
+            role='admin'
+        )
+        admin.set_password('KeepMathAlive')
+        
+        db.session.add(admin)
+        db.session.commit()
+        
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <title>Администратор создан</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <h1>🎉 Администратор успешно создан!</h1>
+                <div class="success-message">
+                    <h3>Данные для входа:</h3>
+                    <p><strong>Логин:</strong> CalmAndManage</p>
+                    <p><strong>Пароль:</strong> KeepMathAlive</p>
+                </div>
+                <p><a href="/login" class="btn btn-primary">Войти как администратор</a></p>
+                <p><a href="/" class="btn btn-secondary">На главную</a></p>
+                <div class="warning-message" style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
+                    <strong>⚠️ Важно:</strong> Этот маршрут создан для первоначальной настройки. 
+                    После входа в систему рекомендуется сменить пароль администратора.
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <title>Ошибка создания администратора</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <h1>❌ Ошибка при создании администратора</h1>
+                <p>Произошла ошибка: {str(e)}</p>
+                <p><a href="/" class="btn btn-secondary">На главную</a></p>
+            </div>
+        </body>
+        </html>
+        '''
 
 if __name__ == '__main__':
     with app.app_context():
