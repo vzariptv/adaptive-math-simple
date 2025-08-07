@@ -1658,7 +1658,7 @@ def admin_users():
             <td><span class="role-badge role-{user.role}">{user.role}</span></td>
             <td>
                 <a href="/admin/edit-user/{user.id}" class="btn-small btn-edit">✏️ Редактировать</a>
-                {'' if user.role == 'admin' else f'<a href="/admin/delete-user/{user.id}" class="btn-small btn-delete" onclick="return confirm(\'\u0423далить пользователя {user.username}?\')">🗑️ Удалить</a>'}
+                {'' if user.role == 'admin' else f'<a href="/admin/delete-user/{user.id}" class="btn-small btn-delete" onclick="return confirm(\'\u0423далить пользователя {user.username.replace("\'", "\\'")}?\')">🗑️ Удалить</a>'}
             </td>
         </tr>
         '''
