@@ -1,0 +1,64 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Демо-данные - Панель администратора{% endblock %}
+
+{% block content %}
+<h2>📊 Управление демо-данными</h2>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total_users }}</div>
+        <div>Всего пользователей</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.students }}</div>
+        <div>Студентов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.teachers }}</div>
+        <div>Преподавателей</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.admins }}</div>
+        <div>Администраторов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total_tasks }}</div>
+        <div>Всего заданий</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total_attempts }}</div>
+        <div>Попыток решения</div>
+    </div>
+</div>
+
+<h3>🛠️ Действия с демо-данными</h3>
+
+<div class="action-buttons">
+    <a href="/admin/create-demo-users" class="action-btn">
+        👥 Создать тестовых пользователей
+    </a>
+    <a href="/admin/create-olympiad-tasks" class="action-btn">
+        📚 Создать олимпиадные задания
+    </a>
+    <a href="/create-sample-tasks" class="action-btn">
+        📝 Создать примеры заданий
+    </a>
+    <a href="#" class="action-btn" onclick="alert('Функция экспорта будет добавлена позже')">
+        💾 Экспорт базы данных
+    </a>
+    <a href="#" class="action-btn" onclick="alert('Функция импорта будет добавлена позже')">
+        📁 Импорт базы данных
+    </a>
+    <a href="#" class="action-btn danger" onclick="if(confirm('Вы уверены? Это удалит ВСЕ данные!')) alert('Функция очистки будет добавлена позже')">
+        🗑️ Очистить базу данных
+    </a>
+</div>
+
+<div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0;">
+    <h4 style="color: #856404; margin-top: 0;">⚠️ Информация</h4>
+    <p style="color: #856404; margin-bottom: 0;">
+        Тестовые пользователи: student/123456, teacher/123456, CalmAndManage/KeepMathAlive
+    </p>
+</div>
+{% endblock %}

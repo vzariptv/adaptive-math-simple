@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель студента - Система адаптивного обучения</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Панель студента</h1>
+        
+        <div class="status">
+            🚀 Добро пожаловать, {{ user_name }}!
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #495057; margin-top: 0;">📊 Ваша статистика:</h3>
+            <p><strong>Роль:</strong> {{ current_user.role.title() }}</p>
+            <p><strong>Последний вход:</strong> {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход' }}</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <h3 style="color: #495057;">📚 Математические задания</h3>
+            <a href="/tasks" class="btn btn-success">📈 Посмотреть задания</a>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/logout" class="btn">🚺 Выйти из системы</a>
+        </div>
+    </div>
+</body>
+</html>

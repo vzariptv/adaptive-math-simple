@@ -1,0 +1,20 @@
+{% extends "shared/base.html" %}
+
+{% block title %}Успешная регистрация - Адаптивное обучение математике{% endblock %}
+
+{% block content %}
+    <h1>✅ Успешная регистрация!</h1>
+    
+    <div class="success-message">
+        🎉 Поздравляем! Ваш аккаунт успешно создан.
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+        <p style="color: #6c757d;">Теперь вы можете войти в систему с вашими данными.</p>
+    </div>
+    
+    <div style="text-align: center;">
+        <a href="{{ url_for('login') }}" class="btn btn-primary">🔐 Войти в систему</a>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">🏠 На главную</a>
+    </div>
+{% endblock %}

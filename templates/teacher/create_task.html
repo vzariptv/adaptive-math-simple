@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание задания</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-title">➕ Создание нового задания</div>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <input type="text" name="title" placeholder="Название задания" required>
+            </div>
+            
+            <div class="form-group">
+                <textarea name="description" placeholder="Описание задачи (условие)" 
+                    style="width: 100%; height: 150px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" 
+                    required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" name="topic" placeholder="Тема (например: Алгебра, Геометрия)" required>
+            </div>
+            
+            <div class="form-group">
+                <select name="difficulty_level">
+                    <option value="1">⚫ Очень легко (1/5)</option>
+                    <option value="2">🟢 Легко (2/5)</option>
+                    <option value="3" selected>🟡 Средне (3/5)</option>
+                    <option value="4">🟠 Сложно (4/5)</option>
+                    <option value="5">🔴 Очень сложно (5/5)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <input type="number" name="max_score" placeholder="Максимальный балл" min="0.1" max="10" step="0.1" value="1" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" name="correct_answer" placeholder="Правильный ответ" required>
+            </div>
+            
+            <div class="form-group">
+                <textarea name="explanation" placeholder="Объяснение решения (необязательно)" 
+                    style="width: 100%; height: 100px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" class="btn btn-success">✅ Создать задание</button>
+            </div>
+        </form>
+        
+        <div class="nav-links">
+            <a href="/tasks">← К списку заданий</a>
+            <a href="/dashboard">Панель управления</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математические задания</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Математические задания</h1>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="/dashboard" class="btn">← Назад в панель</a>
+            {% if current_user.role == 'teacher' %}
+                <a href="/create-task" class="btn btn-success">➕ Создать задание</a>
+            {% endif %}
+        </div>
+        
+        {% if tasks %}
+            {% for task in tasks %}
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #3498db;">
+                    <h3 style="color: #2c3e50; margin-top: 0;">{{ task.title }}</h3>
+                    <p style="color: #6c757d;"><strong>Тема:</strong> {{ task.topic }}</p>
+                    <p style="color: #6c757d;"><strong>Сложность:</strong> {{ task.difficulty_level }}/5</p>
+                    <p style="color: #6c757d;"><strong>Максимальный балл:</strong> {{ task.max_score }}</p>
+                    {% if current_user.role == 'student' and task.id in user_attempts %}
+                        <p style="color: #28a745;"><strong>Ваши попытки:</strong> {{ user_attempts[task.id]|length }}</p>
+                    {% endif %}
+                    <div style="text-align: right; margin-top: 15px;">
+                        <a href="/task/{{ task.id }}" class="btn btn-success">
+                            {% if current_user.role == "student" %}📝 Решать{% else %}👁️ Посмотреть{% endif %}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; color: #6c757d; margin: 40px 0;">
+                <p>Пока нет доступных заданий.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -50,35 +50,11 @@ def get_base_styles():
 
 @app.route('/')
 def home():
-    return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Система адаптивного обучения математике</title>
-        {get_base_styles()}
-    </head>
-    <body>
-        <div class="container">
-            <h1>🎓 Система адаптивного обучения математике</h1>
-            
-            <div class="status">
-                ✅ Приложение работает стабильно и красиво!
-            </div>
-            
-            <div style="text-align: center;">
-                <a href="/register" class="btn">📝 Регистрация</a>
-                <a href="/login" class="btn">🔐 Вход</a>
-            </div>
-            
-            <div class="welcome-text">
-                Версия 2.2 - стабильная версия с улучшенным дизайном
-            </div>
-        </div>
-    </body>
-    </html>
-    '''
+    try:
+        messages = get_flashed_messages()
+        return render_template('shared/home.html', messages=messages)
+    except Exception as e:
+        return f'<h1>Ошибка</h1><p>Ошибка при загрузке главной страницы: {str(e)}</p>'
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -94,58 +70,10 @@ def register():
             
             # Проверяем, что пользователь не существует
             if User.query.filter_by(username=username).first():
-                return f'''
-                <!DOCTYPE html>
-                <html lang="ru">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Ошибка регистрации</title>
-                    {get_base_styles()}
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="form-title">⚠️ Ошибка регистрации</div>
-                        
-                        <div class="error">
-                            Пользователь с таким именем уже существует!
-                        </div>
-                        
-                        <div style="text-align: center;">
-                            <a href="/register" class="btn">← Попробовать снова</a>
-                            <a href="/login" class="btn">Уже есть аккаунт? Войти</a>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                '''
+                return render_template('auth/register.html', error='Пользователь с таким именем уже существует!')
             
             if User.query.filter_by(email=email).first():
-                return f'''
-                <!DOCTYPE html>
-                <html lang="ru">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Ошибка регистрации</title>
-                    {get_base_styles()}
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="form-title">⚠️ Ошибка регистрации</div>
-                        
-                        <div class="error">
-                            Пользователь с таким email уже существует!
-                        </div>
-                        
-                        <div style="text-align: center;">
-                            <a href="/register" class="btn">← Попробовать снова</a>
-                            <a href="/login" class="btn">Уже есть аккаунт? Войти</a>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                '''
+                return render_template('auth/register.html', error='Пользователь с таким email уже существует!')
             
             # Создаем нового пользователя
             user = User(
@@ -166,176 +94,32 @@ def register():
                 db.session.add(profile)
                 db.session.commit()
             
-            return f'''
-            <!DOCTYPE html>
-            <html lang="ru">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Успешная регистрация</title>
-                {get_base_styles()}
-            </head>
-            <body>
-                <div class="container">
-                    <div class="form-title">✅ Успешная регистрация!</div>
-                    
-                    <div class="status">
-                        🎉 Поздравляем! Ваш аккаунт успешно создан.
-                    </div>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                        <p style="color: #6c757d;">Теперь вы можете войти в систему с вашими данными.</p>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <a href="/login" class="btn btn-success">🔐 Войти в систему</a>
-                        <a href="/" class="btn">← На главную</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            '''
+            return render_template('auth/register_success.html')
             
         except Exception as e:
             db.session.rollback()
-            return f'<h1>Ошибка</h1><p>Ошибка при регистрации: {str(e)}</p><a href="/register">Назад</a>'
+            return render_template('auth/register.html', error=f'Ошибка при регистрации: {str(e)}')
     
     # GET запрос - показываем форму регистрации
-    return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Регистрация - Система адаптивного обучения</title>
-        {get_base_styles()}
-    </head>
-    <body>
-        <div class="container">
-            <div class="form-title">📝 Регистрация нового пользователя</div>
-            
-            <form method="POST">
-                <div class="form-group">
-                    <input type="text" name="username" placeholder="Имя пользователя" required>
-                </div>
-                
-                <div class="form-group">
-                    <input type="email" name="email" placeholder="Email" required>
-                </div>
-                
-                <div class="form-group">
-                    <input type="password" name="password" placeholder="Пароль" required>
-                </div>
-                
-                <div class="form-group">
-                    <input type="text" name="first_name" placeholder="Имя (необязательно)">
-                </div>
-                
-                <div class="form-group">
-                    <input type="text" name="last_name" placeholder="Фамилия (необязательно)">
-                </div>
-                
-                <div class="form-group">
-                    <select name="role">
-                        <option value="student">👨‍🎓 Студент</option>
-                        <option value="teacher">👨‍🏫 Преподаватель</option>
-                    </select>
-                </div>
-                
-                <div style="text-align: center;">
-                    <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-                </div>
-            </form>
-            
-            <div class="nav-links">
-                <a href="/">← Главная</a>
-                <a href="/login">Уже есть аккаунт? Войти</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    '''
+    return render_template('auth/register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        try:
-            username = request.form.get('username')
-            password = request.form.get('password')
-            
-            user = User.query.filter_by(username=username).first()
-            
-            if user and user.check_password(password):
-                login_user(user)
-                user.last_login = datetime.utcnow()
-                db.session.commit()
-                return redirect(url_for('dashboard'))
-            else:
-                return f'''
-                <!DOCTYPE html>
-                <html lang="ru">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Ошибка входа</title>
-                    {get_base_styles()}
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="form-title">⚠️ Ошибка входа</div>
-                        
-                        <div class="error">
-                            Неверное имя пользователя или пароль!
-                        </div>
-                        
-                        <div style="text-align: center;">
-                            <a href="/login" class="btn">← Попробовать снова</a>
-                            <a href="/register" class="btn">Нет аккаунта? Регистрация</a>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                '''
-                
-        except Exception as e:
-            db.session.rollback()
-            return f'<h1>Ошибка</h1><p>Ошибка при входе: {str(e)}</p><a href="/login">Назад</a>'
+        username = request.form['username']
+        password = request.form['password']
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user)
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('auth/login.html', error='Неверное имя пользователя или пароль.')
     
-    return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Вход - Система адаптивного обучения</title>
-        {get_base_styles()}
-    </head>
-    <body>
-        <div class="container">
-            <div class="form-title">🔐 Вход в систему</div>
-            
-            <form method="POST">
-                <div class="form-group">
-                    <input type="text" name="username" placeholder="Имя пользователя" required>
-                </div>
-                
-                <div class="form-group">
-                    <input type="password" name="password" placeholder="Пароль" required>
-                </div>
-                
-                <div style="text-align: center;">
-                    <button type="submit" class="btn btn-success">Войти в систему</button>
-                </div>
-            </form>
-            
-            <div class="nav-links">
-                <a href="/">← Главная</a>
-                <a href="/register">Нет аккаунта? Регистрация</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    '''
+    return render_template('auth/login.html')
 
 @app.route('/dashboard')
 @login_required
@@ -344,116 +128,11 @@ def dashboard():
         user_name = current_user.get_full_name() if hasattr(current_user, 'get_full_name') else current_user.username
         
         if current_user.role == 'student':
-            return f'''
-            <!DOCTYPE html>
-            <html lang="ru">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Панель студента - Система адаптивного обучения</title>
-                {get_base_styles()}
-            </head>
-            <body>
-                <div class="container">
-                    <h1>🎓 Панель студента</h1>
-                    
-                    <div class="status">
-                        🚀 Добро пожаловать, {user_name}!
-                    </div>
-                    
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                        <h3 style="color: #495057; margin-top: 0;">📊 Ваша статистика:</h3>
-                        <p><strong>Роль:</strong> {current_user.role.title()}</p>
-                        <p><strong>Последний вход:</strong> {current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход'}</p>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                        <h3 style="color: #495057;">📚 Математические задания</h3>
-                        <a href="/tasks" class="btn btn-success">📈 Посмотреть задания</a>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <a href="/logout" class="btn">🚺 Выйти из системы</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            '''
+            return render_template('student/dashboard.html', user_name=user_name)
         elif current_user.role == 'admin':
-            return f'''
-            <!DOCTYPE html>
-            <html lang="ru">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Панель администратора - Система адаптивного обучения</title>
-                {get_base_styles()}
-            </head>
-            <body>
-                <div class="container">
-                    <h1>🔧 Панель администратора</h1>
-                    
-                    <div class="status">
-                        🎆 Добро пожаловать, {user_name}!
-                    </div>
-                    
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                        <h3 style="color: #495057; margin-top: 0;">📊 Информация о профиле:</h3>
-                        <p><strong>Роль:</strong> {current_user.role.title()}</p>
-                        <p><strong>Последний вход:</strong> {current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход'}</p>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                        <h3 style="color: #495057;">🔧 Инструменты администратора</h3>
-                        <a href="/admin" class="btn btn-success">🔧 Панель администратора</a>
-                        <a href="/tasks" class="btn">📚 Посмотреть задания</a>
-                        <a href="/create-task" class="btn">➕ Создать задание</a>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <a href="/logout" class="btn">🚺 Выйти из системы</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            '''
-        else:
-            return f'''
-            <!DOCTYPE html>
-            <html lang="ru">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Панель преподавателя - Система адаптивного обучения</title>
-                {get_base_styles()}
-            </head>
-            <body>
-                <div class="container">
-                    <h1>👨‍🏫 Панель преподавателя</h1>
-                    
-                    <div class="status">
-                        🎆 Добро пожаловать, {user_name}!
-                    </div>
-                    
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                        <h3 style="color: #495057; margin-top: 0;">📊 Информация о профиле:</h3>
-                        <p><strong>Роль:</strong> {current_user.role.title()}</p>
-                        <p><strong>Последний вход:</strong> {current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход'}</p>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                        <h3 style="color: #495057;">🛠️ Инструменты преподавателя</h3>
-                        <a href="/tasks" class="btn">📚 Посмотреть задания</a>
-                        <a href="/create-task" class="btn btn-success">➕ Создать задание</a>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <a href="/logout" class="btn">🚪 Выйти из системы</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            '''
+            return render_template('admin/dashboard.html', user_name=user_name)
+        else:  # teacher
+            return render_template('teacher/dashboard.html', user_name=user_name)
     except Exception as e:
         return f'<h1>Ошибка панели управления</h1><p>Ошибка: {str(e)}</p><p><a href="/logout">Выйти</a></p>'
 
@@ -480,42 +159,7 @@ def tasks_list():
                     user_attempts[attempt.task_id] = []
                 user_attempts[attempt.task_id].append(attempt)
         
-        return f'''
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Математические задания</title>
-            {get_base_styles()}
-        </head>
-        <body>
-            <div class="container">
-                <h1>📚 Математические задания</h1>
-                
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <a href="/dashboard" class="btn">← Назад в панель</a>
-                    {('<a href="/create-task" class="btn btn-success">➕ Создать задание</a>' if current_user.role == 'teacher' else '')}
-                </div>
-                
-                "".join([
-                    f'<div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #3498db;">'
-                    f'<h3 style="color: #2c3e50; margin-top: 0;">{task.title}</h3>'
-                    f'<p style="color: #6c757d;"><strong>Тема:</strong> {task.topic}</p>'
-                    f'<p style="color: #6c757d;"><strong>Сложность:</strong> {task.difficulty_level}/5</p>'
-                    f'<p style="color: #6c757d;"><strong>Максимальный балл:</strong> {task.max_score}</p>'
-                    + ('<p style="color: #28a745;"><strong>Ваши попытки:</strong> ' + str(len(user_attempts.get(task.id, []))) + '</p>' if current_user.role == 'student' and task.id in user_attempts else '') +
-                    f'<div style="text-align: right; margin-top: 15px;">'
-                    f'<a href="/task/{task.id}" class="btn btn-success">{"📝 Решать" if current_user.role == "student" else "👁️ Посмотреть"}</a>'
-                    f'</div></div>'
-                    for task in tasks
-                ])
-                
-                {('<div style="text-align: center; color: #6c757d; margin: 40px 0;"><p>Пока нет доступных заданий.</p></div>' if not tasks else '')}
-            </div>
-        </body>
-        </html>
-        '''
+        return render_template('shared/tasks_list.html', tasks=tasks, user_attempts=user_attempts)
         
     except Exception as e:
         return f'<h1>Ошибка</h1><p>Ошибка при загрузке заданий: {str(e)}</p><p><a href="/dashboard">← Назад</a></p>'
@@ -535,42 +179,7 @@ def view_task(task_id):
                 task_id=task_id
             ).order_by(TaskAttempt.created_at.desc()).all()
         
-        return f'''
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>{task.title}</title>
-            {get_base_styles()}
-        </head>
-        <body>
-            <div class="container">
-                <h1>📝 {task.title}</h1>
-                
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <a href="/tasks" class="btn">← Назад к заданиям</a>
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                    <h3 style="color: #495057; margin-top: 0;">📋 Условие задачи:</h3>
-                    <p style="white-space: pre-wrap; line-height: 1.6;">{task.description}</p>
-                </div>
-                
-                <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                    <p><strong>📊 Тема:</strong> {task.topic}</p>
-                    <p><strong>⭐ Сложность:</strong> {task.difficulty_level}/5</p>
-                    <p><strong>🎯 Максимальный балл:</strong> {task.max_score}</p>
-                    <p><strong>📅 Создано:</strong> {task.created_at.strftime('%d.%m.%Y %H:%M')}</p>
-                </div>
-                
-                ('<div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0;"><h3 style="color: #856404; margin-top: 0;">📈 Ваши попытки: ' + str(len(user_attempts)) + '</h3>' + (''.join(['<p><strong>Попытка ' + str(i+1) + ':</strong> Балл ' + str(attempt.partial_score) + '/' + str(task.max_score) + ' (' + attempt.created_at.strftime("%d.%m.%Y %H:%M") + ')</p>' for i, attempt in enumerate(user_attempts[:3])]) if user_attempts else '<p>Попыток пока нет</p>') + '</div>' if current_user.role == 'student' else '')
-                
-                ('<form method="POST" action="/solve-task/' + str(task_id) + '"><div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;"><h3 style="color: #2c3e50; margin-top: 0;">✏️ Ваш ответ:</h3><div class="form-group"><textarea name="answer" placeholder="Введите ваш ответ здесь..." style="width: 100%; height: 120px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" required></textarea></div><div style="text-align: center;"><button type="submit" class="btn btn-success">🚀 Отправить решение</button></div></div></form>' if current_user.role == 'student' else '')
-            </div>
-        </body>
-        </html>
-        '''
+        return render_template('shared/view_task.html', task=task, user_attempts=user_attempts)
         
     except Exception as e:
         return f'<h1>Ошибка</h1><p>Ошибка при загрузке задачи: {str(e)}</p><p><a href="/tasks">← Назад</a></p>'
@@ -587,26 +196,9 @@ def solve_task(task_id):
         user_answer = request.form.get('answer', '').strip()
         
         if not user_answer:
-            return f'''
-            <!DOCTYPE html>
-            <html lang="ru">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Ошибка</title>
-                {get_base_styles()}
-            </head>
-            <body>
-                <div class="container">
-                    <div class="form-title">⚠️ Ошибка</div>
-                    <div class="error">Пожалуйста, введите ответ!</div>
-                    <div style="text-align: center;">
-                        <a href="/task/{task_id}" class="btn">← Назад к задаче</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            '''
+            return render_template('shared/solve_task_error.html', 
+                                 error_message='Пожалуйста, введите ответ!', 
+                                 task_id=task_id)
         
         # Подсчет номера попытки
         attempt_number = TaskAttempt.query.filter_by(
@@ -650,40 +242,12 @@ def solve_task(task_id):
         db.session.commit()
         
         # Показываем результат
-        return f'''
-        <!DOCTYPE html>
-        <html lang="ru">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Результат решения</title>
-            {get_base_styles()}
-        </head>
-        <body>
-            <div class="container">
-                <div class="form-title">📊 Результат решения</div>
-                
-                <div class="{'status' if is_correct else 'error'}">
-                    {'🎉 Правильно! Отличная работа!' if is_correct else '❌ Ответ неверный. Попробуйте еще раз!'}
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                    <h3 style="color: #495057; margin-top: 0;">📝 Ваш ответ:</h3>
-                    <p style="background: white; padding: 15px; border-radius: 5px; border: 1px solid #dee2e6;">{user_answer}</p>
-                    
-                    <h3 style="color: #495057;">📊 Результат:</h3>
-                    <p><strong>Балл:</strong> {partial_score}/{task.max_score}</p>
-                    <p><strong>Попытка №:</strong> {attempt_number}</p>
-                </div>
-                
-                <div style="text-align: center;">
-                    <a href="/task/{task_id}" class="btn">🔄 Попробовать еще раз</a>
-                    <a href="/tasks" class="btn btn-success">📚 К другим заданиям</a>
-                </div>
-            </div>
-        </body>
-        </html>
-        '''
+        return render_template('shared/solve_task_result.html',
+                             task=task,
+                             user_answer=user_answer,
+                             is_correct=is_correct,
+                             partial_score=partial_score,
+                             attempt_number=attempt_number)
         
     except Exception as e:
         db.session.rollback()
@@ -707,26 +271,8 @@ def create_task():
             explanation = request.form.get('explanation', '').strip()
             
             if not all([title, description, topic, correct_answer]):
-                return f'''
-                <!DOCTYPE html>
-                <html lang="ru">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Ошибка</title>
-                    {get_base_styles()}
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="form-title">⚠️ Ошибка</div>
-                        <div class="error">Пожалуйста, заполните все обязательные поля!</div>
-                        <div style="text-align: center;">
-                            <a href="/create-task" class="btn">← Назад</a>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                '''
+                return render_template('teacher/create_task.html', 
+                                     error='Пожалуйста, заполните все обязательные поля!')
             
             # Создаем новую задачу
             task = MathTask(
@@ -744,101 +290,14 @@ def create_task():
             db.session.add(task)
             db.session.commit()
             
-            return f'''
-            <!DOCTYPE html>
-            <html lang="ru">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Успешно создано</title>
-                {get_base_styles()}
-            </head>
-            <body>
-                <div class="container">
-                    <div class="form-title">✅ Задание создано!</div>
-                    
-                    <div class="status">
-                        🎉 Задание "{title}" успешно создано и доступно для студентов!
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <a href="/tasks" class="btn btn-success">📚 Посмотреть все задания</a>
-                        <a href="/create-task" class="btn">➕ Создать еще одно</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-            '''
+            return render_template('teacher/create_task_success.html', task_title=title)
             
         except Exception as e:
             db.session.rollback()
             return f'<h1>Ошибка</h1><p>Ошибка при создании задания: {str(e)}</p><p><a href="/create-task">← Назад</a></p>'
     
     # GET запрос - показываем форму создания
-    return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Создание задания</title>
-        {get_base_styles()}
-    </head>
-    <body>
-        <div class="container">
-            <div class="form-title">➕ Создание нового задания</div>
-            
-            <form method="POST">
-                <div class="form-group">
-                    <input type="text" name="title" placeholder="Название задания" required>
-                </div>
-                
-                <div class="form-group">
-                    <textarea name="description" placeholder="Описание задачи (условие)" 
-                        style="width: 100%; height: 150px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" 
-                        required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <input type="text" name="topic" placeholder="Тема (например: Алгебра, Геометрия)" required>
-                </div>
-                
-                <div class="form-group">
-                    <select name="difficulty_level">
-                        <option value="1">⚫ Очень легко (1/5)</option>
-                        <option value="2">🟢 Легко (2/5)</option>
-                        <option value="3" selected>🟡 Средне (3/5)</option>
-                        <option value="4">🟠 Сложно (4/5)</option>
-                        <option value="5">🔴 Очень сложно (5/5)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <input type="number" name="max_score" placeholder="Максимальный балл" min="0.1" max="10" step="0.1" value="1" required>
-                </div>
-                
-                <div class="form-group">
-                    <input type="text" name="correct_answer" placeholder="Правильный ответ" required>
-                </div>
-                
-                <div class="form-group">
-                    <textarea name="explanation" placeholder="Объяснение решения (необязательно)" 
-                        style="width: 100%; height: 100px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
-                </div>
-                
-                <div style="text-align: center;">
-                    <button type="submit" class="btn btn-success">✅ Создать задание</button>
-                </div>
-            </form>
-            
-            <div class="nav-links">
-                <a href="/tasks">← К списку заданий</a>
-                <a href="/dashboard">Панель управления</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    '''
+    return render_template('teacher/create_task.html')
 
 def create_default_admin():
     """Создаем дефолтного администратора"""
@@ -1182,155 +641,7 @@ def admin_demo_data():
         'total_attempts': TaskAttempt.query.count()
     }
     
-    return f'''
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Панель администратора</title>
-        {get_base_styles()}
-        <style>
-            .admin-tabs {{
-                display: flex;
-                background: #f8f9fa;
-                border-radius: 10px 10px 0 0;
-                margin: 20px 0 0 0;
-                overflow: hidden;
-            }}
-            .admin-tab {{
-                flex: 1;
-                padding: 15px 20px;
-                text-align: center;
-                background: #e9ecef;
-                color: #495057;
-                text-decoration: none;
-                border-right: 1px solid #dee2e6;
-                transition: all 0.3s ease;
-            }}
-            .admin-tab:hover {{
-                background: #dee2e6;
-            }}
-            .admin-tab.active {{
-                background: #007bff;
-                color: white;
-            }}
-            .admin-content {{
-                background: white;
-                border-radius: 0 0 10px 10px;
-                padding: 30px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }}
-            .stats-grid {{
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin: 20px 0;
-            }}
-            .stat-card {{
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 20px;
-                border-radius: 10px;
-                text-align: center;
-            }}
-            .stat-number {{
-                font-size: 2em;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }}
-            .action-buttons {{
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 15px;
-                margin: 30px 0;
-            }}
-            .action-btn {{
-                padding: 15px 20px;
-                border: none;
-                border-radius: 8px;
-                font-size: 16px;
-                cursor: pointer;
-                text-decoration: none;
-                display: block;
-                text-align: center;
-                transition: all 0.3s ease;
-            }}
-            .btn-create {{ background: #28a745; color: white; }}
-            .btn-export {{ background: #17a2b8; color: white; }}
-            .btn-import {{ background: #ffc107; color: #212529; }}
-            .btn-danger {{ background: #dc3545; color: white; }}
-            .action-btn:hover {{
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="form-title">🔧 Панель администратора</div>
-            
-            <!-- Вкладки -->
-            <div class="admin-tabs">
-                <a href="/admin/demo-data" class="admin-tab active">🎯 Демо-данные</a>
-                <a href="/admin/users" class="admin-tab">👥 Пользователи</a>
-                <a href="/admin/settings" class="admin-tab">⚙️ Настройки</a>
-                <a href="/admin/analytics" class="admin-tab">📊 Аналитика</a>
-                <a href="/admin/tasks" class="admin-tab">📝 Задания</a>
-            </div>
-            
-            <!-- Контент вкладки -->
-            <div class="admin-content">
-                <h2>🎯 Управление демо-данными</h2>
-                
-                <!-- Статистика -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">{stats['total_users']}</div>
-                        <div>Всего пользователей</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">{stats['students']}</div>
-                        <div>Студентов</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">{stats['teachers']}</div>
-                        <div>Преподавателей</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">{stats['total_tasks']}</div>
-                        <div>Заданий</div>
-                    </div>
-                </div>
-                
-                <!-- Действия -->
-                <div class="action-buttons">
-                    <a href="/admin/create-demo-users" class="action-btn btn-create">
-                        👥 Создать тестовых пользователей
-                    </a>
-                    <a href="/admin/create-olympiad-tasks" class="action-btn btn-create">
-                        🏆 Создать тестовые задания
-                    </a>
-                    <a href="/admin/export-db" class="action-btn btn-export">
-                        📦 Экспорт базы данных
-                    </a>
-                    <a href="/admin/import-db" class="action-btn btn-import">
-                        📥 Импорт базы данных
-                    </a>
-                    <a href="/admin/clear-db" class="action-btn btn-danger" onclick="return confirm('Вы уверены, что хотите очистить все данные?')">
-                        🗑️ Очистить базу данных
-                    </a>
-                </div>
-            </div>
-            
-            <div class="nav-links">
-                <a href="/dashboard">← На главную</a>
-                <a href="/logout">Выход</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    '''
+    return render_template('admin/demo_data.html', stats=stats, active_tab='demo-data')
 
 @app.route('/admin/create-demo-users')
 @login_required

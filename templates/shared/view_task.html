@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ task.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📝 {{ task.title }}</h1>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="/tasks" class="btn">← Назад к заданиям</a>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #495057; margin-top: 0;">📋 Условие задачи:</h3>
+            <p style="white-space: pre-wrap; line-height: 1.6;">{{ task.description }}</p>
+        </div>
+        
+        <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <p><strong>📊 Тема:</strong> {{ task.topic }}</p>
+            <p><strong>⭐ Сложность:</strong> {{ task.difficulty_level }}/5</p>
+            <p><strong>🎯 Максимальный балл:</strong> {{ task.max_score }}</p>
+            <p><strong>📅 Создано:</strong> {{ task.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+        </div>
+        
+        {% if current_user.role == 'student' %}
+            <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3 style="color: #856404; margin-top: 0;">📈 Ваши попытки: {{ user_attempts|length }}</h3>
+                {% if user_attempts %}
+                    {% for attempt in user_attempts[:3] %}
+                        <p><strong>Попытка {{ loop.index }}:</strong> Балл {{ attempt.partial_score }}/{{ task.max_score }} ({{ attempt.created_at.strftime("%d.%m.%Y %H:%M") }})</p>
+                    {% endfor %}
+                {% else %}
+                    <p>Попыток пока нет</p>
+                {% endif %}
+            </div>
+            
+            <form method="POST" action="/solve-task/{{ task.id }}">
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;">
+                    <h3 style="color: #2c3e50; margin-top: 0;">✏️ Ваш ответ:</h3>
+                    <div class="form-group">
+                        <textarea name="answer" placeholder="Введите ваш ответ здесь..." style="width: 100%; height: 120px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" required></textarea>
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn btn-success">🚀 Отправить решение</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% extends "shared/base.html" %}
+
+{% block title %}Панель управления - {{ user_name }}{% endblock %}
+
+{% block content %}
+    <h1>👋 Добро пожаловать, {{ user_name }}!</h1>
+    
+    {% if current_user.role == 'student' %}
+        <!-- Панель студента -->
+        <div class="info-message">
+            <h3>🎓 Панель студента</h3>
+            <p>Здесь вы можете решать математические задачи, отслеживать свой прогресс и изучать новые темы.</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ url_for('tasks_list') }}" class="btn btn-primary">📚 Перейти к заданиям</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">🚪 Выйти</a>
+        </div>
+        
+    {% elif current_user.role == 'admin' %}
+        <!-- Панель администратора -->
+        <div class="warning-message">
+            <h3>🔧 Панель администратора</h3>
+            <p>У вас есть полный доступ к системе управления пользователями, заданиями и настройками.</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-primary">⚙️ Админ-панель</a>
+            <a href="{{ url_for('tasks_list') }}" class="btn btn-success">📋 Управление заданиями</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">🚪 Выйти</a>
+        </div>
+        
+    {% else %}
+        <!-- Панель преподавателя -->
+        <div class="success-message">
+            <h3>👨‍🏫 Панель преподавателя</h3>
+            <p>Создавайте задания, отслеживайте прогресс студентов и управляйте учебным процессом.</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ url_for('tasks_list') }}" class="btn btn-primary">📚 Управление заданиями</a>
+            <a href="{{ url_for('create_task') }}" class="btn btn-success">➕ Создать задание</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">🚪 Выйти</a>
+        </div>
+    {% endif %}
+    
+    <div class="nav-links">
+        <a href="{{ url_for('home') }}">🏠 На главную</a>
+    </div>
+{% endblock %}

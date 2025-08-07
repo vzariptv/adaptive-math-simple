@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-title">⚠️ Ошибка</div>
+        <div class="error">{{ error_message }}</div>
+        <div style="text-align: center;">
+            <a href="/task/{{ task_id }}" class="btn">← Назад к задаче</a>
+        </div>
+    </div>
+</body>
+</html>

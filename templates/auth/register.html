@@ -1,0 +1,46 @@
+{% extends "shared/base.html" %}
+
+{% block title %}Регистрация - Адаптивное обучение математике{% endblock %}
+
+{% block content %}
+    <h1>📝 Регистрация в системе</h1>
+    
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="role">Роль:</label>
+            <select id="role" name="role" required>
+                <option value="">Выберите роль</option>
+                <option value="student">👨‍🎓 Студент</option>
+                <option value="teacher">👨‍🏫 Преподаватель</option>
+            </select>
+        </div>
+        
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-success">✨ Зарегистрироваться</button>
+        </div>
+    </form>
+    
+    <div class="nav-links">
+        <a href="{{ url_for('login') }}">🔐 Уже есть аккаунт? Войти</a>
+        <a href="{{ url_for('home') }}">🏠 На главную</a>
+    </div>
+{% endblock %}
