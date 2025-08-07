@@ -32,6 +32,8 @@ def init_db():
         with app.app_context():
             db.create_all()
             print("Database tables created successfully!")
+            # Создаем дефолтного администратора
+            create_default_admin()
             # Создаем тестовые задания для демонстрации
             create_sample_tasks()
             # Создаем олимпиадные задания
@@ -491,7 +493,45 @@ def dashboard():
                     </div>
                     
                     <div style="text-align: center;">
-                        <a href="/logout" class="btn">🚪 Выйти из системы</a>
+                        <a href="/logout" class="btn">🚺 Выйти из системы</a>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
+        elif current_user.role == 'admin':
+            return f'''
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Панель администратора - Система адаптивного обучения</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🔧 Панель администратора</h1>
+                    
+                    <div class="status">
+                        🎆 Добро пожаловать, {user_name}!
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                        <h3 style="color: #495057; margin-top: 0;">📊 Информация о профиле:</h3>
+                        <p><strong>Роль:</strong> {current_user.role.title()}</p>
+                        <p><strong>Последний вход:</strong> {current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход'}</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <h3 style="color: #495057;">🔧 Инструменты администратора</h3>
+                        <a href="/admin" class="btn btn-success">🔧 Панель администратора</a>
+                        <a href="/tasks" class="btn">📚 Посмотреть задания</a>
+                        <a href="/create-task" class="btn">➕ Создать задание</a>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="/logout" class="btn">🚺 Выйти из системы</a>
                     </div>
                 </div>
             </body>
@@ -941,6 +981,31 @@ def create_task():
     </html>
     '''
 
+def create_default_admin():
+    """Создаем дефолтного администратора"""
+    try:
+        # Проверяем, существует ли админ
+        existing_admin = User.query.filter_by(username='CalmAndManage').first()
+        if existing_admin:
+            print("Администратор уже существует")
+            return
+            
+        # Создаем администратора
+        admin = User(
+            username='CalmAndManage',
+            email='admin@mathsystem.local',
+            role='admin'
+        )
+        admin.set_password('KeepMathAlive')
+        
+        db.session.add(admin)
+        db.session.commit()
+        print("Администратор успешно создан: CalmAndManage")
+        
+    except Exception as e:
+        print(f"Ошибка при создании администратора: {e}")
+        db.session.rollback()
+
 def create_sample_tasks():
     """Создаем несколько тестовых задач для демонстрации"""
     try:
@@ -1222,6 +1287,289 @@ D) Уменьшилась на 2%
         print(f"Ошибка при создании олимпиадных заданий: {e}")
         db.session.rollback()
 
+@app.route('/admin')
+@login_required
+def admin_panel():
+    """Главная страница администратора"""
+    # Проверяем, что пользователь - администратор
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    # Получаем статистику
+    total_users = User.query.count()
+    students_count = User.query.filter_by(role='student').count()
+    teachers_count = User.query.filter_by(role='teacher').count()
+    admins_count = User.query.filter_by(role='admin').count()
+    total_tasks = MathTask.query.count()
+    total_attempts = TaskAttempt.query.count()
+    
+    # По умолчанию открываем первую вкладку
+    return redirect(url_for('admin_demo_data'))
+
+@app.route('/admin/demo-data')
+@login_required
+def admin_demo_data():
+    """Вкладка 1: Управление демо-данными"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    # Статистика
+    stats = {
+        'total_users': User.query.count(),
+        'students': User.query.filter_by(role='student').count(),
+        'teachers': User.query.filter_by(role='teacher').count(),
+        'admins': User.query.filter_by(role='admin').count(),
+        'total_tasks': MathTask.query.count(),
+        'total_attempts': TaskAttempt.query.count()
+    }
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Панель администратора</title>
+        {get_base_styles()}
+        <style>
+            .admin-tabs {{
+                display: flex;
+                background: #f8f9fa;
+                border-radius: 10px 10px 0 0;
+                margin: 20px 0 0 0;
+                overflow: hidden;
+            }}
+            .admin-tab {{
+                flex: 1;
+                padding: 15px 20px;
+                text-align: center;
+                background: #e9ecef;
+                color: #495057;
+                text-decoration: none;
+                border-right: 1px solid #dee2e6;
+                transition: all 0.3s ease;
+            }}
+            .admin-tab:hover {{
+                background: #dee2e6;
+            }}
+            .admin-tab.active {{
+                background: #007bff;
+                color: white;
+            }}
+            .admin-content {{
+                background: white;
+                border-radius: 0 0 10px 10px;
+                padding: 30px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }}
+            .stats-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin: 20px 0;
+            }}
+            .stat-card {{
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+            }}
+            .stat-number {{
+                font-size: 2em;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }}
+            .action-buttons {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+                margin: 30px 0;
+            }}
+            .action-btn {{
+                padding: 15px 20px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                cursor: pointer;
+                text-decoration: none;
+                display: block;
+                text-align: center;
+                transition: all 0.3s ease;
+            }}
+            .btn-create {{ background: #28a745; color: white; }}
+            .btn-export {{ background: #17a2b8; color: white; }}
+            .btn-import {{ background: #ffc107; color: #212529; }}
+            .btn-danger {{ background: #dc3545; color: white; }}
+            .action-btn:hover {{
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="form-title">🔧 Панель администратора</div>
+            
+            <!-- Вкладки -->
+            <div class="admin-tabs">
+                <a href="/admin/demo-data" class="admin-tab active">🎯 Демо-данные</a>
+                <a href="/admin/users" class="admin-tab">👥 Пользователи</a>
+                <a href="/admin/settings" class="admin-tab">⚙️ Настройки</a>
+                <a href="/admin/analytics" class="admin-tab">📊 Аналитика</a>
+                <a href="/admin/tasks" class="admin-tab">📝 Задания</a>
+            </div>
+            
+            <!-- Контент вкладки -->
+            <div class="admin-content">
+                <h2>🎯 Управление демо-данными</h2>
+                
+                <!-- Статистика -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{stats['total_users']}</div>
+                        <div>Всего пользователей</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{stats['students']}</div>
+                        <div>Студентов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{stats['teachers']}</div>
+                        <div>Преподавателей</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{stats['total_tasks']}</div>
+                        <div>Заданий</div>
+                    </div>
+                </div>
+                
+                <!-- Действия -->
+                <div class="action-buttons">
+                    <a href="/admin/create-demo-users" class="action-btn btn-create">
+                        👥 Создать тестовых пользователей
+                    </a>
+                    <a href="/admin/create-olympiad-tasks" class="action-btn btn-create">
+                        🏆 Создать тестовые задания
+                    </a>
+                    <a href="/admin/export-db" class="action-btn btn-export">
+                        📦 Экспорт базы данных
+                    </a>
+                    <a href="/admin/import-db" class="action-btn btn-import">
+                        📥 Импорт базы данных
+                    </a>
+                    <a href="/admin/clear-db" class="action-btn btn-danger" onclick="return confirm('Вы уверены, что хотите очистить все данные?')">
+                        🗑️ Очистить базу данных
+                    </a>
+                </div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="/dashboard">← На главную</a>
+                <a href="/logout">Выход</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+
+@app.route('/admin/create-demo-users')
+@login_required
+def admin_create_demo_users():
+    """Создание тестовых пользователей"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    try:
+        created_users = []
+        
+        # Создаем тестового студента
+        student = User.query.filter_by(username='student').first()
+        if not student:
+            student = User(
+                username='student',
+                email='student@test.com',
+                role='student'
+            )
+            student.set_password('123456')
+            db.session.add(student)
+            created_users.append('Студент (student/123456)')
+        
+        # Создаем тестового преподавателя
+        teacher = User.query.filter_by(username='teacher').first()
+        if not teacher:
+            teacher = User(
+                username='teacher',
+                email='teacher@test.com',
+                role='teacher'
+            )
+            teacher.set_password('123456')
+            db.session.add(teacher)
+            created_users.append('Преподаватель (teacher/123456)')
+        
+        db.session.commit()
+        
+        if created_users:
+            users_list = '<br>'.join([f'• {user}' for user in created_users])
+            message = f'Успешно созданы:<br>{users_list}'
+        else:
+            message = 'Все тестовые пользователи уже существуют'
+        
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Тестовые пользователи</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <div class="form-title">👥 Тестовые пользователи</div>
+                
+                <div class="status">
+                    {message}
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #495057; margin-top: 0;">🔑 Данные для входа:</h3>
+                    <p><strong>Студент:</strong> student / 123456</p>
+                    <p><strong>Преподаватель:</strong> teacher / 123456</p>
+                    <p><strong>Администратор:</strong> CalmAndManage / KeepMathAlive</p>
+                </div>
+                
+                <div style="text-align: center;">
+                    <a href="/admin/demo-data" class="btn btn-success">← Назад к демо-данным</a>
+                    <a href="/admin/users" class="btn">👥 Управление пользователями</a>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Ошибка</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <div class="form-title">⚠️ Ошибка</div>
+                <div class="error">Ошибка при создании пользователей: {str(e)}</div>
+                <div style="text-align: center;">
+                    <a href="/admin/demo-data" class="btn">← Назад</a>
+                </div>
+            </div>
+        </body>
+        </html>
+        '''
+
 @app.route('/admin/create-olympiad-tasks')
 def admin_create_olympiad_tasks():
     """Админский маршрут для создания олимпиадных заданий"""
@@ -1289,10 +1637,341 @@ def admin_create_olympiad_tasks():
         </html>
         '''
 
+@app.route('/admin/users')
+@login_required
+def admin_users():
+    """Вкладка 2: Управление пользователями"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    # Получаем всех пользователей
+    users = User.query.order_by(User.role, User.username).all()
+    
+    users_html = ''
+    for user in users:
+        role_emoji = {'admin': '🔧', 'teacher': '👨‍🏫', 'student': '🎓'}
+        emoji = role_emoji.get(user.role, '👤')
+        users_html += f'''
+        <tr>
+            <td>{emoji} {user.username}</td>
+            <td>{user.email}</td>
+            <td><span class="role-badge role-{user.role}">{user.role}</span></td>
+            <td>
+                <a href="/admin/edit-user/{user.id}" class="btn-small btn-edit">✏️ Редактировать</a>
+                {'' if user.role == 'admin' else f'<a href="/admin/delete-user/{user.id}" class="btn-small btn-delete" onclick="return confirm(\'\u0423далить пользователя {user.username}?\')">🗑️ Удалить</a>'}
+            </td>
+        </tr>
+        '''
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Панель администратора</title>
+        {get_base_styles()}
+        <style>
+            .admin-tabs {{
+                display: flex;
+                background: #f8f9fa;
+                border-radius: 10px 10px 0 0;
+                margin: 20px 0 0 0;
+                overflow: hidden;
+            }}
+            .admin-tab {{
+                flex: 1;
+                padding: 15px 20px;
+                text-align: center;
+                background: #e9ecef;
+                color: #495057;
+                text-decoration: none;
+                border-right: 1px solid #dee2e6;
+                transition: all 0.3s ease;
+            }}
+            .admin-tab:hover {{
+                background: #dee2e6;
+            }}
+            .admin-tab.active {{
+                background: #007bff;
+                color: white;
+            }}
+            .admin-content {{
+                background: white;
+                border-radius: 0 0 10px 10px;
+                padding: 30px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }}
+            .users-table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }}
+            .users-table th, .users-table td {{
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #dee2e6;
+            }}
+            .users-table th {{
+                background: #f8f9fa;
+                font-weight: bold;
+            }}
+            .role-badge {{
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                text-transform: uppercase;
+            }}
+            .role-admin {{ background: #dc3545; color: white; }}
+            .role-teacher {{ background: #28a745; color: white; }}
+            .role-student {{ background: #007bff; color: white; }}
+            .btn-small {{
+                padding: 6px 12px;
+                margin: 2px;
+                border-radius: 4px;
+                text-decoration: none;
+                font-size: 12px;
+                display: inline-block;
+            }}
+            .btn-edit {{ background: #ffc107; color: #212529; }}
+            .btn-delete {{ background: #dc3545; color: white; }}
+            .btn-small:hover {{
+                opacity: 0.8;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="form-title">🔧 Панель администратора</div>
+            
+            <div class="admin-tabs">
+                <a href="/admin/demo-data" class="admin-tab">🎯 Демо-данные</a>
+                <a href="/admin/users" class="admin-tab active">👥 Пользователи</a>
+                <a href="/admin/settings" class="admin-tab">⚙️ Настройки</a>
+                <a href="/admin/analytics" class="admin-tab">📊 Аналитика</a>
+                <a href="/admin/tasks" class="admin-tab">📝 Задания</a>
+            </div>
+            
+            <div class="admin-content">
+                <h2>👥 Управление пользователями</h2>
+                
+                <div style="margin: 20px 0;">
+                    <a href="/admin/add-user" class="btn btn-success">➕ Добавить пользователя</a>
+                </div>
+                
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Пользователь</th>
+                            <th>Email</th>
+                            <th>Роль</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users_html}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="nav-links">
+                <a href="/dashboard">← На главную</a>
+                <a href="/logout">Выход</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+
+@app.route('/admin/settings')
+@login_required
+def admin_settings():
+    """Вкладка 3: Настройки (пока пустая)"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Панель администратора</title>
+        {get_base_styles()}
+        <style>
+            .admin-tabs {{
+                display: flex;
+                background: #f8f9fa;
+                border-radius: 10px 10px 0 0;
+                margin: 20px 0 0 0;
+                overflow: hidden;
+            }}
+            .admin-tab {{
+                flex: 1;
+                padding: 15px 20px;
+                text-align: center;
+                background: #e9ecef;
+                color: #495057;
+                text-decoration: none;
+                border-right: 1px solid #dee2e6;
+                transition: all 0.3s ease;
+            }}
+            .admin-tab:hover {{
+                background: #dee2e6;
+            }}
+            .admin-tab.active {{
+                background: #007bff;
+                color: white;
+            }}
+            .admin-content {{
+                background: white;
+                border-radius: 0 0 10px 10px;
+                padding: 30px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }}
+            .placeholder {{
+                text-align: center;
+                padding: 60px 20px;
+                color: #6c757d;
+                background: #f8f9fa;
+                border-radius: 10px;
+                margin: 20px 0;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="form-title">🔧 Панель администратора</div>
+            
+            <div class="admin-tabs">
+                <a href="/admin/demo-data" class="admin-tab">🎯 Демо-данные</a>
+                <a href="/admin/users" class="admin-tab">👥 Пользователи</a>
+                <a href="/admin/settings" class="admin-tab active">⚙️ Настройки</a>
+                <a href="/admin/analytics" class="admin-tab">📊 Аналитика</a>
+                <a href="/admin/tasks" class="admin-tab">📝 Задания</a>
+            </div>
+            
+            <div class="admin-content">
+                <h2>⚙️ Настройки системы</h2>
+                
+                <div class="placeholder">
+                    <h3>🚧 В разработке</h3>
+                    <p>Здесь будут настройки весовых коэффициентов<br>адаптивного алгоритма обучения</p>
+                </div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="/dashboard">← На главную</a>
+                <a href="/logout">Выход</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+
+@app.route('/admin/analytics')
+@login_required
+def admin_analytics():
+    """Вкладка 4: Аналитика (пока пустая)"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    return f'''
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Панель администратора</title>
+        {get_base_styles()}
+        <style>
+            .admin-tabs {{
+                display: flex;
+                background: #f8f9fa;
+                border-radius: 10px 10px 0 0;
+                margin: 20px 0 0 0;
+                overflow: hidden;
+            }}
+            .admin-tab {{
+                flex: 1;
+                padding: 15px 20px;
+                text-align: center;
+                background: #e9ecef;
+                color: #495057;
+                text-decoration: none;
+                border-right: 1px solid #dee2e6;
+                transition: all 0.3s ease;
+            }}
+            .admin-tab:hover {{
+                background: #dee2e6;
+            }}
+            .admin-tab.active {{
+                background: #007bff;
+                color: white;
+            }}
+            .admin-content {{
+                background: white;
+                border-radius: 0 0 10px 10px;
+                padding: 30px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }}
+            .placeholder {{
+                text-align: center;
+                padding: 60px 20px;
+                color: #6c757d;
+                background: #f8f9fa;
+                border-radius: 10px;
+                margin: 20px 0;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="form-title">🔧 Панель администратора</div>
+            
+            <div class="admin-tabs">
+                <a href="/admin/demo-data" class="admin-tab">🎯 Демо-данные</a>
+                <a href="/admin/users" class="admin-tab">👥 Пользователи</a>
+                <a href="/admin/settings" class="admin-tab">⚙️ Настройки</a>
+                <a href="/admin/analytics" class="admin-tab active">📊 Аналитика</a>
+                <a href="/admin/tasks" class="admin-tab">📝 Задания</a>
+            </div>
+            
+            <div class="admin-content">
+                <h2>📊 Аналитика системы</h2>
+                
+                <div class="placeholder">
+                    <h3>🚧 В разработке</h3>
+                    <p>Здесь будут графики и статистика:<br>• Активность студентов<br>• Сложность заданий<br>• Прогресс обучения</p>
+                </div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="/dashboard">← На главную</a>
+                <a href="/logout">Выход</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+
+@app.route('/admin/tasks')
+@login_required
+def admin_tasks():
+    """Вкладка 5: Управление заданиями"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    # Перенаправляем на обычный список заданий (админ видит всё как преподаватель)
+    return redirect(url_for('tasks_list'))
+
 if __name__ == '__main__':
     with app.app_context():
         # Создаем таблицы базы данных
         db.create_all()
+        # Создаем дефолтного администратора
+        create_default_admin()
         # Создаем тестовые задания для демонстрации
         create_sample_tasks()
         # Создаем олимпиадные задания
