@@ -50,7 +50,7 @@ def get_base_styles():
         <style>
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                max-width: 600px;
+                max-width: min(800px, 90%);
                 margin: 0 auto;
                 padding: 20px;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
