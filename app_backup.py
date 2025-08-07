@@ -564,9 +564,28 @@ def view_task(task_id):
                     <p><strong>📅 Создано:</strong> {task.created_at.strftime('%d.%m.%Y %H:%M')}</p>
                 </div>
                 
-                ('<div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0;"><h3 style="color: #856404; margin-top: 0;">📈 Ваши попытки: ' + str(len(user_attempts)) + '</h3>' + (''.join(['<p><strong>Попытка ' + str(i+1) + ':</strong> Балл ' + str(attempt.partial_score) + '/' + str(task.max_score) + ' (' + attempt.created_at.strftime("%d.%m.%Y %H:%M") + ')</p>' for i, attempt in enumerate(user_attempts[:3])]) if user_attempts else '<p>Попыток пока нет</p>') + '</div>' if current_user.role == 'student' else '')
+                {(f'''
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #856404; margin-top: 0;">📈 Ваши попытки: {len(user_attempts)}</h3>
+                    {(''.join([f'<p><strong>Попытка {i+1}:</strong> Балл {attempt.partial_score}/{task.max_score} ({attempt.created_at.strftime("%d.%m.%Y %H:%M")})</p>' for i, attempt in enumerate(user_attempts[:3])]) if user_attempts else '<p>Попыток пока нет</p>')}
+                </div>
+                ''' if current_user.role == 'student' else '')}
                 
-                ('<form method="POST" action="/solve-task/' + str(task_id) + '"><div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;"><h3 style="color: #2c3e50; margin-top: 0;">✏️ Ваш ответ:</h3><div class="form-group"><textarea name="answer" placeholder="Введите ваш ответ здесь..." style="width: 100%; height: 120px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" required></textarea></div><div style="text-align: center;"><button type="submit" class="btn btn-success">🚀 Отправить решение</button></div></div></form>' if current_user.role == 'student' else '')
+                {(f'''
+                <form method="POST" action="/solve-task/{task_id}">
+                    <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;">
+                        <h3 style="color: #2c3e50; margin-top: 0;">✏️ Ваш ответ:</h3>
+                        <div class="form-group">
+                            <textarea name="answer" placeholder="Введите ваш ответ здесь..." 
+                                style="width: 100%; height: 120px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" 
+                                required></textarea>
+                        </div>
+                        <div style="text-align: center;">
+                            <button type="submit" class="btn btn-success">🚀 Отправить решение</button>
+                        </div>
+                    </div>
+                </form>
+                ''' if current_user.role == 'student' else '')}
             </div>
         </body>
         </html>
@@ -1510,7 +1529,6 @@ def admin_users():
     for user in users:
         role_emoji = {'admin': '🔧', 'teacher': '👨‍🏫', 'student': '🎓'}
         emoji = role_emoji.get(user.role, '👤')
-        delete_button = '' if user.role == 'admin' else f'<a href="/admin/delete-user/{user.id}" class="btn-small btn-delete" onclick="return confirm(\'Удалить пользователя {user.username}?\')">🗑️ Удалить</a>'
         users_html += f'''
         <tr>
             <td>{emoji} {user.username}</td>
@@ -1518,12 +1536,12 @@ def admin_users():
             <td><span class="role-badge role-{user.role}">{user.role}</span></td>
             <td>
                 <a href="/admin/edit-user/{user.id}" class="btn-small btn-edit">✏️ Редактировать</a>
-                {delete_button}
+                {'' if user.role == 'admin' else f'<a href="/admin/delete-user/{user.id}" class="btn-small btn-delete" onclick="return confirm(\'\u0423далить пользователя {user.username.replace("\'", "\\'")}?\')">🗑️ Удалить</a>'}
             </td>
         </tr>
         '''
     
-    return '''
+    return f'''
     <!DOCTYPE html>
     <html lang="ru">
     <head>
