@@ -2049,6 +2049,202 @@ def force_create_admin():
         </html>
         '''
 
+@app.route('/admin/delete-user/<int:user_id>')
+@login_required
+def admin_delete_user(user_id):
+    """Удаление пользователя (только для админов)"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        # Защита от удаления администраторов
+        if user.role == 'admin':
+            return f'''
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <title>Ошибка удаления</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <h1>❌ Ошибка удаления</h1>
+                    <p>Нельзя удалить администратора!</p>
+                    <p><a href="/admin/users" class="btn btn-secondary">Назад к списку пользователей</a></p>
+                </div>
+            </body>
+            </html>
+            '''
+        
+        username = user.username
+        db.session.delete(user)
+        db.session.commit()
+        
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <title>Пользователь удален</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <h1>✅ Пользователь удален</h1>
+                <p>Пользователь <strong>{username}</strong> успешно удален из системы.</p>
+                <p><a href="/admin/users" class="btn btn-primary">Назад к списку пользователей</a></p>
+            </div>
+        </body>
+        </html>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <title>Ошибка удаления</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <h1>❌ Ошибка при удалении пользователя</h1>
+                <p>Произошла ошибка: {str(e)}</p>
+                <p><a href="/admin/users" class="btn btn-secondary">Назад к списку пользователей</a></p>
+            </div>
+        </body>
+        </html>
+        '''
+
+@app.route('/admin/edit-user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def admin_edit_user(user_id):
+    """Редактирование пользователя (только для админов)"""
+    if current_user.role != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        if request.method == 'POST':
+            # Обработка формы редактирования
+            new_username = request.form.get('username', '').strip()
+            new_email = request.form.get('email', '').strip()
+            new_role = request.form.get('role', '').strip()
+            new_password = request.form.get('password', '').strip()
+            
+            # Валидация
+            if not new_username or not new_email or not new_role:
+                raise ValueError("Все поля обязательны для заполнения")
+            
+            if new_role not in ['student', 'teacher', 'admin']:
+                raise ValueError("Недопустимая роль пользователя")
+            
+            # Проверка уникальности имени пользователя (если изменилось)
+            if new_username != user.username:
+                existing_user = User.query.filter_by(username=new_username).first()
+                if existing_user:
+                    raise ValueError(f"Пользователь с именем '{new_username}' уже существует")
+            
+            # Проверка уникальности email (если изменился)
+            if new_email != user.email:
+                existing_email = User.query.filter_by(email=new_email).first()
+                if existing_email:
+                    raise ValueError(f"Пользователь с email '{new_email}' уже существует")
+            
+            # Обновление данных пользователя
+            user.username = new_username
+            user.email = new_email
+            user.role = new_role
+            
+            # Обновление пароля (если указан)
+            if new_password:
+                user.set_password(new_password)
+            
+            db.session.commit()
+            
+            return f'''
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <title>Пользователь обновлен</title>
+                {get_base_styles()}
+            </head>
+            <body>
+                <div class="container">
+                    <h1>✅ Пользователь обновлен</h1>
+                    <p>Данные пользователя <strong>{user.username}</strong> успешно обновлены.</p>
+                    <p><a href="/admin/users" class="btn btn-primary">Назад к списку пользователей</a></p>
+                </div>
+            </body>
+            </html>
+            '''
+        
+        # GET запрос - показываем форму редактирования
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <title>Редактирование пользователя</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <h1>✏️ Редактирование пользователя</h1>
+                <form method="POST">
+                    <div class="form-group">
+                        <label>Имя пользователя:</label>
+                        <input type="text" name="username" value="{user.username}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" name="email" value="{user.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Роль:</label>
+                        <select name="role" required>
+                            <option value="student" {'selected' if user.role == 'student' else ''}>Студент</option>
+                            <option value="teacher" {'selected' if user.role == 'teacher' else ''}>Преподаватель</option>
+                            <option value="admin" {'selected' if user.role == 'admin' else ''}>Администратор</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Новый пароль (оставьте пустым, если не хотите менять):</label>
+                        <input type="password" name="password" placeholder="Новый пароль">
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Сохранить изменения</button>
+                    <a href="/admin/users" class="btn btn-secondary">❌ Отмена</a>
+                </form>
+            </div>
+        </body>
+        </html>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <title>Ошибка редактирования</title>
+            {get_base_styles()}
+        </head>
+        <body>
+            <div class="container">
+                <h1>❌ Ошибка при редактировании пользователя</h1>
+                <p>Произошла ошибка: {str(e)}</p>
+                <p><a href="/admin/users" class="btn btn-secondary">Назад к списку пользователей</a></p>
+            </div>
+        </body>
+        </html>
+        '''
+
 if __name__ == '__main__':
     with app.app_context():
         # Создаем таблицы базы данных
