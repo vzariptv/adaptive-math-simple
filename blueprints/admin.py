@@ -1,0 +1,565 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
+from flask_login import login_required, current_user
+from models import User, MathTask, TaskAttempt, db
+from datetime import datetime
+import os
+import json
+import uuid
+from werkzeug.utils import secure_filename
+from sqlalchemy.exc import SQLAlchemyError
+
+# Создаем blueprint для административных функций
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+def admin_required(f):
+    """Декоратор для проверки прав администратора"""
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.role != 'admin':
+            flash('У вас нет прав доступа к этой странице', 'error')
+            return redirect(url_for('main.dashboard'))
+        return f(*args, **kwargs)
+    decorated_function.__name__ = f.__name__
+    return decorated_function
+
+@admin_bp.route('/')
+@login_required
+@admin_required
+def panel():
+    """Главная страница администратора"""
+    return redirect(url_for('admin.demo_data'))
+
+@admin_bp.route('/demo-data')
+@login_required
+@admin_required
+def demo_data():
+    """Вкладка 1: Управление демо-данными"""
+    # Собираем статистику
+    total_users = User.query.count()
+    total_tasks = MathTask.query.count()
+    total_attempts = TaskAttempt.query.count()
+    
+    students_count = User.query.filter_by(role='student').count()
+    teachers_count = User.query.filter_by(role='teacher').count()
+    admins_count = User.query.filter_by(role='admin').count()
+    
+    # Создаем объект stats для совместимости с шаблоном
+    stats = {
+        'total_users': total_users,
+        'total_tasks': total_tasks,
+        'total_attempts': total_attempts,
+        'students': students_count,
+        'teachers': teachers_count,
+        'admins': admins_count
+    }
+    
+    return render_template('admin/demo_data.html', stats=stats)
+
+@admin_bp.route('/users')
+@login_required
+@admin_required
+def users():
+    """Вкладка 2: Управление пользователями"""
+    users = User.query.order_by(User.role, User.username).all()
+    return render_template('admin/users.html', users=users)
+
+@admin_bp.route('/settings')
+@login_required
+@admin_required
+def settings():
+    """Вкладка 3: Настройки системы"""
+    return render_template('admin/settings.html')
+
+@admin_bp.route('/analytics')
+@login_required
+@admin_required
+def analytics():
+    """Вкладка 4: Аналитика системы"""
+    # Собираем статистику
+    total_users = User.query.count()
+    total_tasks = MathTask.query.count()
+    total_attempts = TaskAttempt.query.count()
+    
+    # Вычисляем успешность
+    successful_attempts = TaskAttempt.query.filter_by(is_correct=True).count()
+    success_rate = round((successful_attempts / total_attempts * 100) if total_attempts > 0 else 0, 1)
+    
+    # Популярные задания (топ-5)
+    popular_tasks = MathTask.query.limit(5).all()
+    
+    # Активные пользователи (топ-6)
+    active_users = User.query.limit(6).all()
+    
+    return render_template('admin/analytics.html',
+                         total_users=total_users,
+                         total_tasks=total_tasks,
+                         total_attempts=total_attempts,
+                         success_rate=success_rate,
+                         popular_tasks=popular_tasks,
+                         active_users=active_users)
+
+@admin_bp.route('/tasks/import', methods=['POST'])
+@login_required
+@admin_required
+def import_tasks():
+    """API для импорта заданий из JSON файла"""
+    if 'import_file' not in request.files:
+        return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
+    
+    file = request.files['import_file']
+    if file.filename == '':
+        return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
+    
+    if not file.filename.endswith('.json'):
+        return jsonify({'success': False, 'message': 'Поддерживаются только файлы в формате JSON'}), 400
+    
+    try:
+        # Создаем папку для загрузок, если её нет
+        upload_folder = os.path.join(current_app.root_path, '..', 'uploads')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Генерируем уникальное имя файла
+        filename = f"{uuid.uuid4()}.json"
+        filepath = os.path.join(upload_folder, filename)
+        
+        # Сохраняем файл
+        file.save(filepath)
+        
+        # Импортируем задачи
+        success_count, errors = import_tasks_from_file(filepath, current_user.id)
+        
+        # Удаляем временный файл
+        try:
+            os.remove(filepath)
+        except Exception as e:
+            current_app.logger.error(f'Error removing temp file {filepath}: {str(e)}')
+        
+        if success_count > 0 or not errors:
+            return jsonify({
+                'success': True,
+                'imported': success_count,
+                'errors': errors,
+                'message': f'Успешно импортировано {success_count} заданий.' + (f' Ошибок: {len(errors)}' if errors else '')
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'imported': 0,
+                'errors': errors,
+                'message': 'Не удалось импортировать ни одного задания. Проверьте формат данных.'
+            }), 400
+            
+    except Exception as e:
+        current_app.logger.error(f'Error importing tasks: {str(e)}')
+        return jsonify({
+            'success': False,
+            'message': f'Ошибка при импорте заданий: {str(e)}'
+        }), 500
+
+@admin_bp.route('/tasks', methods=['GET'])
+@login_required
+@admin_required
+def tasks():
+    """Вкладка 5: Управление заданиями"""
+    
+    # Получаем все задания с дополнительной информацией для админа
+    tasks = MathTask.query.order_by(MathTask.difficulty_level.desc(), MathTask.id.desc()).all()
+    return render_template('admin/tasks.html', tasks=tasks)
+
+def import_tasks_from_file(filepath, user_id):
+    """Импорт заданий из JSON файла"""
+    success_count = 0
+    errors = []
+    
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        if 'tasks' not in data:
+            raise ValueError("Неверный формат файла. Ожидается объект с полем 'tasks'")
+            
+        for i, task_data in enumerate(data['tasks'], 1):
+            try:
+                # Проверяем обязательные поля
+                required_fields = ['title', 'description', 'answer_type', 'correct_answer', 
+                                 'difficulty_level', 'topic', 'max_score']
+                
+                missing_fields = [field for field in required_fields if field not in task_data]
+                if missing_fields:
+                    errors.append(f'Задание {i}: Отсутствуют обязательные поля: {", ".join(missing_fields)}')
+                    continue
+                
+                # Проверяем формат correct_answer
+                correct_answer = task_data['correct_answer']
+                if not isinstance(correct_answer, dict) or 'type' not in correct_answer:
+                    errors.append(f'Задание {i}: Неверный формат correct_answer. Ожидается объект с полем type')
+                    continue
+                
+                # Валидация по типу ответа
+                answer_type = correct_answer.get('type')
+                if answer_type == 'number':
+                    if 'value' not in correct_answer or not isinstance(correct_answer['value'], (int, float)):
+                        errors.append(f'Задание {i}: Для типа "number" требуется поле "value" с числовым значением')
+                        continue
+                elif answer_type == 'sequence':
+                    if 'values' not in correct_answer or not isinstance(correct_answer['values'], list):
+                        errors.append(f'Задание {i}: Для типа "sequence" требуется поле "values" со списком чисел')
+                        continue
+                elif answer_type == 'variables':
+                    if 'variables' not in correct_answer or not isinstance(correct_answer['variables'], list):
+                        errors.append(f'Задание {i}: Для типа "variables" требуется поле "variables" со списком переменных')
+                        continue
+                    # Проверяем структуру переменных
+                    for var in correct_answer['variables']:
+                        if not isinstance(var, dict) or 'name' not in var or 'value' not in var:
+                            errors.append(f'Задание {i}: Каждая переменная должна содержать поля "name" и "value"')
+                            break
+                elif answer_type == 'interval':
+                    required_interval_fields = ['start', 'end', 'start_inclusive', 'end_inclusive']
+                    missing_interval_fields = [field for field in required_interval_fields if field not in correct_answer]
+                    if missing_interval_fields:
+                        errors.append(f'Задание {i}: Для типа "interval" отсутствуют поля: {", ".join(missing_interval_fields)}')
+                        continue
+                else:
+                    errors.append(f'Задание {i}: Неподдерживаемый тип ответа "{answer_type}". Поддерживаются: number, sequence, variables, interval')
+                    continue
+                
+                # Создаем новое задание
+                task = MathTask(
+                    title=task_data['title'],
+                    description=task_data['description'],
+                    answer_type=task_data['answer_type'],
+                    correct_answer=task_data['correct_answer'],
+                    difficulty_level=float(task_data['difficulty_level']),
+                    topic=task_data['topic'],
+                    max_score=float(task_data['max_score']),
+                    explanation=task_data.get('explanation', ''),
+                    created_by=user_id,
+                    is_active=True
+                )
+                
+                db.session.add(task)
+                db.session.commit()
+                success_count += 1
+                
+            except (ValueError, TypeError) as e:
+                db.session.rollback()
+                errors.append(f'Задание {i}: Ошибка формата данных - {str(e)}')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                errors.append(f'Задание {i}: Ошибка базы данных - {str(e)}')
+            except Exception as e:
+                db.session.rollback()
+                errors.append(f'Задание {i}: Неизвестная ошибка - {str(e)}')
+    
+    except json.JSONDecodeError:
+        raise ValueError('Ошибка при чтении JSON файла')
+    except Exception as e:
+        raise Exception(f'Ошибка при обработке файла: {str(e)}')
+    
+    return success_count, errors
+
+@admin_bp.route('/tasks/<int:task_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def delete_task(task_id):
+    """Удаление задания"""
+    task = MathTask.query.get_or_404(task_id)
+    
+    try:
+        # Удаляем все попытки решения этого задания
+        TaskAttempt.query.filter_by(task_id=task_id).delete()
+        # Удаляем само задание
+        db.session.delete(task)
+        db.session.commit()
+        flash('Задание успешно удалено', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении задания: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.tasks'))
+
+@admin_bp.route('/tasks/<int:task_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_task(task_id):
+    """Редактирование задания"""
+    task = MathTask.query.get_or_404(task_id)
+    
+    if request.method == 'POST':
+        try:
+            # Обновляем данные задания
+            task.title = request.form.get('title', task.title)
+            task.description = request.form.get('description', task.description)
+            task.topic = request.form.get('topic', task.topic)
+            task.difficulty_level = float(request.form.get('difficulty_level', task.difficulty_level))
+            task.max_score = float(request.form.get('max_score', task.max_score))
+            
+            # Обновляем правильный ответ в зависимости от типа
+            answer_type = request.form.get('answer_type', task.answer_type)
+            if answer_type == 'text':
+                task.correct_answer = {
+                    'value': request.form.get('correct_answer', ''),
+                    'type': 'text'
+                }
+            elif answer_type == 'number':
+                task.correct_answer = {
+                    'value': str(float(request.form.get('correct_number', 0))),
+                    'type': 'number'
+                }
+            
+            task.answer_type = answer_type
+            
+            db.session.commit()
+            flash('Задание успешно обновлено', 'success')
+            return redirect(url_for('admin.tasks'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при обновлении задания: {str(e)}', 'error')
+    
+    # Для GET запроса показываем форму редактирования
+    return render_template('admin/edit_task.html', task=task)
+
+
+@admin_bp.route('/tasks/export', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def export_tasks():
+    """Экспорт заданий в JSON формате"""
+    try:
+        if request.method == 'POST':
+            # Экспорт выбранных заданий
+            data = request.get_json()
+            task_ids = data.get('task_ids', [])
+            
+            if not task_ids:
+                return jsonify({'success': False, 'message': 'Не выбрано ни одного задания'}), 400
+                
+            tasks = MathTask.query.filter(MathTask.id.in_(task_ids)).all()
+        else:
+            # Экспорт всех заданий
+            tasks = MathTask.query.all()
+        
+        # Формируем данные для экспорта
+        export_data = {
+            'tasks': [],
+            'exported_at': datetime.utcnow().isoformat(),
+            'exported_by': current_user.username,
+            'total_tasks': len(tasks)
+        }
+        
+        for task in tasks:
+            task_data = {
+                'title': task.title,
+                'description': task.description,
+                'answer_type': task.answer_type,
+                'correct_answer': task.correct_answer,
+                'difficulty_level': task.difficulty_level,
+                'topic': task.topic,
+                'max_score': task.max_score,
+                'explanation': task.explanation or '',
+                'created_at': task.created_at.isoformat() if task.created_at else None
+            }
+            export_data['tasks'].append(task_data)
+        
+        # Возвращаем JSON файл
+        from flask import make_response
+        import json
+        
+        response = make_response(json.dumps(export_data, ensure_ascii=False, indent=2))
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        
+        if request.method == 'POST':
+            filename = f'selected_tasks_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+        else:
+            filename = f'all_tasks_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+            
+        response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        current_app.logger.error(f'Error exporting tasks: {str(e)}')
+        if request.method == 'POST':
+            return jsonify({'success': False, 'message': f'Ошибка при экспорте: {str(e)}'}), 500
+        else:
+            flash(f'Ошибка при экспорте заданий: {str(e)}', 'error')
+            return redirect(url_for('admin.tasks'))
+
+
+@admin_bp.route('/clear-database', methods=['POST'])
+@login_required
+@admin_required
+def clear_database():
+    """Очистка базы данных (только для админов)"""
+    try:
+        # Удаляем все попытки решения
+        TaskAttempt.query.delete()
+        
+        # Удаляем все задания
+        MathTask.query.delete()
+        
+        # Удаляем всех пользователей кроме текущего админа
+        User.query.filter(User.id != current_user.id).delete()
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'База данных успешно очищена. Сохранен только ваш аккаунт администратора.'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error clearing database: {str(e)}')
+        return jsonify({
+            'success': False,
+            'message': f'Ошибка при очистке базы данных: {str(e)}'
+        }), 500
+
+
+# Дополнительные административные маршруты
+
+@admin_bp.route('/create-demo-users')
+@login_required
+@admin_required
+def create_demo_users():
+    """Создание демо-пользователей"""
+    try:
+        # Создаем тестового студента
+        if not User.query.filter_by(username='student').first():
+            student = User(
+                username='student',
+                email='student@example.com',
+                role='student',
+                first_name='Тестовый',
+                last_name='Студент'
+            )
+            student.set_password('123456')
+            db.session.add(student)
+        
+        # Создаем тестового преподавателя
+        if not User.query.filter_by(username='teacher').first():
+            teacher = User(
+                username='teacher',
+                email='teacher@example.com',
+                role='teacher',
+                first_name='Тестовый',
+                last_name='Преподаватель'
+            )
+            teacher.set_password('123456')
+            db.session.add(teacher)
+        
+        db.session.commit()
+        flash('Демо-пользователи успешно созданы!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при создании пользователей: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.demo_data'))
+
+@admin_bp.route('/create-olympiad-tasks')
+@login_required
+@admin_required
+def create_olympiad_tasks():
+    """Создание олимпиадных заданий"""
+    try:
+        from app import create_sample_tasks, create_olympiad_tasks
+        
+        # Принудительно создаем олимпиадные задания
+        create_sample_tasks()
+        create_olympiad_tasks()
+        
+        # Подсчитываем количество заданий
+        total_tasks = MathTask.query.count()
+        olympiad_tasks = MathTask.query.filter(MathTask.title.contains('Олимпиада')).count()
+        
+        flash(f'Задания созданы! Всего: {total_tasks}, олимпиадных: {olympiad_tasks}', 'success')
+        
+    except Exception as e:
+        flash(f'Ошибка при создании заданий: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.demo_data'))
+
+@admin_bp.route('/create-sample-tasks')
+@login_required
+@admin_required
+def create_sample_tasks():
+    """Создание примеров заданий"""
+    try:
+        from app import create_sample_tasks
+        
+        # Создаем примеры заданий
+        create_sample_tasks()
+        
+        # Подсчитываем количество заданий
+        total_tasks = MathTask.query.count()
+        
+        flash(f'Примеры заданий созданы! Всего заданий: {total_tasks}', 'success')
+        
+    except Exception as e:
+        flash(f'Ошибка при создании заданий: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.demo_data'))
+
+@admin_bp.route('/delete-user/<int:user_id>')
+@login_required
+@admin_required
+def delete_user(user_id):
+    """Удаление пользователя"""
+    user = User.query.get_or_404(user_id)
+    
+    if user.role == 'admin':
+        flash('Нельзя удалить администратора', 'error')
+        return redirect(url_for('admin.users'))
+    
+    try:
+        # Удаляем связанные попытки
+        TaskAttempt.query.filter_by(user_id=user_id).delete()
+        
+        # Удаляем пользователя
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash(f'Пользователь {user.username} успешно удален', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении пользователя: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.users'))
+
+@admin_bp.route('/edit-user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_user(user_id):
+    """Редактирование пользователя"""
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        try:
+            user.email = request.form.get('email', user.email)
+            user.first_name = request.form.get('first_name', user.first_name)
+            user.last_name = request.form.get('last_name', user.last_name)
+            
+            # Изменяем роль только если это не админ
+            if user.role != 'admin':
+                user.role = request.form.get('role', user.role)
+            
+            # Изменяем пароль если указан новый
+            new_password = request.form.get('new_password')
+            if new_password:
+                user.set_password(new_password)
+            
+            db.session.commit()
+            flash(f'Пользователь {user.username} успешно обновлен', 'success')
+            return redirect(url_for('admin.users'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при обновлении пользователя: {str(e)}', 'error')
+    
+    # Здесь можно создать отдельный шаблон для редактирования
+    # Пока перенаправляем обратно
+    return redirect(url_for('admin.users'))

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Результат решения</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -28,8 +28,8 @@
         </div>
         
         <div style="text-align: center;">
-            <a href="/task/{{ task.id }}" class="btn">🔄 Попробовать еще раз</a>
-            <a href="/tasks" class="btn btn-success">📚 К другим заданиям</a>
+            <a href="{{ url_for('tasks.view_task', task_id=task.id) }}" class="btn">🔄 Попробовать еще раз</a>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-success">📚 К другим заданиям</a>
         </div>
     </div>
 </body>

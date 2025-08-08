@@ -1,0 +1,40 @@
+{
+  "tasks": [
+    {
+      "title": "Простая арифметика",
+      "description": "Найдите значение выражения: 15 × (27 + 48) ÷ 9 - 50",
+      "answer_type": "number",
+      "correct_answer": {"type": "number", "value": 75},
+      "difficulty_level": 2.0,
+      "topic": "Арифметика",
+      "max_score": 1.0,
+      "explanation": "Сначала выполняем операцию в скобках: 27 + 48 = 75. Затем умножение: 15 × 75 = 1125. Далее деление: 1125 ÷ 9 = 125. И наконец вычитание: 125 - 50 = 75."
+    },
+    {
+      "title": "Квадратное уравнение - корни",
+      "description": "Решите уравнение: x² - 5x + 6 = 0. Найдите все корни.",
+      "answer_type": "sequence",
+      "correct_answer": {"type": "sequence", "values": [2, 3]},
+      "difficulty_level": 3.0,
+      "topic": "Алгебра",
+      "max_score": 2.0,
+      "explanation": "Находим дискриминант: D = b² - 4ac = 25 - 24 = 1. Корни уравнения: x₁ = (5 - 1)/2 = 2, x₂ = (5 + 1)/2 = 3."
+    },
+    {
+      "title": "Система уравнений",
+      "description": "Решите систему уравнений: 2x + 3y = 12 и 3x - y = 7.",
+      "answer_type": "variables",
+      "correct_answer": {
+        "type": "variables",
+        "variables": [
+          {"name": "x", "value": 3},
+          {"name": "y", "value": 2}
+        ]
+      },
+      "difficulty_level": 4.0,
+      "topic": "Алгебра",
+      "max_score": 3.0,
+      "explanation": "Из второго уравнения выражаем y = 3x - 7. Подставляем в первое: 2x + 3(3x - 7) = 12. Решаем: 2x + 9x - 21 = 12 → 11x = 33 → x = 3. Тогда y = 3×3 - 7 = 2."
+    }
+  ]
+}

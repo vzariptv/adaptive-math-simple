@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Успешно создано</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -15,8 +15,8 @@
         </div>
         
         <div style="text-align: center;">
-            <a href="/tasks" class="btn btn-success">📚 Посмотреть все задания</a>
-            <a href="/create-task" class="btn">➕ Создать еще одно</a>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-success">📚 Посмотреть все задания</a>
+            <a href="{{ url_for('tasks.create_task') }}" class="btn">➕ Создать еще одно</a>
         </div>
     </div>
 </body>

@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Математические задания</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>📚 Математические задания</h1>
         
         <div style="text-align: center; margin-bottom: 30px;">
-            <a href="/dashboard" class="btn">← Назад в панель</a>
+            <a href="{{ url_for('main.dashboard') }}" class="btn">← Назад в панель</a>
             {% if current_user.role == 'teacher' %}
-                <a href="/create-task" class="btn btn-success">➕ Создать задание</a>
+                <a href="{{ url_for('tasks.create_task') }}" class="btn btn-success">➕ Создать задание</a>
             {% endif %}
         </div>
         
@@ -28,7 +28,7 @@
                         <p style="color: #28a745;"><strong>Ваши попытки:</strong> {{ user_attempts[task.id]|length }}</p>
                     {% endif %}
                     <div style="text-align: right; margin-top: 15px;">
-                        <a href="/task/{{ task.id }}" class="btn btn-success">
+                        <a href="{{ url_for('tasks.view_task', task_id=task.id) }}" class="btn btn-success">
                             {% if current_user.role == "student" %}📝 Решать{% else %}👁️ Посмотреть{% endif %}
                         </a>
                     </div>

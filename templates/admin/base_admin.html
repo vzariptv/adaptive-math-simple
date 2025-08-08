@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Панель администратора{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .admin-tabs {
             display: flex;
@@ -77,9 +77,84 @@
         }
         .action-btn.danger {
             background: #dc3545;
+            color: white;
         }
         .action-btn.danger:hover {
             background: #c82333;
+        }
+        
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .info-box h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .info-box ul {
+            margin-bottom: 0;
+        }
+        
+        .info-box code {
+            background: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -89,11 +164,11 @@
         
         <!-- Вкладки -->
         <div class="admin-tabs">
-            <a href="/admin/demo-data" class="admin-tab {{ 'active' if active_tab == 'demo-data' else '' }}">📊 Демо-данные</a>
-            <a href="/admin/users" class="admin-tab {{ 'active' if active_tab == 'users' else '' }}">👥 Пользователи</a>
-            <a href="/admin/settings" class="admin-tab {{ 'active' if active_tab == 'settings' else '' }}">⚙️ Настройки</a>
-            <a href="/admin/analytics" class="admin-tab {{ 'active' if active_tab == 'analytics' else '' }}">📈 Аналитика</a>
-            <a href="/admin/tasks" class="admin-tab {{ 'active' if active_tab == 'tasks' else '' }}">📚 Задания</a>
+            <a href="{{ url_for('admin.demo_data') }}" class="admin-tab {{ 'active' if active_tab == 'demo-data' else '' }}">📊 Демо-данные</a>
+            <a href="{{ url_for('admin.users') }}" class="admin-tab {{ 'active' if active_tab == 'users' else '' }}">👥 Пользователи</a>
+            <a href="{{ url_for('admin.settings') }}" class="admin-tab {{ 'active' if active_tab == 'settings' else '' }}">⚙️ Настройки</a>
+            <a href="{{ url_for('admin.analytics') }}" class="admin-tab {{ 'active' if active_tab == 'analytics' else '' }}">📈 Аналитика</a>
+            <a href="{{ url_for('admin.tasks') }}" class="admin-tab {{ 'active' if active_tab == 'tasks' else '' }}">📚 Задания</a>
         </div>
         
         <div class="admin-content">
@@ -101,9 +176,11 @@
         </div>
         
         <div class="nav-links">
-            <a href="/dashboard">← Назад в панель</a>
-            <a href="/logout">Выйти из системы</a>
+            <a href="{{ url_for('main.dashboard') }}">← Назад в панель</a>
+            <a href="{{ url_for('auth.logout') }}">Выйти из системы</a>
         </div>
     </div>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

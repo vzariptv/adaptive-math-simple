@@ -26,8 +26,9 @@ class User(UserMixin, db.Model):
     created_tasks = db.relationship('MathTask', backref='creator', lazy='dynamic')
     
     def set_password(self, password):
-        """Установить хэш пароля"""
-        self.password_hash = generate_password_hash(password)
+        """Установить хэш пароля (совместимый метод)"""
+        # Используем pbkdf2 для максимальной совместимости
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
     
     def check_password(self, password):
         """Проверить пароль"""

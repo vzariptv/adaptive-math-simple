@@ -10,6 +10,7 @@
     {% endif %}
     
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="form-group">
             <label for="username">Имя пользователя:</label>
             <input type="text" id="username" name="username" required>
@@ -40,7 +41,7 @@
     </form>
     
     <div class="nav-links">
-        <a href="{{ url_for('login') }}">🔐 Уже есть аккаунт? Войти</a>
-        <a href="{{ url_for('home') }}">🏠 На главную</a>
+        <a href="{{ url_for('auth.login') }}">🔐 Уже есть аккаунт? Войти</a>
+        <a href="{{ url_for('main.home') }}">🏠 На главную</a>
     </div>
 {% endblock %}

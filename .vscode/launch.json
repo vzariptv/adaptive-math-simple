@@ -1,0 +1,40 @@
+{
+    // PORT MANAGEMENT INSTRUCTIONS:
+    // If you get a 'port already in use' error:
+    // 1. Find which process is using the port (macOS/Linux):
+    //    lsof -i :8084
+    // 2. Stop the process (replace PID with the actual process ID):
+    //    kill -9 PID
+    // 3. Alternative: Change the port number below to an available port
+    
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Flask",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--port=8084",  // Change this port if 8084 is in use
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": true,
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}

@@ -13,8 +13,8 @@
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ url_for('tasks_list') }}" class="btn btn-primary">📚 Перейти к заданиям</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary">🚪 Выйти</a>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-primary">📚 Перейти к заданиям</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">🚪 Выйти</a>
         </div>
         
     {% elif current_user.role == 'admin' %}
@@ -25,9 +25,9 @@
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ url_for('admin_panel') }}" class="btn btn-primary">⚙️ Админ-панель</a>
-            <a href="{{ url_for('tasks_list') }}" class="btn btn-success">📋 Управление заданиями</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary">🚪 Выйти</a>
+            <a href="{{ url_for('admin.panel') }}" class="btn btn-primary">⚙️ Админ-панель</a>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-success">📋 Управление заданиями</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">🚪 Выйти</a>
         </div>
         
     {% else %}
@@ -38,13 +38,13 @@
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ url_for('tasks_list') }}" class="btn btn-primary">📚 Управление заданиями</a>
-            <a href="{{ url_for('create_task') }}" class="btn btn-success">➕ Создать задание</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary">🚪 Выйти</a>
+            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-primary">📚 Управление заданиями</a>
+            <a href="{{ url_for('tasks.create_task') }}" class="btn btn-success">➕ Создать задание</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">🚪 Выйти</a>
         </div>
     {% endif %}
     
     <div class="nav-links">
-        <a href="{{ url_for('home') }}">🏠 На главную</a>
+        <a href="{{ url_for('main.home') }}">🏠 На главную</a>
     </div>
 {% endblock %}

@@ -1,0 +1,393 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Настройки системы{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <h2>⚙️ Настройки системы</h2>
+    
+    <div class="settings-section">
+        <h3>🎯 Адаптивный алгоритм</h3>
+        <p class="section-description">Настройка параметров адаптивного алгоритма обучения</p>
+        
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label for="difficulty_weight">Вес сложности задач</label>
+                <input type="range" id="difficulty_weight" min="0.1" max="2.0" step="0.1" value="1.0">
+                <span class="setting-value">1.0</span>
+            </div>
+            
+            <div class="setting-item">
+                <label for="time_weight">Вес времени решения</label>
+                <input type="range" id="time_weight" min="0.1" max="2.0" step="0.1" value="0.8">
+                <span class="setting-value">0.8</span>
+            </div>
+            
+            <div class="setting-item">
+                <label for="accuracy_weight">Вес точности ответов</label>
+                <input type="range" id="accuracy_weight" min="0.1" max="2.0" step="0.1" value="1.2">
+                <span class="setting-value">1.2</span>
+            </div>
+            
+            <div class="setting-item">
+                <label for="progress_threshold">Порог прогресса</label>
+                <input type="range" id="progress_threshold" min="0.5" max="0.95" step="0.05" value="0.75">
+                <span class="setting-value">0.75</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>📊 Система оценивания</h3>
+        <p class="section-description">Настройка параметров оценивания и баллов</p>
+        
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label for="max_attempts">Максимум попыток на задачу</label>
+                <input type="number" id="max_attempts" min="1" max="10" value="3">
+            </div>
+            
+            <div class="setting-item">
+                <label for="partial_credit">Частичные баллы</label>
+                <input type="checkbox" id="partial_credit" checked>
+                <span class="checkbox-label">Разрешить частичные баллы</span>
+            </div>
+            
+            <div class="setting-item">
+                <label for="hint_penalty">Штраф за подсказки (%)</label>
+                <input type="range" id="hint_penalty" min="0" max="50" step="5" value="10">
+                <span class="setting-value">10%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>🎨 Интерфейс</h3>
+        <p class="section-description">Настройка внешнего вида и поведения интерфейса</p>
+        
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label for="theme">Тема оформления</label>
+                <select id="theme">
+                    <option value="light">Светлая</option>
+                    <option value="dark">Темная</option>
+                    <option value="auto">Автоматическая</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label for="language">Язык интерфейса</label>
+                <select id="language">
+                    <option value="ru" selected>Русский</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label for="notifications">Уведомления</label>
+                <input type="checkbox" id="notifications" checked>
+                <span class="checkbox-label">Включить уведомления</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>🔒 Безопасность</h3>
+        <p class="section-description">Настройки безопасности и доступа</p>
+        
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label for="session_timeout">Время сессии (минуты)</label>
+                <input type="number" id="session_timeout" min="15" max="480" value="120">
+            </div>
+            
+            <div class="setting-item">
+                <label for="password_strength">Требования к паролю</label>
+                <select id="password_strength">
+                    <option value="weak">Слабые</option>
+                    <option value="medium" selected>Средние</option>
+                    <option value="strong">Строгие</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label for="auto_logout">Автоматический выход</label>
+                <input type="checkbox" id="auto_logout" checked>
+                <span class="checkbox-label">При неактивности</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button type="button" class="btn btn-primary" onclick="saveSettings()">💾 Сохранить настройки</button>
+        <button type="button" class="btn btn-secondary" onclick="resetSettings()">🔄 Сбросить к умолчанию</button>
+        <button type="button" class="btn btn-warning" onclick="exportSettings()">📤 Экспорт настроек</button>
+        <button type="button" class="btn btn-info" onclick="importSettings()">📥 Импорт настроек</button>
+    </div>
+
+    <div class="settings-info">
+        <div class="info-card">
+            <h4>ℹ️ Информация</h4>
+            <p>Настройки применяются ко всей системе и влияют на всех пользователей.</p>
+            <p>Изменения вступают в силу немедленно после сохранения.</p>
+            <p>Рекомендуется создать резервную копию настроек перед внесением изменений.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.settings-section {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.settings-section h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.3em;
+}
+
+.section-description {
+    color: #666;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-item label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.setting-item input[type="range"],
+.setting-item input[type="number"],
+.setting-item select {
+    padding: 8px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 0.9em;
+    transition: border-color 0.3s ease;
+}
+
+.setting-item input[type="range"]:focus,
+.setting-item input[type="number"]:focus,
+.setting-item select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.setting-value {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 0.9em;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.settings-info {
+    margin-top: 30px;
+}
+
+.info-card {
+    background: #f8f9fa;
+    border-left: 4px solid #007bff;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.info-card h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.info-card p {
+    margin: 8px 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+function saveSettings() {
+    // Собираем все настройки
+    const settings = {
+        difficulty_weight: document.getElementById('difficulty_weight').value,
+        time_weight: document.getElementById('time_weight').value,
+        accuracy_weight: document.getElementById('accuracy_weight').value,
+        progress_threshold: document.getElementById('progress_threshold').value,
+        max_attempts: document.getElementById('max_attempts').value,
+        partial_credit: document.getElementById('partial_credit').checked,
+        hint_penalty: document.getElementById('hint_penalty').value,
+        theme: document.getElementById('theme').value,
+        language: document.getElementById('language').value,
+        notifications: document.getElementById('notifications').checked,
+        session_timeout: document.getElementById('session_timeout').value,
+        password_strength: document.getElementById('password_strength').value,
+        auto_logout: document.getElementById('auto_logout').checked
+    };
+    
+    // Здесь будет AJAX запрос для сохранения настроек
+    alert('Настройки сохранены! (Функция в разработке)');
+    console.log('Settings to save:', settings);
+}
+
+function resetSettings() {
+    if (confirm('Сбросить все настройки к значениям по умолчанию?')) {
+        // Сброс к значениям по умолчанию
+        document.getElementById('difficulty_weight').value = 1.0;
+        document.getElementById('time_weight').value = 0.8;
+        document.getElementById('accuracy_weight').value = 1.2;
+        document.getElementById('progress_threshold').value = 0.75;
+        document.getElementById('max_attempts').value = 3;
+        document.getElementById('partial_credit').checked = true;
+        document.getElementById('hint_penalty').value = 10;
+        document.getElementById('theme').value = 'light';
+        document.getElementById('language').value = 'ru';
+        document.getElementById('notifications').checked = true;
+        document.getElementById('session_timeout').value = 120;
+        document.getElementById('password_strength').value = 'medium';
+        document.getElementById('auto_logout').checked = true;
+        
+        updateAllValues();
+        alert('Настройки сброшены к значениям по умолчанию');
+    }
+}
+
+function exportSettings() {
+    const settings = {
+        difficulty_weight: document.getElementById('difficulty_weight').value,
+        time_weight: document.getElementById('time_weight').value,
+        accuracy_weight: document.getElementById('accuracy_weight').value,
+        progress_threshold: document.getElementById('progress_threshold').value,
+        max_attempts: document.getElementById('max_attempts').value,
+        partial_credit: document.getElementById('partial_credit').checked,
+        hint_penalty: document.getElementById('hint_penalty').value,
+        theme: document.getElementById('theme').value,
+        language: document.getElementById('language').value,
+        notifications: document.getElementById('notifications').checked,
+        session_timeout: document.getElementById('session_timeout').value,
+        password_strength: document.getElementById('password_strength').value,
+        auto_logout: document.getElementById('auto_logout').checked
+    };
+    
+    const dataStr = JSON.stringify(settings, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'math_system_settings.json';
+    link.click();
+}
+
+function importSettings() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const settings = JSON.parse(e.target.result);
+                    // Применяем настройки
+                    Object.keys(settings).forEach(key => {
+                        const element = document.getElementById(key);
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = settings[key];
+                            } else {
+                                element.value = settings[key];
+                            }
+                        }
+                    });
+                    updateAllValues();
+                    alert('Настройки успешно импортированы');
+                } catch (error) {
+                    alert('Ошибка при импорте настроек: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+    };
+    input.click();
+}
+
+function updateAllValues() {
+    // Обновляем отображаемые значения для range inputs
+    const ranges = document.querySelectorAll('input[type="range"]');
+    ranges.forEach(range => {
+        const valueSpan = range.nextElementSibling;
+        if (valueSpan && valueSpan.classList.contains('setting-value')) {
+            let value = range.value;
+            if (range.id === 'hint_penalty') {
+                value += '%';
+            }
+            valueSpan.textContent = value;
+        }
+    });
+}
+
+// Обновляем значения при изменении
+document.addEventListener('DOMContentLoaded', function() {
+    const ranges = document.querySelectorAll('input[type="range"]');
+    ranges.forEach(range => {
+        range.addEventListener('input', function() {
+            const valueSpan = this.nextElementSibling;
+            if (valueSpan && valueSpan.classList.contains('setting-value')) {
+                let value = this.value;
+                if (this.id === 'hint_penalty') {
+                    value += '%';
+                }
+                valueSpan.textContent = value;
+            }
+        });
+    });
+    
+    updateAllValues();
+});
+</script>
+{% endblock %}
