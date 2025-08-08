@@ -137,7 +137,7 @@
         <div class="form-group answer-group" id="sequence-answer-group">
             <label for="sequence_values">Последовательность чисел</label>
             <input type="text" id="sequence_values" name="sequence_values" 
-                   value="{% if task.correct_answer and task.correct_answer.type == 'sequence' %}{{ task.correct_answer.values|join(', ') }}{% endif %}" 
+                   value="{% if task.correct_answer and task.correct_answer.get('type') == 'sequence' and task.correct_answer.get('sequence_values') %}{{ task.correct_answer['sequence_values']|join(', ') }}{% endif %}" 
                    placeholder="1, 2, 5, 8, 13">
             <small class="form-help">Введите числа через запятую. Пример: 1, 2, 5, 8, 13</small>
         </div>

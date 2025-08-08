@@ -122,7 +122,7 @@
 ```json
 {
   "type": "sequence",
-  "values": [1, 2, 5, 8, 13]
+  "sequence_values": [1, 2, 5, 8, 13]
 }
 ```
 
@@ -135,15 +135,15 @@
 
 **Примеры JSON:**
 ```json
-{"type": "sequence", "values": [1, 1, 2, 3, 5, 8]}
+{"type": "sequence", "sequence_values": [1, 1, 2, 3, 5, 8]}
 ```
 
 ```json
-{"type": "sequence", "values": [-2, 0, 3, 7]}
+{"type": "sequence", "sequence_values": [-2, 0, 3, 7]}
 ```
 
 ```json
-{"type": "sequence", "values": [0.5, 1.5, 2.5, 3.5]}
+{"type": "sequence", "sequence_values": [0.5, 1.5, 2.5, 3.5]}
 ```
 
 ---
@@ -223,7 +223,7 @@
 **Условие:** Найдите все корни уравнения: x³ - 6x² + 11x - 6 = 0
 **Ответ:**
 ```json
-{"type": "sequence", "values": [1, 2, 3]}
+{"type": "sequence", "sequence_values": [1, 2, 3]}
 ```
 
 ---

@@ -14,7 +14,7 @@
       "title": "Квадратное уравнение - корни",
       "description": "Решите уравнение: x² - 5x + 6 = 0. Найдите все корни.",
       "answer_type": "sequence",
-      "correct_answer": {"type": "sequence", "values": [2, 3]},
+      "correct_answer": {"type": "sequence", "sequence_values": [2, 3]},
       "difficulty_level": 2,
       "topic": "Алгебра",
       "max_score": 2.0,

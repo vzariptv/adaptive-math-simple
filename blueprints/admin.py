@@ -201,8 +201,8 @@ def import_tasks_from_file(filepath, user_id):
                         errors.append(f'Задание {i}: Для типа "number" требуется поле "value" с числовым значением')
                         continue
                 elif answer_type == 'sequence':
-                    if 'values' not in correct_answer or not isinstance(correct_answer['values'], list):
-                        errors.append(f'Задание {i}: Для типа "sequence" требуется поле "values" со списком чисел')
+                    if 'sequence_values' not in correct_answer or not isinstance(correct_answer['sequence_values'], list):
+                        errors.append(f'Задание {i}: Для типа "sequence" требуется поле "sequence_values" со списком чисел')
                         continue
                 elif answer_type == 'variables':
                     if 'variables' not in correct_answer or not isinstance(correct_answer['variables'], list):
@@ -339,7 +339,7 @@ def edit_task(task_id):
                 }
                 
             elif answer_type == 'sequence':
-                # Последовательность: {"type": "sequence", "values": [1, 2, 5, 8, 13]}
+                # Последовательность: {"type": "sequence", "sequence_values": [1, 2, 5, 8, 13]}
                 sequence_str = request.form.get('sequence_values', '')
                 values = []
                 
@@ -352,7 +352,7 @@ def edit_task(task_id):
                 
                 task.correct_answer = {
                     'type': 'sequence',
-                    'values': values
+                    'sequence_values': values
                 }
             
             else:
