@@ -12,9 +12,9 @@
         
         <div class="settings-grid">
             <div class="setting-item">
-                <label for="difficulty_weight">Вес сложности задач</label>
-                <input type="range" id="difficulty_weight" min="0.1" max="2.0" step="0.1" value="1.0">
-                <span class="setting-value">1.0</span>
+                <label for="motivation_factor">Коэффициент мотивации студентов</label>
+                <input type="range" id="motivation_factor" min="0.1" max="2.0" step="0.1" value="1.2">
+                <span class="setting-value">1.2</span>
             </div>
             
             <div class="setting-item">
@@ -254,7 +254,7 @@
 function saveSettings() {
     // Собираем все настройки
     const settings = {
-        difficulty_weight: document.getElementById('difficulty_weight').value,
+        motivation_factor: document.getElementById('motivation_factor').value,
         time_weight: document.getElementById('time_weight').value,
         accuracy_weight: document.getElementById('accuracy_weight').value,
         progress_threshold: document.getElementById('progress_threshold').value,
@@ -277,7 +277,7 @@ function saveSettings() {
 function resetSettings() {
     if (confirm('Сбросить все настройки к значениям по умолчанию?')) {
         // Сброс к значениям по умолчанию
-        document.getElementById('difficulty_weight').value = 1.0;
+        document.getElementById('motivation_factor').value = 1.2;
         document.getElementById('time_weight').value = 0.8;
         document.getElementById('accuracy_weight').value = 1.2;
         document.getElementById('progress_threshold').value = 0.75;
@@ -298,7 +298,7 @@ function resetSettings() {
 
 function exportSettings() {
     const settings = {
-        difficulty_weight: document.getElementById('difficulty_weight').value,
+        motivation_factor: document.getElementById('motivation_factor').value,
         time_weight: document.getElementById('time_weight').value,
         accuracy_weight: document.getElementById('accuracy_weight').value,
         progress_threshold: document.getElementById('progress_threshold').value,

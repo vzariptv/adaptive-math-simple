@@ -4,6 +4,154 @@ from models import MathTask, TaskAttempt, User, db
 from datetime import datetime
 import json
 
+
+def parse_student_answer(form_data, answer_type):
+    """
+    Парсит ответ студента в зависимости от типа задачи
+    Возвращает словарь с данными ответа или None если ответ пустой
+    """
+    try:
+        if answer_type == 'number':
+            value = form_data.get('number_answer', '').strip()
+            if not value:
+                return None
+            return {
+                'type': 'number',
+                'value': float(value)
+            }
+            
+        elif answer_type == 'variables':
+            variables = []
+            # Ищем все поля с переменными
+            for key in form_data.keys():
+                if key.startswith('var_value_'):
+                    var_name = key.replace('var_value_', '')
+                    var_value = form_data.get(key, '').strip()
+                    if var_value:
+                        variables.append({
+                            'name': var_name,
+                            'value': float(var_value)
+                        })
+            
+            if not variables:
+                return None
+            return {
+                'type': 'variables',
+                'variables': variables
+            }
+            
+        elif answer_type == 'interval':
+            start = form_data.get('interval_start', '').strip()
+            end = form_data.get('interval_end', '').strip()
+            
+            if not start or not end:
+                return None
+                
+            return {
+                'type': 'interval',
+                'start': float(start),
+                'end': float(end),
+                'start_inclusive': 'start_inclusive' in form_data,
+                'end_inclusive': 'end_inclusive' in form_data
+            }
+            
+        elif answer_type == 'sequence':
+            sequence_str = form_data.get('sequence_values', '').strip()
+            if not sequence_str:
+                return None
+                
+            # Парсим последовательность чисел
+            values = []
+            for val in sequence_str.split(','):
+                val = val.strip()
+                if val:
+                    values.append(float(val))
+                    
+            if not values:
+                return None
+                
+            return {
+                'type': 'sequence',
+                'sequence_values': values
+            }
+            
+        else:
+            return None
+            
+    except (ValueError, TypeError):
+        return None
+
+
+def check_answer_correctness(user_answer, correct_answer, max_score):
+    """
+    Проверяет правильность ответа студента
+    Возвращает (is_correct, score)
+    """
+    try:
+        if not user_answer or not correct_answer:
+            return False, 0
+            
+        answer_type = user_answer.get('type')
+        
+        if answer_type == 'number':
+            user_value = user_answer.get('value')
+            correct_value = correct_answer.get('value')
+            # Сравниваем с небольшой погрешностью для чисел с плавающей точкой
+            is_correct = abs(user_value - correct_value) < 1e-6
+            
+        elif answer_type == 'variables':
+            user_vars = {var['name']: var['value'] for var in user_answer.get('variables', [])}
+            correct_vars = {var['name']: var['value'] for var in correct_answer.get('variables', [])}
+            
+            # Проверяем, что все переменные совпадают
+            is_correct = True
+            for name, correct_val in correct_vars.items():
+                user_val = user_vars.get(name)
+                if user_val is None or abs(user_val - correct_val) >= 1e-6:
+                    is_correct = False
+                    break
+                    
+        elif answer_type == 'interval':
+            user_start = user_answer.get('start')
+            user_end = user_answer.get('end')
+            user_start_inc = user_answer.get('start_inclusive', True)
+            user_end_inc = user_answer.get('end_inclusive', False)
+            
+            correct_start = correct_answer.get('start')
+            correct_end = correct_answer.get('end')
+            correct_start_inc = correct_answer.get('start_inclusive', True)
+            correct_end_inc = correct_answer.get('end_inclusive', False)
+            
+            is_correct = (
+                abs(user_start - correct_start) < 1e-6 and
+                abs(user_end - correct_end) < 1e-6 and
+                user_start_inc == correct_start_inc and
+                user_end_inc == correct_end_inc
+            )
+            
+        elif answer_type == 'sequence':
+            user_values = user_answer.get('sequence_values', [])
+            correct_values = correct_answer.get('sequence_values', [])
+            
+            # Проверяем, что последовательности одинаковой длины
+            if len(user_values) != len(correct_values):
+                is_correct = False
+            else:
+                # Проверяем каждый элемент
+                is_correct = True
+                for i, (user_val, correct_val) in enumerate(zip(user_values, correct_values)):
+                    if abs(user_val - correct_val) >= 1e-6:
+                        is_correct = False
+                        break
+        else:
+            is_correct = False
+            
+        score = max_score if is_correct else 0
+        return is_correct, score
+        
+    except (ValueError, TypeError, KeyError):
+        return False, 0
+
 # Создаем blueprint для работы с заданиями
 tasks_bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 
@@ -47,20 +195,20 @@ def solve_task(task_id):
         flash('Только студенты могут решать задания', 'error')
         return redirect(url_for('tasks.view_task', task_id=task_id))
     
-    user_answer = request.form.get('answer', '').strip()
-    
-    if not user_answer:
-        return render_template('shared/solve_task_error.html',
-                             task=task,
-                             error='Пожалуйста, введите ответ')
-    
     try:
-        # Проверяем правильность ответа
-        correct_answer = task.correct_answer.get('value', '') if isinstance(task.correct_answer, dict) else str(task.correct_answer)
-        is_correct = user_answer.lower().strip() == correct_answer.lower().strip()
+        # Получаем тип ответа из формы
+        answer_type = request.form.get('answer_type', 'number')
         
-        # Вычисляем баллы
-        score = task.max_score if is_correct else 0
+        # Парсим ответ студента в зависимости от типа
+        user_answer_data = parse_student_answer(request.form, answer_type)
+        
+        if not user_answer_data:
+            return render_template('shared/solve_task_error.html',
+                                 task=task,
+                                 error='Пожалуйста, введите ответ')
+        
+        # Проверяем правильность ответа
+        is_correct, score = check_answer_correctness(user_answer_data, task.correct_answer, task.max_score)
         
         # Подсчитываем номер попытки
         attempt_number = TaskAttempt.query.filter_by(
@@ -72,7 +220,7 @@ def solve_task(task_id):
         attempt = TaskAttempt(
             user_id=current_user.id,
             task_id=task_id,
-            user_answer={'value': user_answer, 'type': 'text'},
+            user_answer=user_answer_data,
             is_correct=is_correct,
             partial_score=score,
             attempt_number=attempt_number,
@@ -87,7 +235,7 @@ def solve_task(task_id):
                              attempt=attempt,
                              is_correct=is_correct,
                              score=score,
-                             correct_answer=correct_answer)
+                             correct_answer=task.correct_answer)
         
     except Exception as e:
         db.session.rollback()

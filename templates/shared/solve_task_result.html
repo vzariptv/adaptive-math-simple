@@ -20,11 +20,63 @@
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
             <h3 style="color: #495057; margin-top: 0;">📝 Ваш ответ:</h3>
-            <p style="background: white; padding: 15px; border-radius: 5px; border: 1px solid #dee2e6;">{{ user_answer }}</p>
+            <div style="background: white; padding: 15px; border-radius: 5px; border: 1px solid #dee2e6;">
+                {% if attempt.user_answer.type == 'number' %}
+                    <strong>Число:</strong> {{ attempt.user_answer.value }}
+                {% elif attempt.user_answer.type == 'variables' %}
+                    <strong>Переменные:</strong>
+                    {% for var in attempt.user_answer.variables %}
+                        {{ var.name }} = {{ var.value }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% elif attempt.user_answer.type == 'interval' %}
+                    <strong>Интервал:</strong> 
+                    {% if attempt.user_answer.start_inclusive %}[{% else %}({% endif %}{{ attempt.user_answer.start }}, {{ attempt.user_answer.end }}{% if attempt.user_answer.end_inclusive %}]{% else %}){% endif %}
+                {% elif attempt.user_answer.type == 'sequence' %}
+                    <strong>Последовательность:</strong> {{ attempt.user_answer.sequence_values|join(', ') }}
+                {% else %}
+                    {{ attempt.user_answer }}
+                {% endif %}
+            </div>
             
             <h3 style="color: #495057;">📊 Результат:</h3>
-            <p><strong>Балл:</strong> {{ partial_score }}/{{ task.max_score }}</p>
-            <p><strong>Попытка №:</strong> {{ attempt_number }}</p>
+            <p><strong>Балл:</strong> {{ score }}/{{ task.max_score }}</p>
+            <p><strong>Попытка №:</strong> {{ attempt.attempt_number }}</p>
+            
+            {% if not is_correct %}
+                {% if task.explanation %}
+                    <h3 style="color: #495057;">💡 Подсказка:</h3>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; border: 1px solid #ffeaa7; margin-bottom: 15px;">
+                        <p style="margin: 0; color: #856404;">{{ task.explanation }}</p>
+                    </div>
+                {% endif %}
+                
+                {% if correct_answer %}
+                    <div style="text-align: center; margin: 15px 0;">
+                        <button id="show-answer-btn" class="btn" style="background: #17a2b8; color: white;" onclick="showCorrectAnswer()">
+                            🔍 Показать правильный ответ
+                        </button>
+                    </div>
+                    
+                    <div id="correct-answer-section" style="display: none;">
+                        <h3 style="color: #495057;">✅ Правильный ответ:</h3>
+                        <div style="background: #e8f5e8; padding: 15px; border-radius: 5px; border: 1px solid #c3e6c3;">
+                            {% if correct_answer.type == 'number' %}
+                                <strong>Число:</strong> {{ correct_answer.value }}
+                            {% elif correct_answer.type == 'variables' %}
+                                <strong>Переменные:</strong>
+                                {% for var in correct_answer.variables %}
+                                    {{ var.name }} = {{ var.value }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            {% elif correct_answer.type == 'interval' %}
+                                <strong>Интервал:</strong> 
+                                {% if correct_answer.start_inclusive %}[{% else %}({% endif %}{{ correct_answer.start }}, {{ correct_answer.end }}{% if correct_answer.end_inclusive %}]{% else %}){% endif %}
+                            {% elif correct_answer.type == 'sequence' %}
+                                <strong>Последовательность:</strong> {{ correct_answer.sequence_values|join(', ') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
         </div>
         
         <div style="text-align: center;">
@@ -32,5 +84,22 @@
             <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-success">📚 К другим заданиям</a>
         </div>
     </div>
+    
+    <script>
+        function showCorrectAnswer() {
+            const button = document.getElementById('show-answer-btn');
+            const answerSection = document.getElementById('correct-answer-section');
+            
+            if (answerSection.style.display === 'none') {
+                answerSection.style.display = 'block';
+                button.innerHTML = '🙈 Скрыть правильный ответ';
+                button.style.background = '#6c757d';
+            } else {
+                answerSection.style.display = 'none';
+                button.innerHTML = '🔍 Показать правильный ответ';
+                button.style.background = '#17a2b8';
+            }
+        }
+    </script>
 </body>
 </html>

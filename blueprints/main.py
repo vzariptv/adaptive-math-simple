@@ -48,15 +48,8 @@ def dashboard():
                              recent_tasks=recent_tasks)
     
     elif current_user.role == 'admin':
-        # Статистика для администратора
-        total_users = User.query.count()
-        total_tasks = MathTask.query.count()
-        total_attempts = TaskAttempt.query.count()
-        
-        return render_template('admin/dashboard.html',
-                             total_users=total_users,
-                             total_tasks=total_tasks,
-                             total_attempts=total_attempts)
+        # Перенаправляем админа сразу на панель администратора
+        return redirect(url_for('admin.panel'))
     
     else:
         # Неизвестная роль

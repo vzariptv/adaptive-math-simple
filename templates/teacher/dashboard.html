@@ -11,14 +11,13 @@
         <h1>👨‍🏫 Панель преподавателя</h1>
         
         <div class="status">
-            🎆 Добро пожаловать, {{ user_name }}!
+            🎆 Добро пожаловать, {{ current_user.username }}!
         </div>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
             <h3 style="color: #495057; margin-top: 0;">📊 Информация о профиле:</h3>
             <p><strong>Роль:</strong> {{ current_user.role.title() }}</p>
-            <p><strong>Последний вход:</strong> {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') if current_user.last_login else 'Первый вход' }}</p>
-        </div>
+            <p><strong>Последний вход:</strong> {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}</p>        </div>
         
         <div style="text-align: center; margin: 30px 0;">
             <h3 style="color: #495057;">🛠️ Инструменты преподавателя</h3>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ task.title }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -39,17 +40,105 @@
             </div>
             
             <form method="POST" action="{{ url_for('tasks.solve_task', task_id=task.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;">
                     <h3 style="color: #2c3e50; margin-top: 0;">✏️ Ваш ответ:</h3>
-                    <div class="form-group">
-                        <textarea name="answer" placeholder="Введите ваш ответ здесь..." style="width: 100%; height: 120px; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; resize: vertical;" required></textarea>
+                    
+                    <!-- Скрытое поле с типом ответа -->
+                    <input type="hidden" name="answer_type" value="{{ task.correct_answer.type if task.correct_answer else 'number' }}">
+                    
+                    <!-- Числовой ответ -->
+                    <div class="answer-group" id="number-answer-group">
+                        <div class="form-group">
+                            <label for="number_answer">Введите число:</label>
+                            <input type="number" id="number_answer" name="number_answer" step="any" 
+                                   placeholder="Например: 42 или 3.14" 
+                                   class="student-input">
+                            <small class="form-help">Введите числовое значение</small>
+                        </div>
                     </div>
-                    <div style="text-align: center;">
+                    
+                    <!-- Переменные с значениями -->
+                    <div class="answer-group" id="variables-answer-group">
+                        <label>Значения переменных:</label>
+                        <div id="student-variables-container">
+                            {% if task.correct_answer and task.correct_answer.type == 'variables' and task.correct_answer.variables %}
+                                {% for var in task.correct_answer.variables %}
+                                <div class="variable-pair">
+                                    <span class="var-name">{{ var.name }} =</span>
+                                    <input type="number" name="var_value_{{ var.name }}" step="any" 
+                                           placeholder="Значение для {{ var.name }}" 
+                                           class="var-input">
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <small class="form-help">Введите значения для каждой переменной</small>
+                    </div>
+                    
+                    <!-- Интервал -->
+                    <div class="answer-group" id="interval-answer-group">
+                        <label>Числовой интервал:</label>
+                        <div class="interval-container">
+                            <div class="interval-bound">
+                                <input type="number" id="interval_start" name="interval_start" step="any" 
+                                       placeholder="Начало" class="interval-input">
+                                <label class="checkbox-small">
+                                    <input type="checkbox" id="start_inclusive" name="start_inclusive" checked>
+                                    Включительно
+                                </label>
+                            </div>
+                            <span class="interval-separator">—</span>
+                            <div class="interval-bound">
+                                <input type="number" id="interval_end" name="interval_end" step="any" 
+                                       placeholder="Конец" class="interval-input">
+                                <label class="checkbox-small">
+                                    <input type="checkbox" id="end_inclusive" name="end_inclusive">
+                                    Включительно
+                                </label>
+                            </div>
+                        </div>
+                        <small class="form-help">Пример: [2, 8) - от 2 включительно до 8 невключительно</small>
+                    </div>
+                    
+                    <!-- Последовательность -->
+                    <div class="answer-group" id="sequence-answer-group">
+                        <div class="form-group">
+                            <label for="sequence_values">Последовательность чисел:</label>
+                            <input type="text" id="sequence_values" name="sequence_values" 
+                                   placeholder="1, 2, 5, 8, 13" 
+                                   class="student-input">
+                            <small class="form-help">Введите числа через запятую. Пример: 1, 2, 5, 8, 13</small>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
                         <button type="submit" class="btn btn-success">🚀 Отправить решение</button>
                     </div>
                 </div>
             </form>
         {% endif %}
     </div>
+    
+    <script>
+        // Показываем правильную группу ответов в зависимости от типа задачи
+        document.addEventListener('DOMContentLoaded', function() {
+            const answerType = document.querySelector('input[name="answer_type"]').value;
+            showAnswerGroup(answerType);
+        });
+        
+        function showAnswerGroup(answerType) {
+            // Скрываем все группы ответов
+            document.querySelectorAll('.answer-group').forEach(group => {
+                group.classList.remove('active');
+            });
+            
+            // Показываем нужную группу
+            const targetGroup = document.getElementById(answerType + '-answer-group');
+            if (targetGroup) {
+                targetGroup.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>

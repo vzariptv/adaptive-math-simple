@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime
 from models import User, db
 
 # Создаем blueprint для аутентификации
@@ -22,6 +23,10 @@ def login():
         user = User.query.filter_by(username=username).first()
         
         if user and user.check_password(password):
+            # Обновляем время последнего входа
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            
             login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('main.dashboard'))
