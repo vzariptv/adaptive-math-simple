@@ -229,7 +229,7 @@ def import_tasks_from_file(filepath, user_id):
                     description=task_data['description'],
                     answer_type=task_data['answer_type'],
                     correct_answer=task_data['correct_answer'],
-                    difficulty_level=float(task_data['difficulty_level']),
+                    difficulty_level=int(task_data['difficulty_level']),
                     topic=task_data['topic'],
                     max_score=float(task_data['max_score']),
                     explanation=task_data.get('explanation', ''),
@@ -291,21 +291,73 @@ def edit_task(task_id):
             task.title = request.form.get('title', task.title)
             task.description = request.form.get('description', task.description)
             task.topic = request.form.get('topic', task.topic)
-            task.difficulty_level = float(request.form.get('difficulty_level', task.difficulty_level))
+            task.difficulty_level = int(request.form.get('difficulty_level', task.difficulty_level))
             task.max_score = float(request.form.get('max_score', task.max_score))
             
-            # Обновляем правильный ответ в зависимости от типа
+            # Обновляем правильный ответ в зависимости от типа (унифицированный JSON формат)
             answer_type = request.form.get('answer_type', task.answer_type)
-            if answer_type == 'text':
+            
+            if answer_type == 'number':
+                # Числовой ответ: {"type": "number", "value": 75.5}
+                number_value = float(request.form.get('number_value', 0))
                 task.correct_answer = {
-                    'value': request.form.get('correct_answer', ''),
-                    'type': 'text'
+                    'type': 'number',
+                    'value': number_value
                 }
-            elif answer_type == 'number':
+                
+            elif answer_type == 'variables':
+                # Переменные: {"type": "variables", "variables": [{"name": "x", "value": 3}, ...]}
+                var_names = request.form.getlist('var_name[]')
+                var_values = request.form.getlist('var_value[]')
+                
+                variables = []
+                for name, value in zip(var_names, var_values):
+                    if name.strip():  # Пропускаем пустые имена
+                        variables.append({
+                            'name': name.strip(),
+                            'value': float(value) if value else 0
+                        })
+                
                 task.correct_answer = {
-                    'value': str(float(request.form.get('correct_number', 0))),
-                    'type': 'number'
+                    'type': 'variables',
+                    'variables': variables
                 }
+                
+            elif answer_type == 'interval':
+                # Интервал: {"type": "interval", "start": 2, "end": 8, "start_inclusive": true, "end_inclusive": false}
+                start = float(request.form.get('interval_start', 0))
+                end = float(request.form.get('interval_end', 0))
+                start_inclusive = 'start_inclusive' in request.form
+                end_inclusive = 'end_inclusive' in request.form
+                
+                task.correct_answer = {
+                    'type': 'interval',
+                    'start': start,
+                    'end': end,
+                    'start_inclusive': start_inclusive,
+                    'end_inclusive': end_inclusive
+                }
+                
+            elif answer_type == 'sequence':
+                # Последовательность: {"type": "sequence", "values": [1, 2, 5, 8, 13]}
+                sequence_str = request.form.get('sequence_values', '')
+                values = []
+                
+                if sequence_str.strip():
+                    try:
+                        # Разбираем строку с числами через запятую
+                        values = [float(x.strip()) for x in sequence_str.split(',') if x.strip()]
+                    except ValueError:
+                        raise ValueError('Неверный формат последовательности. Используйте числа через запятую.')
+                
+                task.correct_answer = {
+                    'type': 'sequence',
+                    'values': values
+                }
+            
+            else:
+                # Неизвестный тип ответа
+                raise ValueError(f'Неподдерживаемый тип ответа: {answer_type}')
             
             task.answer_type = answer_type
             

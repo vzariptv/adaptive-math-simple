@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Панель администратора{% endblock %}</title>
+{% extends "shared/base.html" %}
+{% from "shared/form_macros.html" import form_start, csrf_field, csrf_js %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block extra_head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .admin-tabs {
@@ -157,8 +157,9 @@
             font-family: monospace;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <div class="form-title">🔧 Панель администратора</div>
         
@@ -172,15 +173,16 @@
         </div>
         
         <div class="admin-content">
-            {% block content %}{% endblock %}
+            {% block admin_content %}{% endblock %}
         </div>
         
-        <div class="nav-links">
+        <div class="admin-footer">
             <a href="{{ url_for('main.dashboard') }}">← Назад в панель</a>
             <a href="{{ url_for('auth.logout') }}">Выйти из системы</a>
         </div>
     </div>
-    
-    {% block extra_js %}{% endblock %}
-</body>
-</html>
+{% endblock %}
+
+{% block extra_js %}
+    {{ csrf_js() }}
+{% endblock %}

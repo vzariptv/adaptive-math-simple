@@ -2,7 +2,7 @@
 
 {% block title %}Управление заданиями{% endblock %}
 
-{% block content %}
+{% block admin_content %}
 <div class="admin-content">
     <h2>📚 Управление заданиями</h2>
     
@@ -39,7 +39,6 @@
         <a href="{{ url_for('tasks.create_task') }}" class="btn btn-primary">➕ Создать задание</a>
         <button class="btn btn-secondary" onclick="exportTasks()">📤 Экспорт заданий</button>
         <button class="btn btn-secondary" onclick="importTasks()">📥 Импорт заданий</button>
-        <button class="btn btn-warning" onclick="bulkEdit()">✏️ Массовое редактирование</button>
     </div>
 
     <!-- Фильтры -->

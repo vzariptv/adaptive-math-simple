@@ -79,7 +79,7 @@ class MathTask(db.Model):
     answer_schema = db.Column(db.JSON)                      # JSON схема полей для ввода
     
     explanation = db.Column(db.Text)
-    difficulty_level = db.Column(db.Float, nullable=False)  # 0-1
+    difficulty_level = db.Column(db.Integer, nullable=False)  # 1-3 (Низкий-Средний-Высокий)
     topic = db.Column(db.String(100), nullable=False)       # Алгебра, Геометрия и т.д.
     max_score = db.Column(db.Float, default=1.0)           # Максимальный балл
     
