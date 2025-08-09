@@ -1,13 +1,21 @@
-{% extends "shared/base.html" %}
-{% from "shared/form_macros.html" import form_start, csrf_field, csrf_js %}
-
-{% block title %}Панель администратора{% endblock %}
-
-{% block extra_head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSRF Token for all forms -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}Панель администратора{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      integrity="sha512-dIcpCwHw..."
+      crossorigin="anonymous" referrerpolicy="no-referrer">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% from "shared/form_macros.html" import form_start, csrf_field, csrf_js %}
+    
     <div class="container">
         <div class="form-title">🔧 Панель администратора</div>
         
@@ -16,15 +24,16 @@
         </div>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="color: #495057; margin-top: 0;">📊 Информация о профиле:</h3>
+            <h3 style="color: #495057; margin-top: 0;">📅 Информация о профиле:</h3>
             <p><strong>Роль:</strong> {{ current_user.role.title() }}</p>
             <p><strong>Последний вход:</strong> {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}</p>
         </div>
 
         <!-- Вкладки -->
         <div class="admin-tabs">
-            <a href="{{ url_for('admin.demo_data') }}" class="admin-tab {{ 'active' if active_tab == 'demo-data' else '' }}">📊 Демо-данные</a>
+            <a href="{{ url_for('admin.demo_data') }}" class="admin-tab {{ 'active' if active_tab == 'demo-data' else '' }}">📅 Демо-данные</a>
             <a href="{{ url_for('admin.users') }}" class="admin-tab {{ 'active' if active_tab == 'users' else '' }}">👥 Пользователи</a>
+            <a href="{{ url_for('admin.topics') }}" class="admin-tab {{ 'active' if active_tab == 'topics' else '' }}">📚 Темы</a>
             <a href="{{ url_for('admin.settings') }}" class="admin-tab {{ 'active' if active_tab == 'settings' else '' }}">⚙️ Настройки</a>
             <a href="{{ url_for('admin.analytics') }}" class="admin-tab {{ 'active' if active_tab == 'analytics' else '' }}">📈 Аналитика</a>
             <a href="{{ url_for('admin.tasks') }}" class="admin-tab {{ 'active' if active_tab == 'tasks' else '' }}">📚 Задания</a>
@@ -39,8 +48,8 @@
             <a href="{{ url_for('auth.logout') }}">Выйти из системы</a>
         </div>
     </div>
-{% endblock %}
-
-{% block extra_js %}
+    
     {{ csrf_js() }}
-{% endblock %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

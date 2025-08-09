@@ -26,16 +26,21 @@
             </div>
             
             <div class="form-group">
-                <input type="text" name="topic" placeholder="Тема (например: Алгебра, Геометрия)" required>
+                <label for="topic_id">Тема:</label>
+                <select name="topic_id" id="topic_id" required>
+                    <option value="">Выберите тему</option>
+                    {% for topic in topics %}
+                    <option value="{{ topic.id }}">{{ topic.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             
             <div class="form-group">
-                <select name="difficulty_level">
-                    <option value="1">⚫ Очень легко (1/5)</option>
-                    <option value="2">🟢 Легко (2/5)</option>
-                    <option value="3" selected>🟡 Средне (3/5)</option>
-                    <option value="4">🟠 Сложно (4/5)</option>
-                    <option value="5">🔴 Очень сложно (5/5)</option>
+                <label for="level">Уровень сложности:</label>
+                <select name="level" id="level">
+                    <option value="low">🟢 Низкий</option>
+                    <option value="medium" selected>🟡 Средний</option>
+                    <option value="high">🔴 Высокий</option>
                 </select>
             </div>
             

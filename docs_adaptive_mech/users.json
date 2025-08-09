@@ -1,0 +1,38 @@
+[
+  {
+    "id": 101,
+    "username": "ivan_zachetniy",
+    "email": "ivan@example.com",
+    "password_hash": "hashed_password",
+    "role": "student",
+    "first_name": "Иван",
+    "last_name": "Зачетный",
+    "created_at": "2025-08-08T21:02:36.722823",
+    "last_login": null,
+    "is_active": true
+  },
+  {
+    "id": 102,
+    "username": "petr_zaletniy",
+    "email": "petr@example.com",
+    "password_hash": "hashed_password",
+    "role": "student",
+    "first_name": "Петр",
+    "last_name": "Залетный",
+    "created_at": "2025-08-08T21:02:36.722833",
+    "last_login": null,
+    "is_active": true
+  },
+  {
+    "id": 103,
+    "username": "vitia_srednyachok",
+    "email": "vitia@example.com",
+    "password_hash": "hashed_password",
+    "role": "student",
+    "first_name": "Витя",
+    "last_name": "Среднячок",
+    "created_at": "2025-08-08T21:02:36.722835",
+    "last_login": null,
+    "is_active": true
+  }
+]

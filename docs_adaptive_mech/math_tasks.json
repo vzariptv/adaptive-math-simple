@@ -1,0 +1,1142 @@
+[
+  {
+    "id": 1001,
+    "title": "Low Task 1",
+    "description": "Условие задачи 1 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 1.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699068",
+    "is_active": true
+  },
+  {
+    "id": 1002,
+    "title": "Low Task 2",
+    "description": "Условие задачи 2 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 2.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699083",
+    "is_active": true
+  },
+  {
+    "id": 1003,
+    "title": "Low Task 3",
+    "description": "Условие задачи 3 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 3.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699086",
+    "is_active": true
+  },
+  {
+    "id": 1004,
+    "title": "Low Task 4",
+    "description": "Условие задачи 4 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 4.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699089",
+    "is_active": true
+  },
+  {
+    "id": 1005,
+    "title": "Low Task 5",
+    "description": "Условие задачи 5 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 5.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699092",
+    "is_active": true
+  },
+  {
+    "id": 1006,
+    "title": "Low Task 6",
+    "description": "Условие задачи 6 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 6.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699095",
+    "is_active": true
+  },
+  {
+    "id": 1007,
+    "title": "Low Task 7",
+    "description": "Условие задачи 7 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 7.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699098",
+    "is_active": true
+  },
+  {
+    "id": 1008,
+    "title": "Low Task 8",
+    "description": "Условие задачи 8 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 8.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699103",
+    "is_active": true
+  },
+  {
+    "id": 1009,
+    "title": "Low Task 9",
+    "description": "Условие задачи 9 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 9.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699107",
+    "is_active": true
+  },
+  {
+    "id": 1010,
+    "title": "Low Task 10",
+    "description": "Условие задачи 10 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 10.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699111",
+    "is_active": true
+  },
+  {
+    "id": 1011,
+    "title": "Low Task 11",
+    "description": "Условие задачи 11 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 11.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699114",
+    "is_active": true
+  },
+  {
+    "id": 1012,
+    "title": "Low Task 12",
+    "description": "Условие задачи 12 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 12.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699117",
+    "is_active": true
+  },
+  {
+    "id": 1013,
+    "title": "Low Task 13",
+    "description": "Условие задачи 13 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 13.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699120",
+    "is_active": true
+  },
+  {
+    "id": 1014,
+    "title": "Low Task 14",
+    "description": "Условие задачи 14 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 14.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699122",
+    "is_active": true
+  },
+  {
+    "id": 1015,
+    "title": "Low Task 15",
+    "description": "Условие задачи 15 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 15.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699125",
+    "is_active": true
+  },
+  {
+    "id": 1016,
+    "title": "Low Task 16",
+    "description": "Условие задачи 16 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 16.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699128",
+    "is_active": true
+  },
+  {
+    "id": 1017,
+    "title": "Low Task 17",
+    "description": "Условие задачи 17 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 17.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699131",
+    "is_active": true
+  },
+  {
+    "id": 1018,
+    "title": "Low Task 18",
+    "description": "Условие задачи 18 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 18.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699134",
+    "is_active": true
+  },
+  {
+    "id": 1019,
+    "title": "Low Task 19",
+    "description": "Условие задачи 19 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 19.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699137",
+    "is_active": true
+  },
+  {
+    "id": 1020,
+    "title": "Low Task 20",
+    "description": "Условие задачи 20 уровня low.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 20.",
+    "difficulty_level": 1,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699140",
+    "is_active": true
+  },
+  {
+    "id": 1021,
+    "title": "Medium Task 1",
+    "description": "Условие задачи 1 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 1.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699144",
+    "is_active": true
+  },
+  {
+    "id": 1022,
+    "title": "Medium Task 2",
+    "description": "Условие задачи 2 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 2.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699147",
+    "is_active": true
+  },
+  {
+    "id": 1023,
+    "title": "Medium Task 3",
+    "description": "Условие задачи 3 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 3.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699150",
+    "is_active": true
+  },
+  {
+    "id": 1024,
+    "title": "Medium Task 4",
+    "description": "Условие задачи 4 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 4.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699152",
+    "is_active": true
+  },
+  {
+    "id": 1025,
+    "title": "Medium Task 5",
+    "description": "Условие задачи 5 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 5.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699155",
+    "is_active": true
+  },
+  {
+    "id": 1026,
+    "title": "Medium Task 6",
+    "description": "Условие задачи 6 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 6.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699158",
+    "is_active": true
+  },
+  {
+    "id": 1027,
+    "title": "Medium Task 7",
+    "description": "Условие задачи 7 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 7.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699161",
+    "is_active": true
+  },
+  {
+    "id": 1028,
+    "title": "Medium Task 8",
+    "description": "Условие задачи 8 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 8.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699164",
+    "is_active": true
+  },
+  {
+    "id": 1029,
+    "title": "Medium Task 9",
+    "description": "Условие задачи 9 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 9.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699167",
+    "is_active": true
+  },
+  {
+    "id": 1030,
+    "title": "Medium Task 10",
+    "description": "Условие задачи 10 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 10.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699170",
+    "is_active": true
+  },
+  {
+    "id": 1031,
+    "title": "Medium Task 11",
+    "description": "Условие задачи 11 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 11.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699173",
+    "is_active": true
+  },
+  {
+    "id": 1032,
+    "title": "Medium Task 12",
+    "description": "Условие задачи 12 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 12.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699176",
+    "is_active": true
+  },
+  {
+    "id": 1033,
+    "title": "Medium Task 13",
+    "description": "Условие задачи 13 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 13.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699178",
+    "is_active": true
+  },
+  {
+    "id": 1034,
+    "title": "Medium Task 14",
+    "description": "Условие задачи 14 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 14.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699182",
+    "is_active": true
+  },
+  {
+    "id": 1035,
+    "title": "Medium Task 15",
+    "description": "Условие задачи 15 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 15.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699185",
+    "is_active": true
+  },
+  {
+    "id": 1036,
+    "title": "Medium Task 16",
+    "description": "Условие задачи 16 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 16.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699189",
+    "is_active": true
+  },
+  {
+    "id": 1037,
+    "title": "Medium Task 17",
+    "description": "Условие задачи 17 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 17.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699194",
+    "is_active": true
+  },
+  {
+    "id": 1038,
+    "title": "Medium Task 18",
+    "description": "Условие задачи 18 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 18.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699199",
+    "is_active": true
+  },
+  {
+    "id": 1039,
+    "title": "Medium Task 19",
+    "description": "Условие задачи 19 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 19.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699203",
+    "is_active": true
+  },
+  {
+    "id": 1040,
+    "title": "Medium Task 20",
+    "description": "Условие задачи 20 уровня medium.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 20.",
+    "difficulty_level": 2,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699208",
+    "is_active": true
+  },
+  {
+    "id": 1041,
+    "title": "High Task 1",
+    "description": "Условие задачи 1 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 1.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699213",
+    "is_active": true
+  },
+  {
+    "id": 1042,
+    "title": "High Task 2",
+    "description": "Условие задачи 2 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 2.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699219",
+    "is_active": true
+  },
+  {
+    "id": 1043,
+    "title": "High Task 3",
+    "description": "Условие задачи 3 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 3.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699223",
+    "is_active": true
+  },
+  {
+    "id": 1044,
+    "title": "High Task 4",
+    "description": "Условие задачи 4 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 4.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699230",
+    "is_active": true
+  },
+  {
+    "id": 1045,
+    "title": "High Task 5",
+    "description": "Условие задачи 5 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 5.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699234",
+    "is_active": true
+  },
+  {
+    "id": 1046,
+    "title": "High Task 6",
+    "description": "Условие задачи 6 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 6.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699239",
+    "is_active": true
+  },
+  {
+    "id": 1047,
+    "title": "High Task 7",
+    "description": "Условие задачи 7 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 7.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699244",
+    "is_active": true
+  },
+  {
+    "id": 1048,
+    "title": "High Task 8",
+    "description": "Условие задачи 8 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 8.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699249",
+    "is_active": true
+  },
+  {
+    "id": 1049,
+    "title": "High Task 9",
+    "description": "Условие задачи 9 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 9.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699257",
+    "is_active": true
+  },
+  {
+    "id": 1050,
+    "title": "High Task 10",
+    "description": "Условие задачи 10 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 10.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699262",
+    "is_active": true
+  },
+  {
+    "id": 1051,
+    "title": "High Task 11",
+    "description": "Условие задачи 11 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 11.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699267",
+    "is_active": true
+  },
+  {
+    "id": 1052,
+    "title": "High Task 12",
+    "description": "Условие задачи 12 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 12.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699271",
+    "is_active": true
+  },
+  {
+    "id": 1053,
+    "title": "High Task 13",
+    "description": "Условие задачи 13 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 13.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699274",
+    "is_active": true
+  },
+  {
+    "id": 1054,
+    "title": "High Task 14",
+    "description": "Условие задачи 14 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 14.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699278",
+    "is_active": true
+  },
+  {
+    "id": 1055,
+    "title": "High Task 15",
+    "description": "Условие задачи 15 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 15.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699281",
+    "is_active": true
+  },
+  {
+    "id": 1056,
+    "title": "High Task 16",
+    "description": "Условие задачи 16 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 16.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699283",
+    "is_active": true
+  },
+  {
+    "id": 1057,
+    "title": "High Task 17",
+    "description": "Условие задачи 17 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 17.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699287",
+    "is_active": true
+  },
+  {
+    "id": 1058,
+    "title": "High Task 18",
+    "description": "Условие задачи 18 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 18.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699290",
+    "is_active": true
+  },
+  {
+    "id": 1059,
+    "title": "High Task 19",
+    "description": "Условие задачи 19 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 19.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699295",
+    "is_active": true
+  },
+  {
+    "id": 1060,
+    "title": "High Task 20",
+    "description": "Условие задачи 20 уровня high.",
+    "answer_type": "single",
+    "correct_answer": {
+      "value": 42
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Пояснение к задаче 20.",
+    "difficulty_level": 3,
+    "topic": "quadratic_equations",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:37:57.699301",
+    "is_active": true
+  }
+]

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import MathTask, TaskAttempt, User, db
+from models import MathTask, TaskAttempt, Topic, User, db
 from datetime import datetime
 import json
 
@@ -254,8 +254,8 @@ def create_task():
     if request.method == 'POST':
         title = request.form.get('title', '').strip()
         description = request.form.get('description', '').strip()
-        topic = request.form.get('topic', '').strip()
-        difficulty_level = request.form.get('difficulty_level', '1')
+        topic_id = request.form.get('topic_id', '')
+        level = request.form.get('level', 'low')
         max_score = request.form.get('max_score', '1')
         correct_answer = request.form.get('correct_answer', '').strip()
         explanation = request.form.get('explanation', '').strip()
@@ -266,31 +266,36 @@ def create_task():
             errors.append('Название задания обязательно')
         if not description:
             errors.append('Описание задания обязательно')
-        if not topic:
+        if not topic_id:
             errors.append('Тема задания обязательна')
         if not correct_answer:
             errors.append('Правильный ответ обязателен')
         
         try:
-            difficulty_level = float(difficulty_level)
+            topic_id = int(topic_id)
             max_score = float(max_score)
-            if difficulty_level < 1 or difficulty_level > 5:
-                errors.append('Уровень сложности должен быть от 1 до 5')
+            if level not in ['low', 'medium', 'high']:
+                errors.append('Уровень сложности должен быть low, medium или high')
             if max_score <= 0:
                 errors.append('Максимальный балл должен быть больше 0')
+            # Проверяем существование темы
+            topic = Topic.query.get(topic_id)
+            if not topic:
+                errors.append('Выбранная тема не существует')
         except ValueError:
             errors.append('Неверный формат числовых значений')
         
         if errors:
-            return render_template('teacher/create_task.html', errors=errors)
+            topics = Topic.query.all()
+            return render_template('teacher/create_task.html', errors=errors, topics=topics)
         
         try:
             # Создаем новое задание
             task = MathTask(
                 title=title,
                 description=description,
-                topic=topic,
-                difficulty_level=difficulty_level,
+                topic_id=topic_id,
+                level=level,
                 max_score=max_score,
                 correct_answer={'value': correct_answer, 'type': 'text'},
                 explanation=explanation,
@@ -306,8 +311,10 @@ def create_task():
             
         except Exception as e:
             db.session.rollback()
+            topics = Topic.query.all()
             return render_template('teacher/create_task.html', 
-                                 errors=[f'Ошибка при создании задания: {str(e)}'])
+                                 errors=[f'Ошибка при создании задания: {str(e)}'], topics=topics)
     
     # GET запрос - показываем форму создания
-    return render_template('teacher/create_task.html')
+    topics = Topic.query.all()
+    return render_template('teacher/create_task.html', topics=topics)

@@ -1,0 +1,347 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Редактирование темы{% endblock %}
+{% block admin_content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📚 Редактирование темы: {{ topic.name }}</h2>
+        <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад к темам
+        </a>
+    </div>
+
+    <!-- Основная информация о теме -->
+    <div class="section mb-4">
+        <h3>Основная информация</h3>
+            {{ form_start(action=url_for('admin.edit_topic', topic_id=topic.id), method='POST', class='topic-form') }}
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="code">Код темы <span class="text-danger">*</span></label>
+                        <input type="text" id="code" name="code" class="form-control" 
+                               value="{{ topic.code }}" 
+                               pattern="[a-z0-9_]+" 
+                               title="Только строчные буквы, цифры и подчеркивания"
+                               required>
+                        <small class="form-text text-muted">
+                            Уникальный идентификатор темы
+                        </small>
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                        <label for="name">Название темы <span class="text-danger">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control" 
+                               value="{{ topic.name }}" 
+                               required>
+                        <small class="form-text text-muted">
+                            Отображаемое название темы
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Описание темы</label>
+                    <textarea id="description" name="description" class="form-control w-100" rows="5"
+                              placeholder="Подробное описание темы и её содержания..."></textarea>
+                    <small class="form-text text-muted d-block">
+                        Опциональное описание темы для преподавателей и студентов
+                    </small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Сохранить изменения
+                    </button>
+                    <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary ml-2">
+                        <i class="fas fa-times"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Конфигурации уровней сложности -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Конфигурации уровней сложности</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for level in ['low', 'medium', 'high'] %}
+                {% set config = configs.get(level) %}
+                <div class="col-md-4">
+                    <div class="level-config level-{{ level }}">
+                        <h6>
+                            {% if level == 'low' %}🟢 Низкий уровень
+                            {% elif level == 'medium' %}🟡 Средний уровень
+                            {% else %}🔴 Высокий уровень
+                            {% endif %}
+                        </h6>
+                        
+                        {% if config %}
+                        <form class="level-config-form" data-level="{{ level }}" data-config-id="{{ config.id }}">
+                            {{ csrf_field() }}
+                            <div class="form-group">
+                                <label>Пороговое количество задач:</label>
+                                <input type="number" name="task_count_threshold" 
+                                       class="form-control form-control-sm" 
+                                       value="{{ config.task_count_threshold }}" 
+                                       min="1" max="50" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Эталонное время (сек):</label>
+                                <input type="number" name="reference_time" 
+                                       class="form-control form-control-sm" 
+                                       value="{{ config.reference_time }}" 
+                                       min="30" max="3600" required>
+                                <small class="form-text text-muted">
+                                    {{ (config.reference_time / 60)|round(1) }} мин
+                                </small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Штрафы за попытки:</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">2-я:</span>
+                                    </div>
+                                    <input type="number" name="penalty_2" 
+                                           class="form-control" 
+                                           value="{{ config.penalty_weights[0] if config.penalty_weights|length > 0 else 0.7 }}" 
+                                           min="0" max="1" step="0.1" required>
+                                </div>
+                                <div class="input-group input-group-sm mt-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">3-я:</span>
+                                    </div>
+                                    <input type="number" name="penalty_3" 
+                                           class="form-control" 
+                                           value="{{ config.penalty_weights[1] if config.penalty_weights|length > 1 else 0.4 }}" 
+                                           min="0" max="1" step="0.1" required>
+                                </div>
+                                <small class="form-text text-muted">
+                                    1-я попытка всегда = 1.0
+                                </small>
+                            </div>
+                            
+                            <button type="button" class="btn btn-sm btn-success" onclick="saveConfig('{{ level }}')">
+                                <i class="fas fa-save"></i> Сохранить
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <small>Конфигурация не найдена</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <h6><i class="fas fa-info-circle"></i> О конфигурациях уровней</h6>
+                <ul class="mb-0">
+                    <li><strong>Пороговое количество задач</strong> - минимальное количество задач для оценки студента</li>
+                    <li><strong>Эталонное время</strong> - ожидаемое время решения одной задачи на данном уровне</li>
+                    <li><strong>Штрафы за попытки</strong> - коэффициенты снижения баллов за 2-ю и 3-ю попытки</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика по теме -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Статистика по теме</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h6>Всего заданий</h6>
+                        <div class="stat-number">{{ topic.tasks.count() }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h6>Низкий уровень</h6>
+                        <div class="stat-number text-success">{{ topic.tasks.filter_by(level='low').count() }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h6>Средний уровень</h6>
+                        <div class="stat-number text-warning">{{ topic.tasks.filter_by(level='medium').count() }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <h6>Высокий уровень</h6>
+                        <div class="stat-number text-danger">{{ topic.tasks.filter_by(level='high').count() }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if topic.tasks.count() > 0 %}
+            <div class="mt-3">
+                <a href="{{ url_for('admin.tasks') }}?topic={{ topic.id }}" class="btn btn-outline-primary">
+                    <i class="fas fa-tasks"></i> Просмотреть задания по теме
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+<script>
+// Сохранение конфигурации уровня
+function saveConfig(level) {
+    const form = document.querySelector(`form[data-level="${level}"]`);
+    const formData = new FormData(form);
+    
+    // Собираем данные
+    const data = {
+        task_count_threshold: parseInt(formData.get('task_count_threshold')),
+        reference_time: parseInt(formData.get('reference_time')),
+        penalty_weights: [
+            parseFloat(formData.get('penalty_2')),
+            parseFloat(formData.get('penalty_3'))
+        ]
+    };
+    
+    // Отправляем AJAX запрос (здесь можно добавить отдельный endpoint для обновления конфигураций)
+    fetch(`/admin/topics/{{ topic.id }}/config/${level}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Показываем успешное сохранение
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Сохранено';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-outline-success');
+                btn.classList.add('btn-success');
+            }, 2000);
+        } else {
+            alert('Ошибка при сохранении: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Ошибка при сохранении конфигурации: ' + error);
+    });
+}
+
+// Валидация формы
+document.querySelector('.topic-form').addEventListener('submit', function(e) {
+    const code = document.getElementById('code').value;
+    const name = document.getElementById('name').value;
+    
+    if (!code.match(/^[a-z0-9_]+$/)) {
+        e.preventDefault();
+        alert('Код темы может содержать только строчные латинские буквы, цифры и подчеркивания');
+        return;
+    }
+    
+    if (code.length < 3) {
+        e.preventDefault();
+        alert('Код темы должен содержать минимум 3 символа');
+        return;
+    }
+    
+    if (name.length < 3) {
+        e.preventDefault();
+        alert('Название темы должно содержать минимум 3 символа');
+        return;
+    }
+});
+
+// Автоматический пересчет времени в минутах
+document.querySelectorAll('input[name="reference_time"]').forEach(input => {
+    input.addEventListener('input', function() {
+        const minutes = (this.value / 60).toFixed(1);
+        const small = this.parentNode.querySelector('.form-text');
+        small.textContent = `${minutes} мин`;
+    });
+});
+</script>
+
+<style>
+.level-config {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #6c757d;
+}
+
+.level-config.level-low {
+    border-left-color: #28a745;
+}
+
+.level-config.level-medium {
+    border-left-color: #ffc107;
+}
+
+.level-config.level-high {
+    border-left-color: #dc3545;
+}
+
+.level-config h6 {
+    margin-bottom: 15px;
+    color: #495057;
+}
+
+.stat-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+}
+
+.stat-card h6 {
+    margin-bottom: 10px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #495057;
+}
+
+.form-actions {
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.input-group-text {
+    min-width: 40px;
+    justify-content: center;
+}
+
+.topic-form .form-group {
+  display: block;           /* сбивает возможный flex у .form-group */
+  width: 100%;
+}
+
+.topic-form textarea.form-control {
+  width: 100%;              /* растягиваем поле */
+}
+
+.topic-form .form-text {
+  display: block;           /* переносим подпись под поле */
+  margin-top: .25rem;
+}
+</style>
+{% endblock %}

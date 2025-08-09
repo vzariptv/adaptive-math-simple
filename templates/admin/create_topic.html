@@ -1,0 +1,238 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Создание темы{% endblock %}
+{% block admin_content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📚 Создание новой темы</h2>
+        <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Назад к темам
+        </a>
+    </div>
+
+    {% if errors %}
+    <div class="alert alert-danger">
+        <h5>Ошибки при создании темы:</h5>
+        <ul class="mb-0">
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="section">
+        <h3>Основная информация</h3>
+            {{ form_start(action=url_for('admin.create_topic'), method='POST', class='topic-form') }}
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="code">Код темы <span class="text-danger">*</span></label>
+                        <input type="text" id="code" name="code" class="form-control" 
+                               placeholder="algebra_basics" 
+                               pattern="[a-z0-9_]+" 
+                               title="Только строчные буквы, цифры и подчеркивания"
+                               required>
+                        <small class="form-text text-muted">
+                            Уникальный идентификатор темы (только латинские буквы, цифры и _)
+                        </small>
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                        <label for="name">Название темы <span class="text-danger">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control" 
+                               placeholder="Основы алгебры" 
+                               required>
+                        <small class="form-text text-muted">
+                            Отображаемое название темы
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Описание темы</label>
+                    <textarea id="description" name="description" class="form-control" rows="5"
+                              placeholder="Подробное описание темы и её содержания..."></textarea>
+                    <small class="form-text text-muted d-block">
+                        Опциональное описание темы для преподавателей и студентов
+                    </small>
+                </div>
+
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> Автоматические настройки</h6>
+                    <p class="mb-0">
+                        При создании темы автоматически будут созданы конфигурации для всех уровней сложности 
+                        (низкий, средний, высокий) с базовыми параметрами. Вы сможете настроить их позже 
+                        в разделе редактирования темы.
+                    </p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Создать тему
+                    </button>
+                    <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary ml-2">
+                        <i class="fas fa-times"></i> Отмена
+                    </a>
+                </div>
+            </form>
+    </div>
+
+    <!-- Предварительные конфигурации -->
+    <div class="section mt-4">
+        <h3>Предварительные конфигурации уровней</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="level-preview level-low">
+                        <h6>🟢 Низкий уровень</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Пороговое количество задач:</strong> 10</li>
+                            <li><strong>Эталонное время:</strong> 15 мин</li>
+                            <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="level-preview level-medium">
+                        <h6>🟡 Средний уровень</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Пороговое количество задач:</strong> 10</li>
+                            <li><strong>Эталонное время:</strong> 15 мин</li>
+                            <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="level-preview level-high">
+                        <h6>🔴 Высокий уровень</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Пороговое количество задач:</strong> 10</li>
+                            <li><strong>Эталонное время:</strong> 15 мин</li>
+                            <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        <div class="alert alert-secondary mt-3">
+            <small>
+                <i class="fas fa-lightbulb"></i> 
+                Эти параметры можно будет изменить после создания темы в разделе редактирования.
+            </small>
+        </div>
+    </div>
+
+<script>
+// Автоматическое создание кода из названия
+document.getElementById('name').addEventListener('input', function() {
+    const codeField = document.getElementById('code');
+    if (!codeField.value) { // Только если код еще не заполнен
+        const name = this.value.toLowerCase()
+            .replace(/[а-яё]/g, function(match) {
+                const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+                const en = 'abvgdeejzijklmnoprstufhccss_y_eua';
+                return en[ru.indexOf(match)] || '';
+            })
+            .replace(/[^a-z0-9]/g, '_')
+            .replace(/_+/g, '_')
+            .replace(/^_|_$/g, '');
+        codeField.value = name;
+    }
+});
+
+// Валидация формы
+document.querySelector('.topic-form').addEventListener('submit', function(e) {
+    const code = document.getElementById('code').value;
+    const name = document.getElementById('name').value;
+    
+    if (!code.match(/^[a-z0-9_]+$/)) {
+        e.preventDefault();
+        alert('Код темы может содержать только строчные латинские буквы, цифры и подчеркивания');
+        return;
+    }
+    
+    if (code.length < 3) {
+        e.preventDefault();
+        alert('Код темы должен содержать минимум 3 символа');
+        return;
+    }
+    
+    if (name.length < 3) {
+        e.preventDefault();
+        alert('Название темы должно содержать минимум 3 символа');
+        return;
+    }
+});
+</script>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+}
+
+.form-actions {
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.level-preview {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #6c757d;
+}
+
+.level-preview.level-low {
+    border-left-color: #28a745;
+}
+
+.level-preview.level-medium {
+    border-left-color: #ffc107;
+}
+
+.level-preview.level-high {
+    border-left-color: #dc3545;
+}
+
+.level-preview h6 {
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.level-preview ul li {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+.topic-form .form-group {
+  display: block;           /* сбивает возможный flex у .form-group */
+  width: 100%;
+}
+.topic-form textarea.form-control {
+  width: 100%;              /* растягиваем поле */
+}
+
+.topic-form .form-text {
+  display: block;           /* переносим подпись под поле */
+  margin-top: .25rem;
+}
+</style>
+{% endblock %}

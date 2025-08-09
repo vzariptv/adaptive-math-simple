@@ -21,8 +21,14 @@
             {% for task in tasks %}
                 <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #3498db;">
                     <h3 style="color: #2c3e50; margin-top: 0;">{{ task.title }}</h3>
-                    <p style="color: #6c757d;"><strong>Тема:</strong> {{ task.topic }}</p>
-                    <p style="color: #6c757d;"><strong>Сложность:</strong> {{ task.difficulty_level }}/5</p>
+                    <p style="color: #6c757d;"><strong>Тема:</strong> {{ task.topic_ref.name if task.topic_ref else 'Неизвестная тема' }}</p>
+                    <p style="color: #6c757d;"><strong>Сложность:</strong> 
+                        {% if task.level == 'low' %}🟢 Низкий
+                        {% elif task.level == 'medium' %}🟡 Средний
+                        {% elif task.level == 'high' %}🔴 Высокий
+                        {% else %}{{ task.level }}
+                        {% endif %}
+                    </p>
                     <p style="color: #6c757d;"><strong>Максимальный балл:</strong> {{ task.max_score }}</p>
                     {% if current_user.role == 'student' and task.id in user_attempts %}
                         <p style="color: #28a745;"><strong>Ваши попытки:</strong> {{ user_attempts[task.id]|length }}</p>

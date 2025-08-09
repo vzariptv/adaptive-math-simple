@@ -21,8 +21,14 @@
         </div>
         
         <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <p><strong>📊 Тема:</strong> {{ task.topic }}</p>
-            <p><strong>⭐ Сложность:</strong> {{ task.difficulty_level }}/5</p>
+            <p><strong>📚 Тема:</strong> {{ task.topic_ref.name if task.topic_ref else 'Неизвестная тема' }}</p>
+            <p><strong>⭐ Сложность:</strong> 
+                {% if task.level == 'low' %}🟢 Низкий
+                {% elif task.level == 'medium' %}🟡 Средний
+                {% elif task.level == 'high' %}🔴 Высокий
+                {% else %}{{ task.level }}
+                {% endif %}
+            </p>
             <p><strong>🎯 Максимальный балл:</strong> {{ task.max_score }}</p>
             <p><strong>📅 Создано:</strong> {{ task.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
         </div>

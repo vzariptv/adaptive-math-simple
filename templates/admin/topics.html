@@ -1,0 +1,377 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Управление темами{% endblock %}
+{% block admin_content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📚 Управление темами</h2>
+        <div class="btn-group">
+            <a href="{{ url_for('admin.create_topic') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Создать тему
+            </a>
+            <button type="button" class="btn btn-success" onclick="showImportModal()">
+                <i class="fas fa-upload"></i> Импорт
+            </button>
+            <a href="{{ url_for('admin.export_topics') }}" class="btn btn-info">
+                <i class="fas fa-download"></i> Экспорт всех
+            </a>
+        </div>
+    </div>
+
+    {% if topics %}
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th>Код</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Заданий</th>
+                    <th>Создано</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for topic in topics %}
+                <tr>
+                    <td><input type="checkbox" class="topic-checkbox" value="{{ topic.id }}"></td>
+                    <td><code>{{ topic.code }}</code></td>
+                    <td><strong>{{ topic.name }}</strong></td>
+                    <td>{{ topic.description[:100] }}{% if topic.description|length > 100 %}...{% endif %}</td>
+                    <td>
+                        <span class="badge badge-info">{{ topic.tasks.count() }}</span>
+                    </td>
+                    <td>{{ topic.created_at.strftime('%d.%m.%Y') if topic.created_at else '-' }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('admin.edit_topic', topic_id=topic.id) }}" 
+                               class="btn btn-outline-primary" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if topic.tasks.count() == 0 %}
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="deleteTopic({{ topic.id }}, '{{ topic.name }}')" 
+                                    title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn btn-outline-secondary" disabled 
+                                    title="Нельзя удалить: есть связанные задания">
+                                <i class="fas fa-lock"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3">
+        <button type="button" class="btn btn-info" onclick="exportSelected()" id="exportSelectedBtn" disabled>
+            <i class="fas fa-download"></i> Экспорт выбранных
+        </button>
+        <span class="text-muted ml-2">Всего тем: {{ topics|length }}</span>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h4>Темы не найдены</h4>
+        <p>Создайте первую тему или импортируйте темы из файла.</p>
+        <a href="{{ url_for('admin.create_topic') }}" class="btn btn-primary">Создать тему</a>
+        <button type="button" class="btn btn-success ml-2" onclick="showImportModal()">Импорт тем</button>
+    </div>
+    {% endif %}
+
+<!-- Модальное окно импорта -->
+<div class="custom-modal" id="importModal" style="display: none;">
+    <div class="modal-overlay" onclick="hideImportModal()"></div>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h5>Импорт тем</h5>
+            <button type="button" class="close-btn" onclick="hideImportModal()">
+                <span>&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="importForm" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div class="form-group">
+                    <label for="importFile">Выберите JSON файл с темами:</label>
+                    <input type="file" class="form-control-file" id="importFile" name="file" accept=".json" required>
+                </div>
+                <div class="alert alert-info">
+                    <h6>Формат файла:</h6>
+                    <pre><code>[
+  {
+    "code": "algebra_basics",
+    "name": "Основы алгебры",
+    "description": "Базовые понятия алгебры",
+    "level_configs": {
+      "low": {
+        "task_count_threshold": 5,
+        "reference_time": 300,
+        "penalty_weights": [0.7, 0.4]
+      },
+      "medium": { ... },
+      "high": { ... }
+    }
+  }
+]</code></pre>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="hideImportModal()">Отмена</button>
+            <button type="button" class="btn btn-success" onclick="importTopics()">
+                <i class="fas fa-upload"></i> Импортировать
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Форма для удаления темы -->
+<form id="deleteForm" method="POST" style="display: none;">
+    {{ csrf_field() }}
+</form>
+
+<script>
+// Управление чекбоксами
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.topic-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+    updateExportButton();
+});
+
+document.querySelectorAll('.topic-checkbox').forEach(cb => {
+    cb.addEventListener('change', updateExportButton);
+});
+
+function updateExportButton() {
+    const selected = document.querySelectorAll('.topic-checkbox:checked');
+    const exportBtn = document.getElementById('exportSelectedBtn');
+    exportBtn.disabled = selected.length === 0;
+}
+
+// Показать модальное окно импорта
+function showImportModal() {
+    document.getElementById('importModal').style.display = 'block';
+}
+
+// Скрыть модальное окно импорта
+function hideImportModal() {
+    document.getElementById('importModal').style.display = 'none';
+}
+
+// Импорт тем
+function importTopics() {
+    const form = document.getElementById('importForm');
+    const formData = new FormData(form);
+    
+    fetch('{{ url_for("admin.import_topics") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Успешно!\n' + data.message);
+            location.reload();
+        } else {
+            alert('Ошибка!\n' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Ошибка при импорте: ' + error);
+    });
+    
+    hideImportModal();
+}
+
+// Экспорт выбранных тем
+function exportSelected() {
+    const selected = Array.from(document.querySelectorAll('.topic-checkbox:checked'))
+                          .map(cb => parseInt(cb.value));
+    
+    if (selected.length === 0) {
+        alert('Выберите темы для экспорта');
+        return;
+    }
+    
+    fetch('{{ url_for("admin.export_topics") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        },
+        body: JSON.stringify({topic_ids: selected})
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.blob();
+        } else {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Ошибка при экспорте');
+            });
+        }
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `selected_topics_export_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        alert('Ошибка при экспорте: ' + error.message);
+    });
+}
+
+// Удаление темы
+function deleteTopic(topicId, topicName) {
+    if (confirm(`Вы уверены, что хотите удалить тему "${topicName}"?\n\nЭто действие нельзя отменить.`)) {
+        const form = document.getElementById('deleteForm');
+        form.action = `{{ url_for('admin.delete_topic', topic_id=0) }}`.replace('0', topicId);
+        form.submit();
+    }
+}
+</script>
+
+<style>
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.data-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.modal-body pre {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+/* Кастомное модальное окно */
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-container {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-header h5 {
+    margin: 0;
+    color: #495057;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #495057;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+</style>
+{% endblock %}

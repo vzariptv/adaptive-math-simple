@@ -1,0 +1,12 @@
+{
+  "evaluation_period_days": 7,
+  "weekend_bonus_multiplier": 1.5,
+  "weight_accuracy": 0.3,
+  "weight_time": 0.2,
+  "weight_progress": 0.3,
+  "weight_motivation": 0.2,
+  "min_threshold_low": 0.4,
+  "max_threshold_low": 0.75,
+  "min_threshold_medium": 0.45,
+  "max_threshold_medium": 0.8
+}

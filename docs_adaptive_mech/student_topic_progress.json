@@ -1,0 +1,23 @@
+[
+  {
+    "user_id": 101,
+    "topic_id": 1,
+    "current_level": "high",
+    "is_mastered": true,
+    "last_evaluated_at": "2025-08-04T00:00:00"
+  },
+  {
+    "user_id": 102,
+    "topic_id": 1,
+    "current_level": "low",
+    "is_mastered": false,
+    "last_evaluated_at": "2025-08-04T00:00:00"
+  },
+  {
+    "user_id": 103,
+    "topic_id": 1,
+    "current_level": "medium",
+    "is_mastered": false,
+    "last_evaluated_at": "2025-08-04T00:00:00"
+  }
+]

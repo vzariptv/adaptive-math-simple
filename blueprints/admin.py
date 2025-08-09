@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
 from flask_login import login_required, current_user
-from models import User, MathTask, TaskAttempt, db
+from models import db, User, MathTask, TaskAttempt, Topic, TopicLevelConfig, EvaluationSystemConfig
 from datetime import datetime
 import os
 import json
@@ -162,7 +162,7 @@ def tasks():
     """Вкладка 5: Управление заданиями"""
     
     # Получаем все задания с дополнительной информацией для админа
-    tasks = MathTask.query.order_by(MathTask.difficulty_level.desc(), MathTask.id.desc()).all()
+    tasks = MathTask.query.order_by(MathTask.level.desc(), MathTask.id.desc()).all()
     return render_template('admin/tasks.html', tasks=tasks)
 
 def import_tasks_from_file(filepath, user_id):
@@ -181,7 +181,7 @@ def import_tasks_from_file(filepath, user_id):
             try:
                 # Проверяем обязательные поля
                 required_fields = ['title', 'description', 'answer_type', 'correct_answer', 
-                                 'difficulty_level', 'topic', 'max_score']
+                                 'level', 'topic_id', 'max_score']
                 
                 missing_fields = [field for field in required_fields if field not in task_data]
                 if missing_fields:
@@ -229,8 +229,8 @@ def import_tasks_from_file(filepath, user_id):
                     description=task_data['description'],
                     answer_type=task_data['answer_type'],
                     correct_answer=task_data['correct_answer'],
-                    difficulty_level=int(task_data['difficulty_level']),
-                    topic=task_data['topic'],
+                    level=task_data['level'],
+                    topic_id=int(task_data['topic_id']),
                     max_score=float(task_data['max_score']),
                     explanation=task_data.get('explanation', ''),
                     created_by=user_id,
@@ -290,8 +290,8 @@ def edit_task(task_id):
             # Обновляем данные задания
             task.title = request.form.get('title', task.title)
             task.description = request.form.get('description', task.description)
-            task.topic = request.form.get('topic', task.topic)
-            task.difficulty_level = int(request.form.get('difficulty_level', task.difficulty_level))
+            task.level = request.form.get('level', task.level)
+            task.topic_id = int(request.form.get('topic_id', task.topic_id))
             task.max_score = float(request.form.get('max_score', task.max_score))
             
             # Обновляем правильный ответ в зависимости от типа (унифицированный JSON формат)
@@ -370,7 +370,8 @@ def edit_task(task_id):
             flash(f'Ошибка при обновлении задания: {str(e)}', 'error')
     
     # Для GET запроса показываем форму редактирования
-    return render_template('admin/edit_task.html', task=task)
+    topics = Topic.query.all()
+    return render_template('admin/edit_task.html', task=task, topics=topics)
 
 
 @admin_bp.route('/tasks/export', methods=['GET', 'POST'])
@@ -406,8 +407,9 @@ def export_tasks():
                 'description': task.description,
                 'answer_type': task.answer_type,
                 'correct_answer': task.correct_answer,
-                'difficulty_level': task.difficulty_level,
-                'topic': task.topic,
+                'level': task.level,
+                'topic_id': task.topic_id,
+                'topic_name': task.topic_ref.name if task.topic_ref else 'Неизвестная тема',
                 'max_score': task.max_score,
                 'explanation': task.explanation or '',
                 'created_at': task.created_at.isoformat() if task.created_at else None
@@ -615,3 +617,292 @@ def edit_user(user_id):
     # Здесь можно создать отдельный шаблон для редактирования
     # Пока перенаправляем обратно
     return redirect(url_for('admin.users'))
+
+# =============================================================================
+# УПРАВЛЕНИЕ ТЕМАМИ
+# =============================================================================
+
+@admin_bp.route('/topics')
+@login_required
+@admin_required
+def topics():
+    """Вкладка 6: Управление темами"""
+    topics = Topic.query.order_by(Topic.name.asc()).all()
+    return render_template('admin/topics.html', topics=topics)
+
+@admin_bp.route('/topics/create', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def create_topic():
+    """Создание новой темы"""
+    if request.method == 'POST':
+        try:
+            code = request.form.get('code', '').strip()
+            name = request.form.get('name', '').strip()
+            description = request.form.get('description', '').strip()
+            
+            # Валидация
+            errors = []
+            if not code:
+                errors.append('Код темы обязателен')
+            if not name:
+                errors.append('Название темы обязательно')
+            
+            # Проверяем уникальность кода
+            if Topic.query.filter_by(code=code).first():
+                errors.append('Тема с таким кодом уже существует')
+            
+            if errors:
+                return render_template('admin/create_topic.html', errors=errors)
+            
+            # Создаем новую тему
+            topic = Topic(
+                code=code,
+                name=name,
+                description=description
+            )
+            
+            db.session.add(topic)
+            db.session.commit()
+            
+            # Создаем базовые конфигурации для всех уровней
+            for level in ['low', 'medium', 'high']:
+                config = TopicLevelConfig(
+                    topic_id=topic.id,
+                    level=level,
+                    #task_count_threshold=5 if level == 'low' else (7 if level == 'medium' else 10),
+                    #reference_time=300 if level == 'low' else (240 if level == 'medium' else 180),
+                    task_count_threshold=10,
+                    reference_time=900,  # 15 минут
+                    penalty_weights=[0.7, 0.4]
+                )
+                db.session.add(config)
+            
+            db.session.commit()
+            
+            flash('Тема успешно создана', 'success')
+            return redirect(url_for('admin.topics'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при создании темы: {str(e)}', 'error')
+    
+    return render_template('admin/create_topic.html')
+
+@admin_bp.route('/topics/<int:topic_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_topic(topic_id):
+    """Редактирование темы"""
+    topic = Topic.query.get_or_404(topic_id)
+    
+    if request.method == 'POST':
+        try:
+            topic.code = request.form.get('code', topic.code)
+            topic.name = request.form.get('name', topic.name)
+            topic.description = request.form.get('description', topic.description)
+            
+            db.session.commit()
+            flash('Тема успешно обновлена', 'success')
+            return redirect(url_for('admin.topics'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при обновлении темы: {str(e)}', 'error')
+    
+    # Получаем конфигурации для всех уровней
+    configs = {}
+    for config in topic.level_configs:
+        configs[config.level] = config
+    
+    return render_template('admin/edit_topic.html', topic=topic, configs=configs)
+
+@admin_bp.route('/topics/<int:topic_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def delete_topic(topic_id):
+    """Удаление темы"""
+    try:
+        topic = Topic.query.get_or_404(topic_id)
+        
+        # Проверяем, есть ли задания, использующие эту тему
+        tasks_count = MathTask.query.filter_by(topic_id=topic_id).count()
+        if tasks_count > 0:
+            flash(f'Нельзя удалить тему: к ней привязано {tasks_count} заданий', 'error')
+            return redirect(url_for('admin.topics'))
+        
+        # Удаляем конфигурации уровней
+        TopicLevelConfig.query.filter_by(topic_id=topic_id).delete()
+        
+        # Удаляем тему
+        db.session.delete(topic)
+        db.session.commit()
+        
+        flash('Тема успешно удалена', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении темы: {str(e)}', 'error')
+    
+    return redirect(url_for('admin.topics'))
+
+@admin_bp.route('/topics/import', methods=['POST'])
+@login_required
+@admin_required
+def import_topics():
+    """Импорт тем из JSON файла"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'message': 'Файл не выбран'})
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'success': False, 'message': 'Файл не выбран'})
+        
+        if not file.filename.endswith('.json'):
+            return jsonify({'success': False, 'message': 'Поддерживаются только JSON файлы'})
+        
+        # Читаем и парсим JSON
+        content = file.read().decode('utf-8')
+        topics_data = json.loads(content)
+        
+        if not isinstance(topics_data, list):
+            return jsonify({'success': False, 'message': 'JSON должен содержать массив тем'})
+        
+        imported_count = 0
+        errors = []
+        
+        for i, topic_data in enumerate(topics_data, 1):
+            try:
+                # Проверяем обязательные поля
+                required_fields = ['code', 'name']
+                missing_fields = [field for field in required_fields if field not in topic_data]
+                if missing_fields:
+                    errors.append(f'Тема {i}: Отсутствуют поля: {", ".join(missing_fields)}')
+                    continue
+                
+                # Проверяем уникальность кода
+                if Topic.query.filter_by(code=topic_data['code']).first():
+                    errors.append(f'Тема {i}: Код "{topic_data["code"]}" уже существует')
+                    continue
+                
+                # Создаем тему
+                topic = Topic(
+                    code=topic_data['code'],
+                    name=topic_data['name'],
+                    description=topic_data.get('description', '')
+                )
+                
+                db.session.add(topic)
+                db.session.flush()  # Получаем ID темы
+                
+                # Создаем конфигурации уровней
+                level_configs = topic_data.get('level_configs', {})
+                for level in ['low', 'medium', 'high']:
+                    config_data = level_configs.get(level, {})
+                    config = TopicLevelConfig(
+                        topic_id=topic.id,
+                        level=level,
+                        task_count_threshold=config_data.get('task_count_threshold', 5 if level == 'low' else (7 if level == 'medium' else 10)),
+                        reference_time=config_data.get('reference_time', 300 if level == 'low' else (240 if level == 'medium' else 180)),
+                        penalty_weights=config_data.get('penalty_weights', [0.7, 0.4])
+                    )
+                    db.session.add(config)
+                
+                imported_count += 1
+                
+            except Exception as e:
+                errors.append(f'Тема {i}: {str(e)}')
+                continue
+        
+        if imported_count > 0:
+            db.session.commit()
+        else:
+            db.session.rollback()
+        
+        result_message = f'Импортировано тем: {imported_count}'
+        if errors:
+            result_message += f'\nОшибки: {len(errors)}'
+            for error in errors[:5]:  # Показываем первые 5 ошибок
+                result_message += f'\n• {error}'
+            if len(errors) > 5:
+                result_message += f'\n... и еще {len(errors) - 5} ошибок'
+        
+        return jsonify({
+            'success': imported_count > 0,
+            'message': result_message,
+            'imported_count': imported_count,
+            'errors_count': len(errors)
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Ошибка при импорте: {str(e)}'})
+
+@admin_bp.route('/topics/export', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def export_topics():
+    """Экспорт тем в JSON формате"""
+    try:
+        if request.method == 'POST':
+            # Экспорт выбранных тем
+            selected_ids = request.json.get('topic_ids', [])
+            if not selected_ids:
+                return jsonify({'success': False, 'message': 'Не выбрано ни одной темы'})
+            
+            topics = Topic.query.filter(Topic.id.in_(selected_ids)).all()
+        else:
+            # Экспорт всех тем
+            topics = Topic.query.all()
+        
+        if not topics:
+            if request.method == 'POST':
+                return jsonify({'success': False, 'message': 'Темы не найдены'})
+            else:
+                flash('Нет тем для экспорта', 'warning')
+                return redirect(url_for('admin.topics'))
+        
+        # Формируем данные для экспорта
+        export_data = []
+        for topic in topics:
+            topic_data = {
+                'code': topic.code,
+                'name': topic.name,
+                'description': topic.description or '',
+                'level_configs': {}
+            }
+            
+            # Добавляем конфигурации уровней
+            for config in topic.level_configs:
+                topic_data['level_configs'][config.level] = {
+                    'task_count_threshold': config.task_count_threshold,
+                    'reference_time': config.reference_time,
+                    'penalty_weights': config.penalty_weights
+                }
+            
+            export_data.append(topic_data)
+        
+        # Возвращаем JSON файл
+        from flask import make_response
+        import json
+        
+        response = make_response(json.dumps(export_data, ensure_ascii=False, indent=2))
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        
+        if request.method == 'POST':
+            filename = f'selected_topics_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+        else:
+            filename = f'all_topics_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+            
+        response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        current_app.logger.error(f'Error exporting topics: {str(e)}')
+        if request.method == 'POST':
+            return jsonify({'success': False, 'message': f'Ошибка при экспорте: {str(e)}'}), 500
+        else:
+            flash(f'Ошибка при экспорте тем: {str(e)}', 'error')
+            return redirect(url_for('admin.topics'))
