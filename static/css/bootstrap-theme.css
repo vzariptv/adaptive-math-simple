@@ -1,0 +1,144 @@
+/* ===== Astramoc Bootstrap Theme (v1) ===== */
+
+/* Палитра и базовые параметры */
+:root {
+    --bs-primary: #3b82f6;   /* синий, спокойный */
+    --bs-secondary: #64748b; /* серо-синий */
+    --bs-success: #22c55e;   /* зелёный */
+    --bs-info:    #0ea5e9;   /* голубой */
+    --bs-warning: #f59e0b;   /* янтарный */
+    --bs-danger:  #ef4444;   /* красный */
+    --bs-light:   #f8fafc;
+    --bs-dark:    #0f172a;
+  
+    --bs-body-bg: #f5f7fb;
+    --bs-body-color: #0f172a;
+  
+    --am-radius: 14px;
+    --am-shadow-sm: 0 2px 8px rgba(15, 23, 42, .06);
+    --am-shadow:    0 10px 30px rgba(15, 23, 42, .08);
+    --am-focus: 0 0 0 .25rem rgba(59,130,246,.25); /* фокус-свечение */
+  }
+  
+  /* Контейнеры/карточки */
+  .container { max-width: 1200px; }
+  .card {
+    border: none;
+    border-radius: var(--am-radius);
+    box-shadow: var(--am-shadow-sm);
+  }
+  .card-header {
+    background: linear-gradient(180deg, #ffffff, #f3f6fb);
+    border-bottom: 1px solid rgba(15,23,42,.06);
+    border-radius: var(--am-radius) var(--am-radius) 0 0 !important;
+  }
+  
+  /* Заголовки */
+  h2, h3, h4, h5 { letter-spacing: .2px; }
+  
+  /* Кнопки — мягкие градиенты и скругления */
+  .btn {
+    border-radius: calc(var(--am-radius) - 6px);
+    font-weight: 600;
+    box-shadow: 0 1px 0 rgba(0,0,0,.03);
+    transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  
+  .btn-primary {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bs-primary) 92%, white),
+                                       color-mix(in srgb, var(--bs-primary) 86%, black));
+    border: 0;
+  }
+  .btn-success  { background: linear-gradient(180deg, #22c55e, #16a34a); border:0; }
+  .btn-info     { background: linear-gradient(180deg, #0ea5e9, #0284c7); border:0; }
+  .btn-danger   { background: linear-gradient(180deg, #ef4444, #dc2626); border:0; }
+  .btn-secondary{ background: linear-gradient(180deg, #64748b, #475569); border:0; }
+  
+  .btn-outline-primary { border-width: 2px; }
+  .btn:hover { filter: brightness(.98); box-shadow: var(--am-shadow-sm); }
+  
+  /* Иконка-кнопка */
+  .btn-icon { 
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; padding: 0;
+    border-radius: 10px;
+  }
+  
+  /* «Мягкие» варианты кнопок */
+  .btn-soft { border:0; }
+  .btn-soft-primary { background: rgba(59,130,246,.12); color: var(--bs-primary); }
+  .btn-soft-success { background: rgba(34,197,94,.12); color: var(--bs-success); }
+  .btn-soft-danger  { background: rgba(239,68,68,.12); color: var(--bs-danger); }
+  .btn-soft-info    { background: rgba(14,165,233,.12); color: var(--bs-info); }
+  .btn-soft-secondary{background: rgba(100,116,139,.12); color: var(--bs-secondary); }
+  .btn-soft:hover { filter: none; box-shadow: none; background: rgba(0,0,0,.06); }
+  
+  /* Бейджи */
+  .badge { 
+    padding: .45em .6em; 
+    border-radius: 999px; 
+    font-weight: 600; 
+    letter-spacing: .2px;
+  }
+  .badge.bg-info  { color: #0b4661; }
+  .badge.bg-warning{ color: #5f3b00; }
+  
+  /* Таблицы */
+  .table {
+    background: #fff;
+    border-radius: var(--am-radius);
+    overflow: hidden;
+    box-shadow: var(--am-shadow-sm);
+  }
+  .table thead { background: #f3f6fb; }
+  .table th {
+    border-bottom: 1px solid rgba(15,23,42,.06);
+    color: #334155;
+    text-transform: none;
+    font-weight: 700;
+  }
+  .table td { vertical-align: middle; }
+  .table-hover tbody tr:hover { background: #f8fbff; }
+  
+  /* Alerts */
+  .alert {
+    border: 0;
+    border-radius: var(--am-radius);
+    box-shadow: var(--am-shadow-sm);
+  }
+  
+  /* Формы */
+  .form-label { font-weight: 600; color: #1f2937; }
+  .form-control, .form-select {
+    border-radius: 12px;
+    border: 1px solid rgba(15,23,42,.12);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: var(--am-focus);
+  }
+  .input-group-text { border-radius: 12px; }
+  
+  /* Маленькие хелп-тексты */
+  .form-text { color: #64748b; }
+  
+  /* Таб «вкладки админки» — лёгкая интеграция */
+  .admin-tabs {
+    border-radius: var(--am-radius) var(--am-radius) 0 0;
+    background: #fff !important;
+    box-shadow: var(--am-shadow-sm);
+  }
+  .admin-tab {
+    background: transparent !important;
+    border-right: 1px solid rgba(15,23,42,.06);
+  }
+  .admin-tab.active {
+    background: var(--bs-primary) !important;
+    color: #fff !important;
+  }
+  
+  /* Хлебные крошки/серые блоки */
+  .text-muted { color: #64748b !important; }
+  

@@ -11,7 +11,7 @@
     {% if errors %}
     <div class="alert alert-danger">
         <h5>Ошибки при создании темы:</h5>
-        <ul class="mb-0">
+        <ul>
             {% for error in errors %}
             <li>{{ error }}</li>
             {% endfor %}
@@ -22,42 +22,46 @@
     <div class="section">
         <h3>Основная информация</h3>
             {{ form_start(action=url_for('admin.create_topic'), method='POST', class='topic-form') }}
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="code">Код темы <span class="text-danger">*</span></label>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                        <label for="code" class="form-label">Код темы <span class="text-danger">*</span></label>
                         <input type="text" id="code" name="code" class="form-control" 
                                placeholder="algebra_basics" 
                                pattern="[a-z0-9_]+" 
                                title="Только строчные буквы, цифры и подчеркивания"
                                required>
-                        <small class="form-text text-muted">
+                        <div class="form-text">
                             Уникальный идентификатор темы (только латинские буквы, цифры и _)
-                        </small>
+                        </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group col-md-6">
-                        <label for="name">Название темы <span class="text-danger">*</span></label>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                        <label for="name" class="form-label">Название темы <span class="text-danger">*</span></label>
                         <input type="text" id="name" name="name" class="form-control" 
                                placeholder="Основы алгебры" 
                                required>
-                        <small class="form-text text-muted">
+                        <div class="form-text">
                             Отображаемое название темы
-                        </small>
+                        </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="description">Описание темы</label>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание темы</label>
                     <textarea id="description" name="description" class="form-control" rows="5"
                               placeholder="Подробное описание темы и её содержания..."></textarea>
-                    <small class="form-text text-muted d-block">
+                    <div class="form-text">
                         Опциональное описание темы для преподавателей и студентов
-                    </small>
+                    </div>
                 </div>
 
                 <div class="alert alert-info">
                     <h6><i class="fas fa-info-circle"></i> Автоматические настройки</h6>
-                    <p class="mb-0">
+                    <p>
                         При создании темы автоматически будут созданы конфигурации для всех уровней сложности 
                         (низкий, средний, высокий) с базовыми параметрами. Вы сможете настроить их позже 
                         в разделе редактирования темы.
@@ -68,7 +72,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Создать тему
                     </button>
-                    <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary ml-2">
+                    <a href="{{ url_for('admin.topics') }}" class="btn btn-info ms-2">
                         <i class="fas fa-times"></i> Отмена
                     </a>
                 </div>

@@ -3,105 +3,56 @@
 {% block title %}Демо-данные - Панель администратора{% endblock %}
 
 {% block admin_content %}
-<h2>📊 Управление демо-данными</h2>
+<h4 class="mb-3">Статистика</h4>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-number">{{ stats.total_users }}</div>
-        <div>Всего пользователей</div>
+
+<div class="row g-2 mb-4">
+    <!-- Пользователи -->
+    <div class="col-12 col-md-6">
+      <div class="p-3 border rounded-3 bg-white shadow-sm">
+        <div class="h5 mb-2">{{ stats.total_users }} пользователей</div>
+        <ul class="mb-0 ps-3 text-muted">
+          <li>{{ stats.students }} всего студентов</li>
+          <li>{{ stats.teachers }} всего преподавателей</li>
+          <li>{{ stats.admins }} всего администраторов</li>
+        </ul>
+      </div>
     </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ stats.students }}</div>
-        <div>Студентов</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ stats.teachers }}</div>
-        <div>Преподавателей</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ stats.admins }}</div>
-        <div>Администраторов</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ stats.total_tasks }}</div>
-        <div>Всего заданий</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ stats.total_attempts }}</div>
-        <div>Попыток решения</div>
+  
+    <!-- Темы -->
+    <div class="col-12 col-md-6">
+      <div class="p-3 border rounded-3 bg-white shadow-sm">
+        <div class="h5 mb-2">{{ stats.total_topics }} тем</div>
+        <ul class="mb-0 ps-3 text-muted">
+          <li>{{ stats.total_tasks }}   всего заданий</li>
+          <li>{{ stats.total_attempts }} всего попыток решения</li>
+        </ul>
+      </div>
     </div>
 </div>
+  
 
-<h3>🛠️ Управление заданиями</h3>
+<h4>🛠️ Управление пользователями</h4>
 
-<div class="action-buttons">
-    <button class="action-btn" onclick="window.taskManager ? window.taskManager.openImportModal() : openImportModal()">
-        📂 Импорт заданий
-    </button>
-    <button class="action-btn" onclick="window.taskManager ? window.taskManager.exportTasks() : exportTasks()">
-        💾 Экспорт заданий
-    </button>
-</div>
-
-<h3>🛠️ Управление пользователями</h3>
-
-<div class="action-buttons">
-    <a href="{{ url_for('admin.create_demo_users') }}" class="action-btn">
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="{{ url_for('admin.create_demo_users') }}" class="btn btn-primary btn-sm">
         👥 Создать тестовых пользователей
     </a>
 </div>
+<div class="alert alert-dismissible alert-info">
+    <strong>⚠️ Тестовые пользователи:</strong> 
+    student/123456, teacher/123456, CalmAndManage/KeepMathAlive
+</div>
 
-<h3>🗑️ Очистка данных</h3>
+<h4>🗑️ Очистка данных</h4>
 
-<div class="action-buttons">
-    <button class="action-btn danger" onclick="clearDatabase()">
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <button class="btn btn-outline-danger btn-sm" onclick="clearDatabase()">
         🗑️ Очистить базу данных
     </button>
 </div>
 
-<div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0;">
-    <h4 style="color: #856404; margin-top: 0;">⚠️ Информация</h4>
-    <p style="color: #856404; margin-bottom: 0;">
-        Тестовые пользователи: student/123456, teacher/123456, CalmAndManage/KeepMathAlive
-    </p>
-</div>
 
-<!-- Модальное окно для импорта заданий -->
-<div id="importModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>📂 Импорт заданий</h3>
-            <span class="close" onclick="closeImportModal()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <p>Выберите JSON файл с заданиями для импорта:</p>
-            <div class="info-box">
-                <h4>📋 Формат файла</h4>
-                <p>Файл должен содержать JSON объект с полем "tasks" - массивом заданий.</p>
-                <p><strong>Поддерживаемые типы ответов:</strong></p>
-                <ul>
-                    <li><code>number</code> - числовой ответ</li>
-                    <li><code>variables</code> - переменные с значениями</li>
-                    <li><code>interval</code> - числовые интервалы</li>
-                    <li><code>sequence</code> - последовательности чисел</li>
-                </ul>
-                <p><a href="{{ url_for('static', filename='sample_tasks_import.json') }}" download>📥 Скачать пример файла</a></p>
-            </div>
-            <form id="importForm" enctype="multipart/form-data">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <div class="form-group">
-                    <input type="file" id="importFile" name="import_file" accept=".json" required>
-                    <small class="form-text text-muted">Поддерживаются только файлы в формате JSON</small>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">📂 Импортировать</button>
-                    <button type="button" class="btn" onclick="closeImportModal()">❌ Отмена</button>
-                </div>
-            </form>
-            <div id="importResult" style="margin-top: 20px; display: none;"></div>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}

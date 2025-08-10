@@ -1,0 +1,49 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Редактирование пользователя{% endblock %}
+
+{% block admin_content %}
+<h2 class="h4 mb-3">Редактирование: {{ user.username }}</h2>
+
+<form method="POST" action="{{ url_for('admin.edit_user', user_id=user.id) }}" class="row g-3">
+  {{ csrf_field() }}
+
+  <div class="col-md-6">
+    <label class="form-label">Email</label>
+    <input name="email" type="email" class="form-control" value="{{ user.email }}" required>
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Роль</label>
+    <select name="role" class="form-select" {% if user.role == 'admin' %}disabled{% endif %}>
+      <option value="student" {{ 'selected' if user.role=='student' }}>Студент</option>
+      <option value="teacher" {{ 'selected' if user.role=='teacher' }}>Преподаватель</option>
+      <option value="admin"   {{ 'selected' if user.role=='admin' }}>Админ</option>
+    </select>
+    {% if user.role == 'admin' %}
+      <div class="form-text">Роль администратора менять нельзя.</div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Имя</label>
+    <input name="first_name" class="form-control" value="{{ user.first_name or '' }}">
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Фамилия</label>
+    <input name="last_name" class="form-control" value="{{ user.last_name or '' }}">
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Новый пароль (необязательно)</label>
+    <input name="new_password" type="password" class="form-control" placeholder="Оставьте пустым, чтобы не менять">
+  </div>
+
+  <div class="col-12 d-flex gap-2 mt-2">
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-save me-1"></i> Сохранить
+    </button>
+    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Отмена</a>
+  </div>
+</form>
+{% endblock %}

@@ -27,7 +27,7 @@ h1 {
     font-size: 2.2em;
     font-weight: 300;
 }
-
+/*
 .form-group {
     margin-bottom: 20px;
 }
@@ -97,6 +97,7 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
     background: linear-gradient(135deg, #2980b9, #1f5f8b);
     box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
 }
+*/
 
 .status {
     background: linear-gradient(135deg, #d4edda, #c3e6cb);
@@ -233,17 +234,17 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 }
 
 .role-admin {
-    background: linear-gradient(135deg, #dc3545, #c82333);
+    background-color: RGBA(var(--bs-danger-rgb), var(--bs-bg-opacity, 1)) !important;
     color: white;
 }
 
 .role-teacher {
-    background: linear-gradient(135deg, #28a745, #20c997);
+    background-color: RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
     color: white;
 }
 
 .role-student {
-    background: linear-gradient(135deg, #007bff, #0056b3);
+    background-color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
     color: white;
 }
 
@@ -425,56 +426,6 @@ tr:hover {
     background: #c82333;
 }
 
-/* Модальное окно */
-.modal {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-    padding: 20px;
-    background: #007bff;
-    color: white;
-    border-radius: 10px 10px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-}
-
-.close {
-    color: white;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1;
-}
-
-.close:hover {
-    opacity: 0.7;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
 .info-box {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -631,6 +582,7 @@ tr:hover {
 }
 
 /* === Добавляем textarea в общий стиль полей ввода === */
+/*
 input[type="text"], input[type="email"], input[type="password"], select, textarea {
     width: 100%;
     padding: 12px 15px;
@@ -641,8 +593,9 @@ input[type="text"], input[type="email"], input[type="password"], select, textare
     box-sizing: border-box;
     font-family: inherit;
 }
-
+*/
 /* === Добавляем эффект фокуса для textarea === */
+/*
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
@@ -652,3 +605,4 @@ textarea:focus {
     border-color: #3498db;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
+    */

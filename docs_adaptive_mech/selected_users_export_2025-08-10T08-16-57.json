@@ -1,0 +1,17 @@
+{
+  "export_info": {
+    "exported_by": "CalmAndManage",
+    "timestamp": "2025-08-10T11:16:57.197064",
+    "total_users": 1
+  },
+  "users": [
+    {
+      "created_at": "2025-08-10T07:57:06.048354",
+      "email": "emailtest@m.ru",
+      "first_name": "\u0414\u0430 \u0441\u0442\u0443\u0434\u0435\u043d\u0442 \u044f!",
+      "last_name": "\u0411\u0430\u043b\u0431\u0435\u0441",
+      "role": "student",
+      "username": "\u0421\u0442\u0443\u0434\u0435\u043d\u0442 \u0411\u0430\u043b\u0431\u0435\u0441"
+    }
+  ]
+}

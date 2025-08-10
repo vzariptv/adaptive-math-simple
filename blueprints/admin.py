@@ -41,6 +41,7 @@ def demo_data():
     students_count = User.query.filter_by(role='student').count()
     teachers_count = User.query.filter_by(role='teacher').count()
     admins_count = User.query.filter_by(role='admin').count()
+    topics_count = Topic.query.count()
     
     # Создаем объект stats для совместимости с шаблоном
     stats = {
@@ -49,25 +50,20 @@ def demo_data():
         'total_attempts': total_attempts,
         'students': students_count,
         'teachers': teachers_count,
-        'admins': admins_count
+        'admins': admins_count,
+        'total_topics': topics_count
     }
     
-    return render_template('admin/demo_data.html', stats=stats)
+    return render_template('admin/demo_data.html', stats=stats, active_tab='demo-data')
 
-@admin_bp.route('/users')
-@login_required
-@admin_required
-def users():
-    """Вкладка 2: Управление пользователями"""
-    users = User.query.order_by(User.role, User.username).all()
-    return render_template('admin/users.html', users=users)
+
 
 @admin_bp.route('/settings')
 @login_required
 @admin_required
 def settings():
     """Вкладка 3: Настройки системы"""
-    return render_template('admin/settings.html')
+    return render_template('admin/settings.html', active_tab='settings')
 
 @admin_bp.route('/analytics')
 @login_required
@@ -95,7 +91,8 @@ def analytics():
                          total_attempts=total_attempts,
                          success_rate=success_rate,
                          popular_tasks=popular_tasks,
-                         active_users=active_users)
+                         active_users=active_users,
+                         active_tab='analytics')
 
 @admin_bp.route('/tasks/import', methods=['POST'])
 @login_required
@@ -163,7 +160,7 @@ def tasks():
     
     # Получаем все задания с дополнительной информацией для админа
     tasks = MathTask.query.order_by(MathTask.level.desc(), MathTask.id.desc()).all()
-    return render_template('admin/tasks.html', tasks=tasks)
+    return render_template('admin/tasks.html', tasks=tasks, active_tab='tasks')
 
 def import_tasks_from_file(filepath, user_id):
     """Импорт заданий из JSON файла"""
@@ -557,6 +554,250 @@ def create_sample_tasks():
     
     return redirect(url_for('admin.demo_data'))
 
+    # ====================================================
+    # Управление пользователями
+    # ====================================================
+
+@admin_bp.route('/users')
+@login_required
+@admin_required
+def users():
+    """Управление пользователями"""
+    users = User.query.all()
+    return render_template('admin/users.html', users=users, active_tab='users')
+
+def import_users_from_file(filepath):
+    """Импорт пользователей из JSON файла (поддерживает 2 формата:
+       1) { "users": [ ... ] }
+       2) [ ... ]  # массив пользователей
+    """
+    success_count = 0
+    errors = []
+    
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        # Определяем, в каком формате пришли данные
+        if isinstance(data, dict) and 'users' in data and isinstance(data['users'], list):
+            users_list = data['users']
+        elif isinstance(data, list):
+            users_list = data
+        else:
+            raise ValueError("Неверный формат файла. Ожидается объект с полем 'users' ИЛИ массив пользователей.")
+            
+        for i, user_data in enumerate(users_list, 1):
+            try:
+                # Проверяем обязательные поля для пользователя
+                required_fields = ['username', 'email', 'role']
+                
+                missing_fields = [field for field in required_fields if field not in user_data or not user_data[field]]
+                if missing_fields:
+                    errors.append(f'Пользователь {i}: Отсутствуют обязательные поля: {", ".join(missing_fields)}')
+                    continue
+                
+                # Проверяем роль пользователя
+                valid_roles = ['student', 'teacher', 'admin']
+                if user_data['role'] not in valid_roles:
+                    errors.append(f'Пользователь {i}: Неверная роль "{user_data["role"]}". Допустимые роли: {", ".join(valid_roles)}')
+                    continue
+                
+                # Проверяем уникальность username и email
+                existing_user = User.query.filter(
+                    (User.username == user_data['username']) | (User.email == user_data['email'])
+                ).first()
+                
+                if existing_user:
+                    if existing_user.username == user_data['username']:
+                        errors.append(f'Пользователь {i}: Пользователь с username "{user_data["username"]}" уже существует')
+                    else:
+                        errors.append(f'Пользователь {i}: Пользователь с email "{user_data["email"]}" уже существует')
+                    continue
+                
+                # Создаем нового пользователя
+                from werkzeug.security import generate_password_hash
+                
+                # Используем пароль из файла или стандартный
+                password = user_data.get('password', '123456')
+                
+                user = User(
+                    username=user_data['username'],
+                    email=user_data['email'],
+                    password_hash=generate_password_hash(password),
+                    role=user_data['role'], 
+                    is_active=user_data.get('is_active', True),
+                    first_name=user_data['first_name'],
+                    last_name=user_data['last_name']
+                )
+                
+                # ==== временная диагностика ====                
+                current_app.logger.info("IMPORT sample user: %s", {
+                    'username': user.username,
+                    'email': user.email,
+                    'role': user.role,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name
+                })
+                # ===============================
+
+                db.session.add(user)
+                db.session.commit()
+                success_count += 1
+                
+            except (ValueError, TypeError) as e:
+                db.session.rollback()
+                errors.append(f'Пользователь {i}: Ошибка формата данных - {str(e)}')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                errors.append(f'Пользователь {i}: Ошибка базы данных - {str(e)}')
+            except Exception as e:
+                db.session.rollback()
+                errors.append(f'Пользователь {i}: Неизвестная ошибка - {str(e)}')
+    
+    except json.JSONDecodeError:
+        raise ValueError('Ошибка при чтении JSON файла')
+    except Exception as e:
+        raise Exception(f'Ошибка при обработке файла: {str(e)}')
+    
+    return success_count, errors
+    
+@admin_bp.route('/users/import', methods=['POST'])
+@login_required
+@admin_required
+def import_users():
+    # ==== временная диагностика ====
+    current_app.logger.info(
+        "IMPORT USERS: content_type=%s, files=%s, form=%s",
+        request.content_type, list(request.files.keys()), list(request.form.keys())
+    )
+    # ===============================
+    """API для импорта пользователей из JSON файла"""
+    file = request.files.get("file") or request.files.get("import_file")  # <-- ключ должен совпадать!
+    if not file or file.filename == "":
+        return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
+    
+    if not file.filename.endswith('.json'):
+        return jsonify({'success': False, 'message': 'Поддерживаются только файлы в формате JSON'}), 400
+    
+    try:
+        # Создаем папку для загрузок, если её нет
+        upload_folder = os.path.join(current_app.root_path, '..', 'uploads')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Генерируем уникальное имя файла
+        filename = f"{uuid.uuid4()}.json"
+        filepath = os.path.join(upload_folder, filename)
+        
+        # Сохраняем файл
+        file.save(filepath)
+        
+        # Импортируем пользователей
+        success_count, errors = import_users_from_file(filepath)
+        
+        # Удаляем временный файл
+        try:
+            os.remove(filepath)
+        except Exception as e:
+            current_app.logger.error(f'Error removing temp file {filepath}: {str(e)}')
+        
+        if success_count > 0 or not errors:
+            return jsonify({
+                'success': True,
+                'imported': success_count,
+                'errors': errors,
+                'message': f'Успешно импортировано {success_count} пользователей.' + (f' Ошибок: {len(errors)}' if errors else '')
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'imported': 0,
+                'errors': errors,
+                'message': 'Не удалось импортировать ни одного пользователя. Проверьте формат данных.'
+            }), 400
+            
+    except Exception as e:
+        current_app.logger.error(f'Error importing users: {str(e)}')
+        return jsonify({
+            'success': False,
+            'message': f'Ошибка при импорте пользователей: {str(e)}'
+        }), 500
+
+@admin_bp.route('/users/export', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def export_users():
+    """Экспорт пользователей в JSON формате"""
+    try:
+        if request.method == 'POST':
+            # Получаем список ID выбранных пользователей
+            selected_ids = request.json.get('selected_ids', [])
+            if selected_ids:
+                users = User.query.filter(User.id.in_(selected_ids)).all()
+            else:
+                users = User.query.all()
+        else:
+            # GET запрос - экспортируем всех пользователей
+            users = User.query.all()
+
+        # ==== временная диагностика ====
+        if users:
+            sample_user = users[0]
+            current_app.logger.info("EXPORT sample user: %s", {
+                'username': sample_user.username,
+                'email': sample_user.email,
+                'role': sample_user.role,
+                'first_name': sample_user.first_name,
+                'last_name': sample_user.last_name
+        })
+        else:
+            current_app.logger.info("EXPORT: no users found")
+        # ===============================
+        
+        # Формируем данные для экспорта
+        export_data = {
+            'users': [],
+            'export_info': {
+                'timestamp': datetime.now().isoformat(),
+                'total_users': len(users),
+                'exported_by': current_user.username
+            }
+        }
+        
+        for user in users:
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,
+                'created_at': user.created_at.isoformat() if user.created_at else None,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
+            export_data['users'].append(user_data)
+        
+        if request.method == 'POST':
+            return jsonify({
+                "users": export_data["users"],
+                "export_info": export_data["export_info"]
+            })
+        else:
+            # GET запрос - возвращаем файл для скачивания
+            from flask import make_response
+            response = make_response(json.dumps(export_data, ensure_ascii=False, indent=2))
+            response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            response.headers['Content-Disposition'] = f'attachment; filename=users_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+            return response
+            
+    except Exception as e:
+        current_app.logger.error(f'Error exporting users: {str(e)}')
+        if request.method == 'POST':
+            return jsonify({
+                'success': False,
+                'message': f'Ошибка при экспорте пользователей: {str(e)}'
+            }), 500
+        else:
+            flash(f'Ошибка при экспорте пользователей: {str(e)}', 'error')
+            return redirect(url_for('admin.users'))
+
 @admin_bp.route('/delete-user/<int:user_id>')
 @login_required
 @admin_required
@@ -614,9 +855,10 @@ def edit_user(user_id):
             db.session.rollback()
             flash(f'Ошибка при обновлении пользователя: {str(e)}', 'error')
     
-    # Здесь можно создать отдельный шаблон для редактирования
-    # Пока перенаправляем обратно
-    return redirect(url_for('admin.users'))
+    # Для GET запроса показываем форму редактирования
+    return render_template('admin/edit_user.html',
+                           user=user,
+                           active_tab='users')
 
 # =============================================================================
 # УПРАВЛЕНИЕ ТЕМАМИ
@@ -628,7 +870,7 @@ def edit_user(user_id):
 def topics():
     """Вкладка 6: Управление темами"""
     topics = Topic.query.order_by(Topic.name.asc()).all()
-    return render_template('admin/topics.html', topics=topics)
+    return render_template('admin/topics.html', topics=topics, active_tab='topics')
 
 @admin_bp.route('/topics/create', methods=['GET', 'POST'])
 @login_required
@@ -653,7 +895,7 @@ def create_topic():
                 errors.append('Тема с таким кодом уже существует')
             
             if errors:
-                return render_template('admin/create_topic.html', errors=errors)
+                return render_template('admin/create_topic.html', errors=errors, active_tab='topics')
             
             # Создаем новую тему
             topic = Topic(
@@ -687,7 +929,7 @@ def create_topic():
             db.session.rollback()
             flash(f'Ошибка при создании темы: {str(e)}', 'error')
     
-    return render_template('admin/create_topic.html')
+    return render_template('admin/create_topic.html', active_tab='topics')
 
 @admin_bp.route('/topics/<int:topic_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -715,7 +957,7 @@ def edit_topic(topic_id):
     for config in topic.level_configs:
         configs[config.level] = config
     
-    return render_template('admin/edit_topic.html', topic=topic, configs=configs)
+    return render_template('admin/edit_topic.html', topic=topic, configs=configs, active_tab='topics')
 
 @admin_bp.route('/topics/<int:topic_id>/delete', methods=['POST'])
 @login_required
