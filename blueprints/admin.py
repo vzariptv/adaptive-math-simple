@@ -565,141 +565,98 @@ def users():
     """Управление пользователями"""
     users = User.query.all()
     return render_template('admin/users.html', users=users, active_tab='users')
-
-def import_users_from_file(filepath):
-    """Импорт пользователей из JSON файла (поддерживает 2 формата:
-       1) { "users": [ ... ] }
-       2) [ ... ]  # массив пользователей
-    """
-    success_count = 0
-    errors = []
-    
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            
-        # Определяем, в каком формате пришли данные
-        if isinstance(data, dict) and 'users' in data and isinstance(data['users'], list):
-            users_list = data['users']
-        elif isinstance(data, list):
-            users_list = data
-        else:
-            raise ValueError("Неверный формат файла. Ожидается объект с полем 'users' ИЛИ массив пользователей.")
-            
-        for i, user_data in enumerate(users_list, 1):
-            try:
-                # Проверяем обязательные поля для пользователя
-                required_fields = ['username', 'email', 'role']
-                
-                missing_fields = [field for field in required_fields if field not in user_data or not user_data[field]]
-                if missing_fields:
-                    errors.append(f'Пользователь {i}: Отсутствуют обязательные поля: {", ".join(missing_fields)}')
-                    continue
-                
-                # Проверяем роль пользователя
-                valid_roles = ['student', 'teacher', 'admin']
-                if user_data['role'] not in valid_roles:
-                    errors.append(f'Пользователь {i}: Неверная роль "{user_data["role"]}". Допустимые роли: {", ".join(valid_roles)}')
-                    continue
-                
-                # Проверяем уникальность username и email
-                existing_user = User.query.filter(
-                    (User.username == user_data['username']) | (User.email == user_data['email'])
-                ).first()
-                
-                if existing_user:
-                    if existing_user.username == user_data['username']:
-                        errors.append(f'Пользователь {i}: Пользователь с username "{user_data["username"]}" уже существует')
-                    else:
-                        errors.append(f'Пользователь {i}: Пользователь с email "{user_data["email"]}" уже существует')
-                    continue
-                
-                # Создаем нового пользователя
-                from werkzeug.security import generate_password_hash
-                
-                # Используем пароль из файла или стандартный
-                password = user_data.get('password', '123456')
-                
-                user = User(
-                    username=user_data['username'],
-                    email=user_data['email'],
-                    password_hash=generate_password_hash(password),
-                    role=user_data['role'], 
-                    is_active=user_data.get('is_active', True),
-                    first_name=user_data['first_name'],
-                    last_name=user_data['last_name']
-                )
-                
-                # ==== временная диагностика ====                
-                current_app.logger.info("IMPORT sample user: %s", {
-                    'username': user.username,
-                    'email': user.email,
-                    'role': user.role,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name
-                })
-                # ===============================
-
-                db.session.add(user)
-                db.session.commit()
-                success_count += 1
-                
-            except (ValueError, TypeError) as e:
-                db.session.rollback()
-                errors.append(f'Пользователь {i}: Ошибка формата данных - {str(e)}')
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                errors.append(f'Пользователь {i}: Ошибка базы данных - {str(e)}')
-            except Exception as e:
-                db.session.rollback()
-                errors.append(f'Пользователь {i}: Неизвестная ошибка - {str(e)}')
-    
-    except json.JSONDecodeError:
-        raise ValueError('Ошибка при чтении JSON файла')
-    except Exception as e:
-        raise Exception(f'Ошибка при обработке файла: {str(e)}')
-    
-    return success_count, errors
     
 @admin_bp.route('/users/import', methods=['POST'])
 @login_required
 @admin_required
 def import_users():
-    # ==== временная диагностика ====
-    current_app.logger.info(
-        "IMPORT USERS: content_type=%s, files=%s, form=%s",
-        request.content_type, list(request.files.keys()), list(request.form.keys())
-    )
-    # ===============================
-    """API для импорта пользователей из JSON файла"""
-    file = request.files.get("file") or request.files.get("import_file")  # <-- ключ должен совпадать!
-    if not file or file.filename == "":
-        return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
-    
-    if not file.filename.endswith('.json'):
-        return jsonify({'success': False, 'message': 'Поддерживаются только файлы в формате JSON'}), 400
-    
+    """Импорт пользователей из JSON файла.
+       Поддерживает форматы:
+       1) { "users": [ {...}, ... ] }
+       2) [ {...}, ... ]
+    """
     try:
-        # Создаем папку для загрузок, если её нет
-        upload_folder = os.path.join(current_app.root_path, '..', 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
-        
-        # Генерируем уникальное имя файла
-        filename = f"{uuid.uuid4()}.json"
-        filepath = os.path.join(upload_folder, filename)
-        
-        # Сохраняем файл
-        file.save(filepath)
-        
-        # Импортируем пользователей
-        success_count, errors = import_users_from_file(filepath)
-        
-        # Удаляем временный файл
+        # файл может прийти под разными ключами
+        file = request.files.get("file") or request.files.get("import_file")
+        if not file or file.filename == "":
+            return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
+
+        if not file.filename.endswith('.json'):
+            return jsonify({'success': False, 'message': 'Поддерживаются только файлы в формате JSON'}), 400
+
+        # читаем JSON (без сохранения на диск)
         try:
-            os.remove(filepath)
-        except Exception as e:
-            current_app.logger.error(f'Error removing temp file {filepath}: {str(e)}')
-        
+            data = json.load(file)
+        except json.JSONDecodeError:
+            return jsonify({'success': False, 'message': 'Файл не является валидным JSON'}), 400
+
+        # определяем список пользователей
+        if isinstance(data, dict) and isinstance(data.get('users'), list):
+            users_list = data['users']
+        elif isinstance(data, list):
+            users_list = data
+        else:
+            return jsonify({'success': False, 'message': "Неверный формат файла. Ожидается объект с полем 'users' ИЛИ массив пользователей"}), 400
+
+        success_count = 0
+        errors = []
+        valid_roles = {'student', 'teacher', 'admin'}
+
+        from werkzeug.security import generate_password_hash
+
+        for i, user_data in enumerate(users_list, 1):
+            try:
+                # обязательные поля
+                required = ['username', 'email', 'role']
+                missing = [k for k in required if not user_data.get(k)]
+                if missing:
+                    errors.append(f'Пользователь {i}: отсутствуют обязательные поля: {", ".join(missing)}')
+                    continue
+
+                # роль
+                role = user_data.get('role')
+                if role not in valid_roles:
+                    errors.append(f'Пользователь {i}: неверная роль "{role}". Допустимые: {", ".join(sorted(valid_roles))}')
+                    continue
+
+                # уникальность
+                existing = User.query.filter(
+                    (User.username == user_data['username']) | (User.email == user_data['email'])
+                ).first()
+                if existing:
+                    if existing.username == user_data['username']:
+                        errors.append(f'Пользователь {i}: username "{user_data["username"]}" уже существует')
+                    else:
+                        errors.append(f'Пользователь {i}: email "{user_data["email"]}" уже существует')
+                    continue
+
+                # создаём
+                password = user_data.get('password', '123456')
+                user = User(
+                    username=user_data['username'],
+                    email=user_data['email'],
+                    password_hash=generate_password_hash(password),
+                    role=role,
+                    is_active=user_data.get('is_active', True),
+                    first_name=user_data.get('first_name', ''),   # <-- ИМПОРТИРУЕМ
+                    last_name=user_data.get('last_name', '')      # <-- ИМПОРТИРУЕМ
+                )
+
+                db.session.add(user)
+                db.session.commit()   # по одному, как у тебя было (чтобы частичный импорт проходил)
+                success_count += 1
+
+            except (ValueError, TypeError) as e:
+                db.session.rollback()
+                errors.append(f'Пользователь {i}: ошибка формата данных — {str(e)}')
+            except SQLAlchemyError as e:
+                db.session.rollback()
+                errors.append(f'Пользователь {i}: ошибка базы данных — {str(e)}')
+            except Exception as e:
+                db.session.rollback()
+                errors.append(f'Пользователь {i}: неизвестная ошибка — {str(e)}')
+
+        # ответ
         if success_count > 0 or not errors:
             return jsonify({
                 'success': True,
@@ -714,13 +671,11 @@ def import_users():
                 'errors': errors,
                 'message': 'Не удалось импортировать ни одного пользователя. Проверьте формат данных.'
             }), 400
-            
+
     except Exception as e:
         current_app.logger.error(f'Error importing users: {str(e)}')
-        return jsonify({
-            'success': False,
-            'message': f'Ошибка при импорте пользователей: {str(e)}'
-        }), 500
+        return jsonify({'success': False, 'message': f'Ошибка при импорте пользователей: {str(e)}'}), 500
+
 
 @admin_bp.route('/users/export', methods=['GET', 'POST'])
 @login_required
@@ -798,7 +753,7 @@ def export_users():
             flash(f'Ошибка при экспорте пользователей: {str(e)}', 'error')
             return redirect(url_for('admin.users'))
 
-@admin_bp.route('/delete-user/<int:user_id>')
+@admin_bp.route('/delete-user/<int:user_id>', methods=['POST'])
 @login_required
 @admin_required
 def delete_user(user_id):

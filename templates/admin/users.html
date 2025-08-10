@@ -105,10 +105,14 @@
                         <div class="btn-group btn-group-sm">
                             <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-outline-primary" title="Редактировать"><i class="fas fa-edit"></i></a>
                             {% if user.role != 'admin' %}
-                                <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" 
-                                   class="btn btn-outline-danger" title="Удалить"
-                                   onclick="return confirm('Удалить пользователя {{ user.username }}?')">
-                                   <i class="fas fa-trash"></i>
+                                <a href="#" 
+                                    class="btn btn-outline-danger" 
+                                    title="Удалить"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteConfirmModal"
+                                    data-user-id="{{ user.id }}"
+                                    data-username="{{ user.username }}">
+                                    <i class="fas fa-trash"></i>
                                 </a>
                             {% endif %}
                         </div>
@@ -172,10 +176,32 @@
     </div>
   </div>
 
-    <!-- Форма для удаления пользователя -->
-    <form id="deleteForm" method="POST" style="display: none;">
-        {{ csrf_field() }}
-    </form>
+    <!-- Модальное окно удаления пользователя -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header bg-danger">
+              <h5 class="modal-title text-light" id="deleteConfirmLabel">Удаление пользователя</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">
+                Вы действительно хотите удалить пользователя <strong id="deleteUserName"></strong>?
+              </p>
+              <p class="text-danger small mt-2 mb-0">
+                Это действие <strong>нельзя отменить</strong>.
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+              <form id="deleteUserForm" method="POST">
+                {{ csrf_field() }}
+                <button type="submit" class="btn btn-danger">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
     <script>
@@ -275,12 +301,24 @@
         }
         
         // Удаление пользователя
-        function deleteUser(userId, userName) {
-            if (confirm(`Вы уверены, что хотите удалить пользователя "${userName}"?\n\nЭто действие нельзя отменить.`)) {
-                const form = document.getElementById('deleteForm');
-                form.action = `{{ url_for('admin.delete_user', user_id=0) }}`.replace('0', userId);
-                form.submit();
-            }
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteModal = document.getElementById('deleteConfirmModal');
+            const deleteUserName = document.getElementById('deleteUserName');
+            const deleteForm = document.getElementById('deleteUserForm');
+
+            // Шаблон URL, но без подстановки ID — в Flask передаём 0
+            const deleteUrlTemplate = "{{ url_for('admin.delete_user', user_id=0) }}";
+
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const userId = button.getAttribute('data-user-id');
+                const username = button.getAttribute('data-username');
+
+                deleteUserName.textContent = username;
+
+                // Меняем только последний сегмент URL, заменяя "0" на реальный ID
+                deleteForm.action = deleteUrlTemplate.replace(/0$/, userId);
+            });
+        });
         </script>
 {% endblock %}
