@@ -3,7 +3,7 @@
 {% block title %}Демо-данные - Панель администратора{% endblock %}
 
 {% block admin_content %}
-<h4 class="mb-3">Статистика</h4>
+<h4 class="text-info-emphasis mb-3"><i class="fas fa-chart-line"></i>Статистика</h4>
 
 
 <div class="row g-2 mb-4">
@@ -32,7 +32,7 @@
 </div>
   
 
-<h4>🛠️ Управление пользователями</h4>
+<h4 class="text-info-emphasis"><i class="fas fa-user"></i> Управление пользователями</h4>
 
 <div class="d-flex flex-wrap gap-2 mb-3">
     <a href="{{ url_for('admin.create_demo_users') }}" class="btn btn-primary btn-sm">
@@ -44,7 +44,7 @@
     student/123456, teacher/123456, CalmAndManage/KeepMathAlive
 </div>
 
-<h4>🗑️ Очистка данных</h4>
+<h4 class="text-info-emphasis"><i class="fas fa-trash"></i> Очистка данных</h4>
 
 <div class="d-flex flex-wrap gap-2 mb-3">
     <button class="btn btn-outline-danger btn-sm" onclick="clearDatabase()">

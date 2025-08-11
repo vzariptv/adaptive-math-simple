@@ -1,3 +1,5 @@
+{% from "shared/modals.html" import confirm_modal, upload_modal %}
+{% from "shared/form_macros.html" import csrf_field %}
 {% extends "admin/base_admin.html" %}
 
 {% block title %}Управление пользователями{% endblock %}
@@ -6,10 +8,10 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-info-emphasis"><i class="fa fa-users"></i> Управление пользователями</h2>
         <div class="btn-group" role="group">
-            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+            <a href="{{ url_for('admin.create_user') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Добавить пользователя
             </a>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importModal">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importUsersModal">
                 <i class="fas fa-upload"></i> Импорт
             </button>
             <a href="{{ url_for('admin.export_users') }}" class="btn btn-info">
@@ -17,6 +19,8 @@
             </a>
         </div>
     </div>
+
+    <!-- Статистика -->
     
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
@@ -63,8 +67,7 @@
         <a href="{{ url_for('auth.register') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Добавить пользователя</a>
     </div>
 
-    <div class="table-responsive">
-        <table class="data-table table-hover align-middle">
+    <table class="table table-hover">
             <thead class="table-light">
                 <tr>
                     <th><input type="checkbox" id="selectAll"></th>
@@ -108,8 +111,8 @@
                                 <a href="#" 
                                     class="btn btn-outline-danger" 
                                     title="Удалить"
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#deleteConfirmModal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteUserModal"
                                     data-user-id="{{ user.id }}"
                                     data-username="{{ user.username }}">
                                     <i class="fas fa-trash"></i>
@@ -121,13 +124,13 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    <div class="mt-3">
-        <button type="button" class="btn btn-info" onclick="exportSelected()" id="exportSelectedBtn" disabled>
-            <i class="fas fa-download"></i> Экспорт выбранных
-        </button>
-        <span class="text-muted ml-2">Всего: <span id="selectedCount">0</span></span>   
-    </div>
+
+        <div class="mt-3">
+            <button type="button" class="btn btn-info" onclick="exportSelected()" id="exportSelectedBtn" disabled>
+                <i class="fas fa-download"></i> Экспорт выбранных
+            </button>
+            <span class="text-muted ml-2">Всего: <span id="selectedCount">0</span></span>   
+        </div>
 
     {% if not users %}
     <div class="empty-state">
@@ -139,6 +142,7 @@
     {% endif %}
 
     <!-- Модальное окно импорта (Bootstrap) -->
+    <!-- TODO: Удалить
     <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -175,8 +179,9 @@
       </div>
     </div>
   </div>
-
+-->
     <!-- Модальное окно удаления пользователя -->
+    <!-- TODO: Удалить 
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -202,6 +207,49 @@
           </div>
         </div>
       </div>
+    -->
+
+    {# URL-шаблон с нулём для JS-подстановки #}
+    {% set delete_user_url_template = url_for('admin.delete_user', user_id=0) %}
+    {% set users_format_note %}
+        <div class="alert alert-info small mb-3">
+        <strong>Формат:</strong>
+        <pre class="mb-0">[
+        {
+            "username": "student1",    -- имя пользователя, обязательно
+            "email": "student1@example.com", -- email, обязательно
+            "password": "password123", -- пароль, необязательно
+            "role": "student",         -- admin | teacher | student
+            "first_name": "Иван",
+            "last_name": "Иванов"
+        }
+        ]</pre>
+        </div>
+    {% endset %}
+
+    {% call confirm_modal(
+        id='deleteUserModal',
+        title='Удаление пользователя',
+        body='Вы действительно хотите удалить пользователя <strong id="deleteUserName"></strong>?',
+        action=delete_user_url_template,
+        confirm_text='Удалить навсегда',
+        confirm_class='btn-danger',
+        alert_note='Это действие нельзя отменить.'
+    ) %}
+    {{ csrf_field() }}
+    {% endcall %}
+
+    {{ upload_modal(
+        id='importUsersModal',
+        title='Импорт пользователей',
+        action=url_for('admin.import_users'),
+        input_name='file',
+        accept='.json',
+        submit_text='Импортировать',
+        method='post',
+        csrf_html=csrf_field(),
+        header_note=users_format_note   
+    ) }}
 
 
     <script>
@@ -223,6 +271,30 @@
             document.getElementById('selectedCount').textContent = selected.length;
         }
         
+
+        <!-- Управление модальным окном удаления -->
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalEl = document.getElementById('deleteUserModal');
+            if (!modalEl) return;
+
+            modalEl.addEventListener('show.bs.modal', (event) => {
+                const btn = event.relatedTarget;
+            const userId = btn.getAttribute('data-user-id');
+            const username = btn.getAttribute('data-username');
+
+            // заменить .../delete/0 на .../delete/<id>
+            const form = modalEl.querySelector('form');
+            form.action = form.action.replace(/0$/, userId);
+
+            // текст модалки
+            const body = modalEl.querySelector('.modal-body');
+            body.innerHTML = `<p class="mb-0">Удалить пользователя <strong>${username}</strong>?</p>
+            <p class="text-danger small mt-2 mb-0">
+                Это действие нельзя отменить.
+            </p>`;
+            });
+        });
+
 
         // Импорт пользователей
         function importUsers() {

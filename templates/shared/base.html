@@ -6,17 +6,102 @@
     <!-- CSRF Token for all forms -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}Система адаптивного обучения математике{% endblock %}</title>
+     <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-spacelab.css') }}">
+     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Иконки -->
     <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-      integrity="sha512-dIcpCwHw..."
-      crossorigin="anonymous" referrerpolicy="no-referrer">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <div class="container">
+<body class="bg-light">
+    {% from "shared/form_macros.html" import csrf_field %}
+
+    <!-- Навбар (общий) -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary rounded-3 shadow-sm border bg-white">
+        <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('main.dashboard') }}"><i class="fas fa-chalkboard-teacher"></i> Adaptive Math</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="mainNav" class="collapse navbar-collapse">
+            {% if current_user.is_authenticated %}
+            <ul class="navbar-nav me-auto small">
+                {% block nav_items %}{% endblock %}
+            </ul>
+            {% endif %}
+            <ul class="navbar-nav ms-auto">
+                <div class="vr me-2"></div>
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">
+                            {% if current_user.role == 'admin' %}<i class="fas fa-cog"></i>
+                            {% elif current_user.role == 'teacher' %}<i class="fas fa-chalkboard-teacher"></i>
+                            {% elif current_user.role == 'student' %}<i class="fas fa-user-graduate"></i>
+                            {% else %}<i class="fas fa-user"></i>
+                            {% endif %}
+                            {{ current_user.get_full_name() }}
+                            <br><small class="text-info">Вход: {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}</small>
+                        </span>
+                    </li>
+                    <div class="vr me-2 ms-2"></div>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Войти</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+    </nav>
+
+    <!-- Флеш-сообщения -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3" id="flash-messages">
+            <div class="position-relative" style="z-index: 1020;">
+                {% for category, message in messages %}
+                {% set bs = {'error':'danger','warning':'warning','success':'success','info':'info'}.get(category, 'secondary') %}
+                <div class="alert alert-{{ bs }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                </div>
+                {% endfor %}
+            </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+     <!-- Контент -->
+    <main class="container my-4">
         {% block content %}{% endblock %}
-    </div>
-    {% block extra_js %}{% endblock %}
+    </main>
+    <footer class="py-4 border-top">
+        <div class="container text-center text-muted small">
+          © {{ 2025 }} Adaptive Math
+        </div>
+      </footer>
+    
+      <!-- Bootstrap JS -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Очистка блока флеш-сообщений после удаления последнего сообщения -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const flashContainer = document.getElementById('flash-messages');
+        
+            if (flashContainer) {
+                flashContainer.querySelectorAll('.alert').forEach(alertEl => {
+                    alertEl.addEventListener('closed.bs.alert', function () {
+                        if (flashContainer.querySelectorAll('.alert').length === 0) {
+                            flashContainer.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+        </script>
+        
+      {% block extra_js %}{% endblock %}
 </body>
 </html>

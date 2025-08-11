@@ -20,85 +20,6 @@ body {
     box-sizing: border-box;
 }
 
-h1 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.2em;
-    font-weight: 300;
-}
-/*
-.form-group {
-    margin-bottom: 20px;
-}
-
-input[type="text"], input[type="email"], input[type="password"], select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e1e8ed;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-    box-sizing: border-box;
-}
-
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white;
-    padding: 12px 30px;
-    text-decoration: none;
-    border-radius: 8px;
-    margin: 10px 5px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    text-align: center;
-    min-width: 120px;
-}
-
-.btn:hover {
-    background: linear-gradient(135deg, #2980b9, #1f5f8b);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #27ae60, #229954);
-}
-
-.btn-success:hover {
-    background: linear-gradient(135deg, #229954, #1e8449);
-    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
-}
-
-.btn-secondary {
-    background: linear-gradient(135deg, #6c757d, #5a6268);
-}
-
-.btn-secondary:hover {
-    background: linear-gradient(135deg, #5a6268, #495057);
-    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #2980b9, #1f5f8b);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-}
-*/
-
 .status {
     background: linear-gradient(135deg, #d4edda, #c3e6cb);
     color: #155724;
@@ -108,44 +29,6 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
     text-align: center;
     font-weight: 500;
     border-left: 4px solid #28a745;
-}
-
-.error {
-    background: linear-gradient(135deg, #f8d7da, #f1aeb5);
-    color: #721c24;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    text-align: center;
-    font-weight: 500;
-    border-left: 4px solid #dc3545;
-}
-
-.nav-links {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #e1e8ed;
-}
-
-.nav-links a {
-    color: #3498db;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: 500;
-}
-
-.nav-links a:hover {
-    color: #2980b9;
-    text-decoration: underline;
-}
-
-.form-title {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #2c3e50;
-    font-size: 1.8em;
-    font-weight: 400;
 }
 
 .welcome-text {
@@ -197,32 +80,6 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.btn-small {
-    padding: 8px 15px;
-    font-size: 14px;
-    margin: 2px;
-    min-width: auto;
-}
-
-.btn-edit {
-    background: linear-gradient(135deg, #ffc107, #e0a800);
-    color: #212529;
-}
-
-.btn-edit:hover {
-    background: linear-gradient(135deg, #e0a800, #d39e00);
-    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
-}
-
-.btn-delete {
-    background: linear-gradient(135deg, #dc3545, #c82333);
-}
-
-.btn-delete:hover {
-    background: linear-gradient(135deg, #c82333, #bd2130);
-    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
-}
-
 .role-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -246,57 +103,6 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 .role-student {
     background-color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
     color: white;
-}
-
-/* Таблицы */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #dee2e6;
-}
-
-th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #495057;
-}
-
-tr:hover {
-    background: #f8f9fa;
-}
-
-/* Сообщения */
-.success-message {
-    background: linear-gradient(135deg, #d4edda, #c3e6cb);
-    color: #155724;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    border-left: 4px solid #28a745;
-}
-
-.warning-message {
-    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-    color: #856404;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    border-left: 4px solid #ffc107;
-}
-
-.info-message {
-    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
-    color: #0c5460;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    border-left: 4px solid #17a2b8;
 }
 
 /* Адаптивность */
@@ -579,30 +385,8 @@ tr:hover {
     .var-input {
         width: 100%;
     }
+
+    .vr { width:1px; height:100%; background-color: var(--bs-border-color); display:inline-block; }
+
 }
 
-/* === Добавляем textarea в общий стиль полей ввода === */
-/*
-input[type="text"], input[type="email"], input[type="password"], select, textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e1e8ed;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-    box-sizing: border-box;
-    font-family: inherit;
-}
-*/
-/* === Добавляем эффект фокуса для textarea === */
-/*
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-    */

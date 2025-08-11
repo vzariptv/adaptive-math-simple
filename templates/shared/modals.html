@@ -1,0 +1,64 @@
+{# Универсальная модалка подтверждения #}
+{% macro confirm_modal(id, title, body, action, method='post', confirm_text='Удалить', confirm_class='btn-danger', alert_note='') -%}
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" action="{{ action }}" method="{{ method }}">
+      {# слот для скрытых полей, CSRF и т.д. #}
+      {{ caller() if caller is defined }}
+
+      <div class="modal-header bg-danger text-light">
+        <h5 class="modal-title text-light">{{ title }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-0">{{ body|safe }}</p>
+        <p class="text-danger small mt-2 mb-0">
+            {{ alert_note|safe }}
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn {{ confirm_class }}">{{ confirm_text }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro upload_modal(
+    id, title, action,
+    input_name='file', accept='.json', submit_text='Импортировать', method='post',
+    csrf_html='', header_note='', after_input=''
+  ) -%}
+  <div class="modal fade" id="{{ id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <form class="modal-content" action="{{ action }}" method="{{ method }}" enctype="multipart/form-data">
+        {{ csrf_html|safe }}
+        <div class="modal-header">
+          <h5 class="modal-title">{{ title }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+  
+        <div class="modal-body">
+          {# описание ПОД заголовком #}
+          {% if header_note %}{{ header_note|safe }}{% endif %}
+  
+          <div class="mb-3">
+            <label class="form-label" for="{{ id }}-input">Выберите файл</label>
+            <input id="{{ id }}-input" name="{{ input_name }}" type="file" class="form-control" accept="{{ accept }}" required>
+          </div>
+  
+          {% if after_input %}{{ after_input|safe }}{% endif %}
+        </div>
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button type="submit" class="btn btn-success">{{ submit_text }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {%- endmacro %}

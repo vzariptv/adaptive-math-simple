@@ -7,6 +7,7 @@ import json
 import uuid
 from werkzeug.utils import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
+from .forms import CreateUserForm
 
 # Создаем blueprint для административных функций
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -565,7 +566,33 @@ def users():
     """Управление пользователями"""
     users = User.query.all()
     return render_template('admin/users.html', users=users, active_tab='users')
-    
+
+
+@admin_bp.route('/users/create', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def create_user():
+    form = CreateUserForm()
+    if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            flash('Пользователь с таким email уже существует', 'error')
+            return redirect(url_for('admin.create_user'))
+
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=generate_password_hash(form.password.data),
+            role=form.role.data
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Пользователь успешно создан', 'success')
+        return redirect(url_for('admin.users'))
+
+    return render_template('admin/create_user.html', form=form)
+
+
+
 @admin_bp.route('/users/import', methods=['POST'])
 @login_required
 @admin_required
@@ -575,33 +602,55 @@ def import_users():
        1) { "users": [ {...}, ... ] }
        2) [ {...}, ... ]
     """
+    current_app.logger.info(
+        "IMPORT USERS: content_type=%s, files=%s, form=%s",
+        request.content_type, list(request.files.keys()), list(request.form.keys())
+    )
+
+    # Определяем "хотим JSON?" по приоритету типов
+    accepts = request.accept_mimetypes
+    wants_json = accepts['application/json'] >= accepts['text/html']
+
     try:
-        # файл может прийти под разными ключами
         file = request.files.get("file") or request.files.get("import_file")
         if not file or file.filename == "":
-            return jsonify({'success': False, 'message': 'Файл не выбран'}), 400
+            msg = 'Файл не выбран'
+            if wants_json:
+                return jsonify({'success': False, 'message': msg}), 400
+            flash(msg, 'error')
+            return redirect(url_for('admin.users'))
 
         if not file.filename.endswith('.json'):
-            return jsonify({'success': False, 'message': 'Поддерживаются только файлы в формате JSON'}), 400
+            msg = 'Поддерживаются только JSON файлы'
+            if wants_json:
+                return jsonify({'success': False, 'message': msg}), 400
+            flash(msg, 'error')
+            return redirect(url_for('admin.users'))
 
-        # читаем JSON (без сохранения на диск)
+        # Читаем JSON напрямую (без временного файла)
         try:
             data = json.load(file)
         except json.JSONDecodeError:
-            return jsonify({'success': False, 'message': 'Файл не является валидным JSON'}), 400
+            msg = 'Файл не является валидным JSON'
+            if wants_json:
+                return jsonify({'success': False, 'message': msg}), 400
+            flash(msg, 'error')
+            return redirect(url_for('admin.users'))
 
-        # определяем список пользователей
+        # Определяем список
         if isinstance(data, dict) and isinstance(data.get('users'), list):
             users_list = data['users']
         elif isinstance(data, list):
             users_list = data
         else:
-            return jsonify({'success': False, 'message': "Неверный формат файла. Ожидается объект с полем 'users' ИЛИ массив пользователей"}), 400
+            msg = "Неверный формат файла. Ожидается объект с полем 'users' ИЛИ массив пользователей"
+            if wants_json:
+                return jsonify({'success': False, 'message': msg}), 400
+            flash(msg, 'error')
+            return redirect(url_for('admin.users'))
 
-        success_count = 0
-        errors = []
+        success_count, errors = 0, []
         valid_roles = {'student', 'teacher', 'admin'}
-
         from werkzeug.security import generate_password_hash
 
         for i, user_data in enumerate(users_list, 1):
@@ -613,7 +662,6 @@ def import_users():
                     errors.append(f'Пользователь {i}: отсутствуют обязательные поля: {", ".join(missing)}')
                     continue
 
-                # роль
                 role = user_data.get('role')
                 if role not in valid_roles:
                     errors.append(f'Пользователь {i}: неверная роль "{role}". Допустимые: {", ".join(sorted(valid_roles))}')
@@ -638,12 +686,11 @@ def import_users():
                     password_hash=generate_password_hash(password),
                     role=role,
                     is_active=user_data.get('is_active', True),
-                    first_name=user_data.get('first_name', ''),   # <-- ИМПОРТИРУЕМ
-                    last_name=user_data.get('last_name', '')      # <-- ИМПОРТИРУЕМ
+                    first_name=user_data.get('first_name', ''),  # импортируем имя
+                    last_name=user_data.get('last_name', '')     # импортируем фамилию
                 )
-
                 db.session.add(user)
-                db.session.commit()   # по одному, как у тебя было (чтобы частичный импорт проходил)
+                db.session.commit()
                 success_count += 1
 
             except (ValueError, TypeError) as e:
@@ -656,25 +703,32 @@ def import_users():
                 db.session.rollback()
                 errors.append(f'Пользователь {i}: неизвестная ошибка — {str(e)}')
 
-        # ответ
-        if success_count > 0 or not errors:
+        # Возврат результата — одна из двух веток ГАРАНТИРОВАНО
+        ok = (success_count > 0 or not errors)
+        if wants_json:
             return jsonify({
-                'success': True,
+                'success': ok,
                 'imported': success_count,
                 'errors': errors,
-                'message': f'Успешно импортировано {success_count} пользователей.' + (f' Ошибок: {len(errors)}' if errors else '')
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'imported': 0,
-                'errors': errors,
-                'message': 'Не удалось импортировать ни одного пользователя. Проверьте формат данных.'
-            }), 400
+                'message': f'Успешно импортировано {success_count} пользователей.' if ok
+                           else 'Не удалось импортировать ни одного пользователя. Проверьте формат данных.'
+            }), (200 if ok else 400)
+
+        # HTML: флеши + редирект
+        if success_count > 0:
+            flash(f'Успешно импортировано {success_count} пользовател(я/ей).', 'success')
+        if errors:
+            preview = ' | '.join(errors[:5])
+            more = f' ... и ещё {len(errors)-5}.' if len(errors) > 5 else ''
+            flash(f'Ошибки импорта: {preview}{more}', 'warning')
+        return redirect(url_for('admin.users'))
 
     except Exception as e:
         current_app.logger.error(f'Error importing users: {str(e)}')
-        return jsonify({'success': False, 'message': f'Ошибка при импорте пользователей: {str(e)}'}), 500
+        if wants_json:
+            return jsonify({'success': False, 'message': f'Ошибка при импорте пользователей: {str(e)}'}), 500
+        flash(f'Ошибка при импорте пользователей: {str(e)}', 'error')
+        return redirect(url_for('admin.users'))
 
 
 @admin_bp.route('/users/export', methods=['GET', 'POST'])
@@ -867,8 +921,6 @@ def create_topic():
                 config = TopicLevelConfig(
                     topic_id=topic.id,
                     level=level,
-                    #task_count_threshold=5 if level == 'low' else (7 if level == 'medium' else 10),
-                    #reference_time=300 if level == 'low' else (240 if level == 'medium' else 180),
                     task_count_threshold=10,
                     reference_time=900,  # 15 минут
                     penalty_weights=[0.7, 0.4]

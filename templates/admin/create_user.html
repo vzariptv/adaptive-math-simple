@@ -1,0 +1,40 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<h2>Создать пользователя</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}  {# CSRF и скрытые поля #}
+
+    <div class="mb-3">
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control") }}
+        {% for error in form.username.errors %}
+            <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+        {% for error in form.email.errors %}
+            <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        {% for error in form.password.errors %}
+            <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        {{ form.role.label(class="form-label") }}
+        {{ form.role(class="form-select") }}
+    </div>
+
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}
