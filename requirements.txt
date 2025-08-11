@@ -1,8 +1,23 @@
-Flask==2.2.5
-Flask-SQLAlchemy==3.0.5
-Flask-Login==0.6.3
-Flask-WTF==1.0.1
-Werkzeug==2.2.3
 MarkupSafe==2.1.3
-gunicorn==21.2.0
 psycopg2-binary==2.9.7
+
+# --- Flask и основные расширения ---
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.1
+Flask-Login==0.6.3
+Flask-Migrate==4.0.5
+Flask-Bcrypt==1.0.1
+
+# --- Валидация email ---
+email_validator==2.2.0
+
+# --- Работа с переменными окружения ---
+python-dotenv==1.0.1
+
+# --- Дополнительно ---
+Werkzeug==3.0.3
+WTForms==3.1.2
+
+# --- Для деплоя (если на Render или Heroku) ---
+gunicorn==21.2.0

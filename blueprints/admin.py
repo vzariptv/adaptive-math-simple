@@ -7,7 +7,7 @@ import json
 import uuid
 from werkzeug.utils import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
-from .forms import CreateUserForm
+from forms import CreateUserForm
 
 # Создаем blueprint для административных функций
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
