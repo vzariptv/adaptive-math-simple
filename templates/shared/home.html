@@ -1,23 +1,40 @@
 {% extends "shared/base.html" %}
 
-{% block title %}Главная - Система адаптивного обучения математике{% endblock %}
+{% block title %}Главная — Система адаптивного обучения математике{% endblock %}
 
 {% block content %}
-    <h1>🧮 Система адаптивного обучения математике</h1>
-    
-    {% if messages %}
-        {% for message in messages %}
-            <div class="status">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-    
-    <p class="welcome-text">
-        Добро пожаловать в интеллектуальную систему изучения математики! 
-        Наша платформа адаптируется под ваш уровень знаний и помогает эффективно изучать математические концепции.
-    </p>
-    
-    <div class="nav-links">
-        <a href="{{ url_for('auth.login') }}">🔐 Войти в систему</a>
-        <a href="{{ url_for('auth.register') }}">📝 Зарегистрироваться</a>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">
+            🧮 Система адаптивного обучения математике
+        </h1>
     </div>
+
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="text-center mb-5">
+        <p class="lead">
+            Добро пожаловать в интеллектуальную систему изучения математики! 
+            Наша платформа адаптируется под ваш уровень знаний и помогает эффективно осваивать математические концепции.
+        </p>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-sign-in-alt"></i> Войти в систему
+        </a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-user-plus"></i> Зарегистрироваться
+        </a>
+    </div>
+</div>
 {% endblock %}

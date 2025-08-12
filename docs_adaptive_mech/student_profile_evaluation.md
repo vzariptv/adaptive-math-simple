@@ -289,7 +289,7 @@ class MathTask(db.Model):
 Изменения:
 
 - `topic` теперь отдельная сущность (`topic_id` → `Topic.id`)
-- `difficulty_level` заменен на `level` (строковое значение, согласованное с `TopicLevelConfig`)
+- `level` заменен на `level` (строковое значение, согласованное с `TopicLevelConfig`)
 
 ---
 

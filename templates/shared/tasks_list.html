@@ -1,50 +1,66 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Математические задания</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>📚 Математические задания</h1>
-        
-        <div style="text-align: center; margin-bottom: 30px;">
-            <a href="{{ url_for('main.dashboard') }}" class="btn">← Назад в панель</a>
+{% extends "shared/base.html" %}
+
+{% block title %}Математические задания — Adaptive Math{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h1 class="h3 fw-bold my-2">📚 Математические задания</h1>
+        <div class="d-flex gap-2 my-2">
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">← Назад в панель</a>
             {% if current_user.role == 'teacher' %}
                 <a href="{{ url_for('tasks.create_task') }}" class="btn btn-success">➕ Создать задание</a>
             {% endif %}
         </div>
-        
-        {% if tasks %}
+    </div>
+
+    {% if tasks %}
+        <div class="row g-3">
             {% for task in tasks %}
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #3498db;">
-                    <h3 style="color: #2c3e50; margin-top: 0;">{{ task.title }}</h3>
-                    <p style="color: #6c757d;"><strong>Тема:</strong> {{ task.topic_ref.name if task.topic_ref else 'Неизвестная тема' }}</p>
-                    <p style="color: #6c757d;"><strong>Сложность:</strong> 
-                        {% if task.level == 'low' %}🟢 Низкий
-                        {% elif task.level == 'medium' %}🟡 Средний
-                        {% elif task.level == 'high' %}🔴 Высокий
-                        {% else %}{{ task.level }}
-                        {% endif %}
-                    </p>
-                    <p style="color: #6c757d;"><strong>Максимальный балл:</strong> {{ task.max_score }}</p>
-                    {% if current_user.role == 'student' and task.id in user_attempts %}
-                        <p style="color: #28a745;"><strong>Ваши попытки:</strong> {{ user_attempts[task.id]|length }}</p>
-                    {% endif %}
-                    <div style="text-align: right; margin-top: 15px;">
-                        <a href="{{ url_for('tasks.view_task', task_id=task.id) }}" class="btn btn-success">
-                            {% if current_user.role == "student" %}📝 Решать{% else %}👁️ Посмотреть{% endif %}
-                        </a>
+                <div class="col-12">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h3 class="h5 mb-2">{{ task.title }}</h3>
+                                <span class="badge
+                                    {% if task.level == 'low' %} bg-success
+                                    {% elif task.level == 'medium' %} bg-warning text-dark
+                                    {% elif task.level == 'high' %} bg-danger
+                                    {% else %} bg-secondary
+                                    {% endif %}">
+                                    {% if task.level == 'low' %}🟢 Низкий
+                                    {% elif task.level == 'medium' %}🟡 Средний
+                                    {% elif task.level == 'high' %}🔴 Высокий
+                                    {% else %}{{ task.level }}
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <div class="text-muted mb-2">
+                                <span class="me-3"><strong>Тема:</strong> {{ task.topic_ref.name if task.topic_ref else 'Неизвестная тема' }}</span>
+                                <span><strong>Макс. балл:</strong> {{ task.max_score }}</span>
+                            </div>
+
+                            {% if current_user.role == 'student' and task.id in user_attempts %}
+                                <div class="mb-2">
+                                    <span class="badge bg-success">Ваши попытки: {{ user_attempts[task.id]|length }}</span>
+                                </div>
+                            {% endif %}
+
+                            <div class="text-end">
+                                <a href="{{ url_for('tasks.view_task', task_id=task.id) }}" class="btn btn-primary">
+                                    {% if current_user.role == "student" %}📝 Решать{% else %}👁️ Посмотреть{% endif %}
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
-        {% else %}
-            <div style="text-align: center; color: #6c757d; margin: 40px 0;">
-                <p>Пока нет доступных заданий.</p>
-            </div>
-        {% endif %}
-    </div>
-</body>
-</html>
+        </div>
+    {% else %}
+        <div class="text-center text-muted py-5">
+            <p class="mb-0">Пока нет доступных заданий.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

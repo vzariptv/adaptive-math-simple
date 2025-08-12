@@ -2,7 +2,7 @@
 """
 Миграция базы данных к новой архитектуре адаптивного механизма
 - Удаление таблицы student_profiles
-- Обновление структуры math_tasks (difficulty_level -> level, topic -> topic_id)
+- Обновление структуры math_tasks (level -> level, topic -> topic_id)
 - Создание новых таблиц: topics, topic_level_configs, student_evaluation_logs, 
   student_topic_progress, evaluation_system_config
 """
@@ -124,7 +124,7 @@ def show_migration_info():
     print()
     print("Изменения:")
     print("• Удаление модели StudentProfile")
-    print("• Обновление MathTask: difficulty_level -> level, topic -> topic_id")
+    print("• Обновление MathTask: level -> level, topic -> topic_id")
     print("• Добавление новых моделей:")
     print("  - Topic (справочник тем)")
     print("  - TopicLevelConfig (параметры для каждой темы/уровня)")

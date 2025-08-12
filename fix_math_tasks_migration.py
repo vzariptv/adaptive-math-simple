@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Исправление миграции таблицы math_tasks
-- Обновление структуры: difficulty_level -> level, topic -> topic_id
+- Обновление структуры: level -> level, topic -> topic_id
 - Миграция существующих данных
 """
 
@@ -89,7 +89,7 @@ def migrate_math_tasks_table():
             print(f"📌 Используем тему по умолчанию: {first_topic.name} (ID: {default_topic_id})")
         
         # 4. Копируем данные из старой таблицы в новую
-        if 'difficulty_level' in column_names and 'topic' in column_names:
+        if 'level' in column_names and 'topic' in column_names:
             # Старая структура - нужна полная миграция
             cursor.execute("""
                 INSERT INTO math_tasks_new 
@@ -100,8 +100,8 @@ def migrate_math_tasks_table():
                     explanation, 
                     ? as topic_id,
                     CASE 
-                        WHEN difficulty_level <= 1 THEN 'low'
-                        WHEN difficulty_level <= 2 THEN 'medium'
+                        WHEN level <= 1 THEN 'low'
+                        WHEN level <= 2 THEN 'medium'
                         ELSE 'high'
                     END as level,
                     max_score, created_by, created_at, is_active
@@ -149,7 +149,7 @@ def show_migration_info():
     print()
     print("Изменения:")
     print("• Обновление структуры таблицы math_tasks:")
-    print("  - difficulty_level (INTEGER) -> level (VARCHAR: 'low'/'medium'/'high')")
+    print("  - level (INTEGER) -> level (VARCHAR: 'low'/'medium'/'high')")
     print("  - topic (VARCHAR) -> topic_id (INTEGER, внешний ключ)")
     print("• Миграция существующих данных с сохранением содержимого")
     print("• Автоматическое преобразование уровней сложности:")

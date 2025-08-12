@@ -80,7 +80,7 @@
       "description": "Описание задания",
       "answer_type": "text|number",
       "correct_answer": {"value": "ответ", "type": "text|number"},
-      "difficulty_level": 2.5,
+      "level": 2.5,
       "topic": "Тема",
       "max_score": 1.0,
       "explanation": "Пояснение к решению"

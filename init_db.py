@@ -38,7 +38,7 @@ def create_database():
             title VARCHAR(200) NOT NULL,
             description TEXT,
             correct_answer TEXT NOT NULL,
-            difficulty_level INTEGER DEFAULT 1,
+            level INTEGER DEFAULT 1,
             topic VARCHAR(100),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_by INTEGER,

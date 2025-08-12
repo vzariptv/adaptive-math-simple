@@ -1,68 +1,35 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страница не найдена - 404</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <div class="error-page">
-            <div class="error-icon">🔍</div>
-            <h1>404 - Страница не найдена</h1>
-            <p>К сожалению, запрашиваемая страница не существует.</p>
-            <p>Возможно, она была перемещена или удалена.</p>
-            
-            <div class="error-actions">
-                <a href="{{ url_for('main.home') }}" class="btn btn-primary">🏠 На главную</a>
+{% extends "base.html" %}
+
+{% block title %}404 — Страница не найдена{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 text-center">
+            <div class="display-1 text-danger fw-bold mb-3">404</div>
+            <div class="fs-1 mb-4"><i class="fa-solid fa-circle-exclamation"></i> Страница не найдена</div>
+            <p class="text-muted mb-2">
+                К сожалению, запрашиваемая страница не существует.
+            </p>
+            <p class="text-muted mb-4">
+                Возможно, она была перемещена или удалена.
+            </p>
+
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a href="{{ url_for('main.home') }}" class="btn btn-primary">
+                    <i class="fa-solid fa-house"></i> На главную
+                </a>
                 {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">📊 В панель управления</a>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-chart-line"></i> В панель управления
+                    </a>
                 {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">🔐 Войти</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-lock"></i> Войти
+                    </a>
                 {% endif %}
             </div>
         </div>
     </div>
-
-    <style>
-    .error-page {
-        text-align: center;
-        padding: 60px 20px;
-        max-width: 500px;
-        margin: 0 auto;
-    }
-
-    .error-icon {
-        font-size: 4em;
-        margin-bottom: 20px;
-    }
-
-    .error-page h1 {
-        color: #dc3545;
-        margin-bottom: 20px;
-    }
-
-    .error-page p {
-        color: #666;
-        margin-bottom: 15px;
-        line-height: 1.5;
-    }
-
-    .error-actions {
-        margin-top: 30px;
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    @media (max-width: 480px) {
-        .error-actions {
-            flex-direction: column;
-            align-items: center;
-        }
-    }
-    </style>
-</body>
-</html>
+</div>
+{% endblock %}
