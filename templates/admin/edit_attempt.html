@@ -1,0 +1,118 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Редактировать попытку{% endblock %}
+
+{% block admin_content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-info-emphasis"><i class="fas fa-edit"></i> Редактировать попытку</h2>
+    <div class="btn-group">
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.attempts') }}">
+        <i class="fas fa-arrow-left"></i> К журналу попыток
+      </a>
+      <a class="btn btn-outline-info" href="{{ url_for('admin.edit_task', task_id=form.task_id.data or (attempt.task_id if attempt else None)) }}">
+        <i class="fas fa-link"></i> К задаче
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post" action="{{ url_for('admin.edit_attempt', attempt_id=attempt.id) }}">
+        {{ form.hidden_tag() }}
+
+        <fieldset {% if not can_edit %}disabled{% endif %}>
+          <div class="row g-3 mb-2">
+            <div class="col-lg-6">
+              <label for="{{ form.user_id.id }}" class="form-label">{{ form.user_id.label.text }} <span class="text-danger">*</span></label>
+              {{ form.user_id(class="form-select" + (" is-invalid" if form.user_id.errors else "")) }}
+              {% if form.user_id.errors %}
+                <div class="invalid-feedback">{% for e in form.user_id.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+            <div class="col-lg-6">
+              <label for="{{ form.task_id.id }}" class="form-label">{{ form.task_id.label.text }} <span class="text-danger">*</span></label>
+              {{ form.task_id(class="form-select" + (" is-invalid" if form.task_id.errors else "")) }}
+              {% if form.task_id.errors %}
+                <div class="invalid-feedback">{% for e in form.task_id.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-sm-4 col-md-3">
+              <label for="{{ form.attempt_number.id }}" class="form-label">{{ form.attempt_number.label.text }}</label>
+              {{ form.attempt_number(class="form-control" + (" is-invalid" if form.attempt_number.errors else "")) }}
+              <div class="form-text">Если оставить пустым — номер вычислится автоматически.</div>
+              {% if form.attempt_number.errors %}
+                <div class="invalid-feedback">{% for e in form.attempt_number.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-4 col-md-3">
+              <label for="{{ form.partial_score.id }}" class="form-label">{{ form.partial_score.label.text }}</label>
+              {{ form.partial_score(class="form-control" + (" is-invalid" if form.partial_score.errors else "")) }}
+              {% if form.partial_score.errors %}
+                <div class="invalid-feedback">{% for e in form.partial_score.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-4 col-md-3">
+              <label for="{{ form.time_spent.id }}" class="form-label">{{ form.time_spent.label.text }}</label>
+              {{ form.time_spent(class="form-control" + (" is-invalid" if form.time_spent.errors else "")) }}
+              <div class="form-text">В секундах.</div>
+              {% if form.time_spent.errors %}
+                <div class="invalid-feedback">{% for e in form.time_spent.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-4 col-md-3">
+              <label for="{{ form.hints_used.id }}" class="form-label">{{ form.hints_used.label.text }}</label>
+              {{ form.hints_used(class="form-control" + (" is-invalid" if form.hints_used.errors else "")) }}
+              {% if form.hints_used.errors %}
+                <div class="invalid-feedback">{% for e in form.hints_used.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-sm-4 col-md-3 d-flex align-items-end">
+              <div class="form-check">
+                {{ form.is_correct(class="form-check-input") }}
+                <label for="{{ form.is_correct.id }}" class="form-check-label">{{ form.is_correct.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-sm-8 col-md-5">
+              <label for="{{ form.created_at.id }}" class="form-label">{{ form.created_at.label.text }}</label>
+              {{ form.created_at(class="form-control" + (" is-invalid" if form.created_at.errors else ""), placeholder="YYYY-MM-DD HH:MM:SS") }}
+              <div class="form-text">Если пусто — оставим текущее значение.</div>
+              {% if form.created_at.errors %}
+                <div class="invalid-feedback">{% for e in form.created_at.errors %}{{ e }}{% endfor %}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="{{ form.user_answer.id }}" class="form-label">{{ form.user_answer.label.text }}</label>
+            {{ form.user_answer(rows=8, class="form-control font-monospace" + (" is-invalid" if form.user_answer.errors else "")) }}
+            <div class="form-text">
+              JSON будет сохранён как объект; если введёте строку — она сохранится как есть. Пример JSON: <code>{"type":"number","value":42}</code>
+            </div>
+            {% if form.user_answer.errors %}
+              <div class="invalid-feedback">{% for e in form.user_answer.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+        </fieldset>
+
+        <div class="d-flex gap-2">
+          {% if can_edit %}
+            {{ form.submit(class="btn btn-primary") }}
+          {% else %}
+            <button type="button" class="btn btn-secondary" disabled>Сохранение недоступно</button>
+          {% endif %}
+          <a class="btn btn-outline-secondary" href="{{ url_for('admin.attempts') }}">Отмена</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin_attempts.js') }}"></script>
+{% endblock %}

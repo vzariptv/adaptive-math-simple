@@ -1,0 +1,1568 @@
+[
+  {
+    "id": 1001,
+    "title": "Определение коэффициентов квадратного уравнения",
+    "description": "Найдите коэффициенты a, b, c в уравнении: 3x² - 2x + 7 = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": -2
+        },
+        {
+          "name": "c",
+          "value": 7
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "Коэффициенты перед x², x и свободный член: a=3, b=-2, c=7.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462655",
+    "is_active": true,
+    "code": "migr_01_1001",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1002,
+    "title": "Нахождение дискриминанта",
+    "description": "Чему равен дискриминант уравнения: x² - 4x + 3 = 0?",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "D = b² - 4ac = (-4)² - 4*1*3 = 16 - 12 = 4",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462666",
+    "is_active": true,
+    "code": "migr_01_1002",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1003,
+    "title": "Проверка на квадратное уравнение",
+    "description": "Является ли уравнение 5x - 7 = 0 квадратным? Укажите 0 – нет, 1 – да.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 0
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Нет, степень уравнения первая, значит оно линейное.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462669",
+    "is_active": true,
+    "code": "migr_01_1003",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1004,
+    "title": "Преобразование полного квадрата",
+    "description": "Приведите выражение (x - 2)² к стандартному виду ax² + bx + c.",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 1
+        },
+        {
+          "name": "b",
+          "value": -4
+        },
+        {
+          "name": "c",
+          "value": 4
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "(x - 2)² = x² - 4x + 4 → a=1, b=-4, c=4",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462673",
+    "is_active": true,
+    "code": "migr_01_1004",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1005,
+    "title": "Подстановка значения в квадратный трёхчлен",
+    "description": "Вычислите значение выражения x² + 5x + 6 при x = -2.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 0
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "(-2)² + 5*(-2) + 6 = 4 - 10 + 6 = 0",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462676",
+    "is_active": true,
+    "code": "migr_01_1005",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1006,
+    "title": "Распознай коэффициенты в уравнении 4x² + (9)x + (5) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 4x² + (9)x + (5) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 4
+        },
+        {
+          "name": "b",
+          "value": 9
+        },
+        {
+          "name": "c",
+          "value": 5
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 4, b = 9, c = 5 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462693",
+    "is_active": true,
+    "code": "migr_01_1006",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1007,
+    "title": "Распознай коэффициенты в уравнении 3x² + (9)x + (6) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 3x² + (9)x + (6) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": 9
+        },
+        {
+          "name": "c",
+          "value": 6
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 3, b = 9, c = 6 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462702",
+    "is_active": true,
+    "code": "migr_01_1007",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1008,
+    "title": "Распознай коэффициенты в уравнении 3x² + (-7)x + (-9) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 3x² + (-7)x + (-9) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": -7
+        },
+        {
+          "name": "c",
+          "value": -9
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 3, b = -7, c = -9 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462720",
+    "is_active": true,
+    "code": "migr_01_1008",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1009,
+    "title": "Распознай коэффициенты в уравнении 3x² + (2)x + (6) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 3x² + (2)x + (6) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": 2
+        },
+        {
+          "name": "c",
+          "value": 6
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 3, b = 2, c = 6 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462728",
+    "is_active": true,
+    "code": "migr_01_1009",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1010,
+    "title": "Распознай коэффициенты в уравнении 3x² + (8)x + (-10) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 3x² + (8)x + (-10) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": 8
+        },
+        {
+          "name": "c",
+          "value": -10
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 3, b = 8, c = -10 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462736",
+    "is_active": true,
+    "code": "migr_01_1010",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1011,
+    "title": "Распознай коэффициенты в уравнении 4x² + (-6)x + (7) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 4x² + (-6)x + (7) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 4
+        },
+        {
+          "name": "b",
+          "value": -6
+        },
+        {
+          "name": "c",
+          "value": 7
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 4, b = -6, c = 7 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462743",
+    "is_active": true,
+    "code": "migr_01_1011",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1012,
+    "title": "Распознай коэффициенты в уравнении 3x² + (-8)x + (8) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 3x² + (-8)x + (8) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": -8
+        },
+        {
+          "name": "c",
+          "value": 8
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 3, b = -8, c = 8 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462749",
+    "is_active": true,
+    "code": "migr_01_1012",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1013,
+    "title": "Распознай коэффициенты в уравнении 1x² + (1)x + (-4) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 1x² + (1)x + (-4) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 1
+        },
+        {
+          "name": "b",
+          "value": 1
+        },
+        {
+          "name": "c",
+          "value": -4
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 1, b = 1, c = -4 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462756",
+    "is_active": true,
+    "code": "migr_01_1013",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1014,
+    "title": "Распознай коэффициенты в уравнении 3x² + (5)x + (-5) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 3x² + (5)x + (-5) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 3
+        },
+        {
+          "name": "b",
+          "value": 5
+        },
+        {
+          "name": "c",
+          "value": -5
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 3, b = 5, c = -5 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462762",
+    "is_active": true,
+    "code": "migr_01_1014",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1015,
+    "title": "Распознай коэффициенты в уравнении 2x² + (2)x + (3) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 2x² + (2)x + (3) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 2
+        },
+        {
+          "name": "b",
+          "value": 2
+        },
+        {
+          "name": "c",
+          "value": 3
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 2, b = 2, c = 3 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462771",
+    "is_active": true,
+    "code": "migr_01_1015",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1016,
+    "title": "Распознай коэффициенты в уравнении 5x² + (4)x + (-9) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 5x² + (4)x + (-9) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 5
+        },
+        {
+          "name": "b",
+          "value": 4
+        },
+        {
+          "name": "c",
+          "value": -9
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 5, b = 4, c = -9 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462781",
+    "is_active": true,
+    "code": "migr_01_1016",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1017,
+    "title": "Распознай коэффициенты в уравнении 2x² + (2)x + (1) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 2x² + (2)x + (1) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 2
+        },
+        {
+          "name": "b",
+          "value": 2
+        },
+        {
+          "name": "c",
+          "value": 1
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 2, b = 2, c = 1 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462792",
+    "is_active": true,
+    "code": "migr_01_1017",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1018,
+    "title": "Распознай коэффициенты в уравнении 5x² + (0)x + (5) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 5x² + (0)x + (5) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 5
+        },
+        {
+          "name": "b",
+          "value": 0
+        },
+        {
+          "name": "c",
+          "value": 5
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 5, b = 0, c = 5 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462804",
+    "is_active": true,
+    "code": "migr_01_1018",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1019,
+    "title": "Распознай коэффициенты в уравнении 5x² + (-10)x + (-5) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 5x² + (-10)x + (-5) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 5
+        },
+        {
+          "name": "b",
+          "value": -10
+        },
+        {
+          "name": "c",
+          "value": -5
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 5, b = -10, c = -5 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462814",
+    "is_active": true,
+    "code": "migr_01_1019",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 1020,
+    "title": "Распознай коэффициенты в уравнении 5x² + (6)x + (5) = 0",
+    "description": "Определите значения коэффициентов a, b, c в уравнении: 5x² + (6)x + (5) = 0",
+    "answer_type": "variables",
+    "correct_answer": {
+      "type": "variables",
+      "variables": [
+        {
+          "name": "a",
+          "value": 5
+        },
+        {
+          "name": "b",
+          "value": 6
+        },
+        {
+          "name": "c",
+          "value": 5
+        }
+      ]
+    },
+    "answer_schema": {
+      "type": "variables",
+      "fields": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    "explanation": "a = 5, b = 6, c = 5 — взяты из уравнения.",
+    "max_score": 1.0,
+    "created_by": 999,
+    "created_at": "2025-08-08T20:43:21.462820",
+    "is_active": true,
+    "code": "migr_01_1020",
+    "topic_code": "quadratic_equations",
+    "level": "low"
+  },
+  {
+    "id": 2001,
+    "title": "Решение квадратного уравнения #1",
+    "description": "Реши уравнение: x² - 3x + 1 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 1.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042177",
+    "is_active": true,
+    "code": "migr_01_2001"
+  },
+  {
+    "id": 2002,
+    "title": "Решение квадратного уравнения #2",
+    "description": "Реши уравнение: x² - 5x + 4 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 2.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042188",
+    "is_active": true,
+    "code": "migr_01_2002"
+  },
+  {
+    "id": 2003,
+    "title": "Решение квадратного уравнения #3",
+    "description": "Реши уравнение: x² - 7x + 9 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042192",
+    "is_active": true,
+    "code": "migr_01_2003"
+  },
+  {
+    "id": 2004,
+    "title": "Решение квадратного уравнения #4",
+    "description": "Реши уравнение: x² - 9x + 16 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042195",
+    "is_active": true,
+    "code": "migr_01_2004"
+  },
+  {
+    "id": 2005,
+    "title": "Решение квадратного уравнения #5",
+    "description": "Реши уравнение: x² - 11x + 25 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 5.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042199",
+    "is_active": true,
+    "code": "migr_01_2005"
+  },
+  {
+    "id": 2006,
+    "title": "Решение квадратного уравнения #6",
+    "description": "Реши уравнение: x² - 13x + 36 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 6.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042201",
+    "is_active": true,
+    "code": "migr_01_2006"
+  },
+  {
+    "id": 2007,
+    "title": "Решение квадратного уравнения #7",
+    "description": "Реши уравнение: x² - 15x + 49 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 7.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042205",
+    "is_active": true,
+    "code": "migr_01_2007"
+  },
+  {
+    "id": 2008,
+    "title": "Решение квадратного уравнения #8",
+    "description": "Реши уравнение: x² - 17x + 64 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 8.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042210",
+    "is_active": true,
+    "code": "migr_01_2008"
+  },
+  {
+    "id": 2009,
+    "title": "Решение квадратного уравнения #9",
+    "description": "Реши уравнение: x² - 19x + 81 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 9.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042213",
+    "is_active": true,
+    "code": "migr_01_2009"
+  },
+  {
+    "id": 2010,
+    "title": "Решение квадратного уравнения #10",
+    "description": "Реши уравнение: x² - 21x + 100 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 10.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042217",
+    "is_active": true,
+    "code": "migr_01_2010"
+  },
+  {
+    "id": 2011,
+    "title": "Решение квадратного уравнения #11",
+    "description": "Реши уравнение: x² - 23x + 121 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 11.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042221",
+    "is_active": true,
+    "code": "migr_01_2011"
+  },
+  {
+    "id": 2012,
+    "title": "Решение квадратного уравнения #12",
+    "description": "Реши уравнение: x² - 25x + 144 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 12.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042224",
+    "is_active": true,
+    "code": "migr_01_2012"
+  },
+  {
+    "id": 2013,
+    "title": "Решение квадратного уравнения #13",
+    "description": "Реши уравнение: x² - 27x + 169 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 13.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042228",
+    "is_active": true,
+    "code": "migr_01_2013"
+  },
+  {
+    "id": 2014,
+    "title": "Решение квадратного уравнения #14",
+    "description": "Реши уравнение: x² - 29x + 196 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 14.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042231",
+    "is_active": true,
+    "code": "migr_01_2014"
+  },
+  {
+    "id": 2015,
+    "title": "Решение квадратного уравнения #15",
+    "description": "Реши уравнение: x² - 31x + 225 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 15.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042233",
+    "is_active": true,
+    "code": "migr_01_2015"
+  },
+  {
+    "id": 2016,
+    "title": "Решение квадратного уравнения #16",
+    "description": "Реши уравнение: x² - 33x + 256 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 16.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042236",
+    "is_active": true,
+    "code": "migr_01_2016"
+  },
+  {
+    "id": 2017,
+    "title": "Решение квадратного уравнения #17",
+    "description": "Реши уравнение: x² - 35x + 289 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 17.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042239",
+    "is_active": true,
+    "code": "migr_01_2017"
+  },
+  {
+    "id": 2018,
+    "title": "Решение квадратного уравнения #18",
+    "description": "Реши уравнение: x² - 37x + 324 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 18.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042242",
+    "is_active": true,
+    "code": "migr_01_2018"
+  },
+  {
+    "id": 2019,
+    "title": "Решение квадратного уравнения #19",
+    "description": "Реши уравнение: x² - 39x + 361 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 19.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042245",
+    "is_active": true,
+    "code": "migr_01_2019"
+  },
+  {
+    "id": 2020,
+    "title": "Решение квадратного уравнения #20",
+    "description": "Реши уравнение: x² - 41x + 400 = 0",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 20.5
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Используем формулу дискриминанта. D = b² - 4ac, x = (-b±√D)/(2a)",
+    "topic_id": 1,
+    "level": "medium",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042248",
+    "is_active": true,
+    "code": "migr_01_2020"
+  },
+  {
+    "id": 3001,
+    "title": "Уравнение с параметром #1",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 3 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 1.7320508075688772
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 3",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042385",
+    "is_active": true,
+    "code": "migr_01_3001"
+  },
+  {
+    "id": 3002,
+    "title": "Уравнение с параметром #2",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 4 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 2.0
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 4",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042389",
+    "is_active": true,
+    "code": "migr_01_3002"
+  },
+  {
+    "id": 3003,
+    "title": "Уравнение с параметром #3",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 5 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 2.23606797749979
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 5",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042393",
+    "is_active": true,
+    "code": "migr_01_3003"
+  },
+  {
+    "id": 3004,
+    "title": "Уравнение с параметром #4",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 6 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 2.449489742783178
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 6",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042398",
+    "is_active": true,
+    "code": "migr_01_3004"
+  },
+  {
+    "id": 3005,
+    "title": "Уравнение с параметром #5",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 7 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 2.6457513110645907
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 7",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042401",
+    "is_active": true,
+    "code": "migr_01_3005"
+  },
+  {
+    "id": 3006,
+    "title": "Уравнение с параметром #6",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 8 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 2.8284271247461903
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 8",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042405",
+    "is_active": true,
+    "code": "migr_01_3006"
+  },
+  {
+    "id": 3007,
+    "title": "Уравнение с параметром #7",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 9 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.0
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 9",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042408",
+    "is_active": true,
+    "code": "migr_01_3007"
+  },
+  {
+    "id": 3008,
+    "title": "Уравнение с параметром #8",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 10 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.1622776601683795
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 10",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042413",
+    "is_active": true,
+    "code": "migr_01_3008"
+  },
+  {
+    "id": 3009,
+    "title": "Уравнение с параметром #9",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 11 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.3166247903554
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 11",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042417",
+    "is_active": true,
+    "code": "migr_01_3009"
+  },
+  {
+    "id": 3010,
+    "title": "Уравнение с параметром #10",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 12 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.4641016151377544
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 12",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042421",
+    "is_active": true,
+    "code": "migr_01_3010"
+  },
+  {
+    "id": 3011,
+    "title": "Уравнение с параметром #11",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 13 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.605551275463989
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 13",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042425",
+    "is_active": true,
+    "code": "migr_01_3011"
+  },
+  {
+    "id": 3012,
+    "title": "Уравнение с параметром #12",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 14 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.7416573867739413
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 14",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042428",
+    "is_active": true,
+    "code": "migr_01_3012"
+  },
+  {
+    "id": 3013,
+    "title": "Уравнение с параметром #13",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 15 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 3.872983346207417
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 15",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042432",
+    "is_active": true,
+    "code": "migr_01_3013"
+  },
+  {
+    "id": 3014,
+    "title": "Уравнение с параметром #14",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 16 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.0
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 16",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042434",
+    "is_active": true,
+    "code": "migr_01_3014"
+  },
+  {
+    "id": 3015,
+    "title": "Уравнение с параметром #15",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 17 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.123105625617661
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 17",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042438",
+    "is_active": true,
+    "code": "migr_01_3015"
+  },
+  {
+    "id": 3016,
+    "title": "Уравнение с параметром #16",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 18 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.242640687119285
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 18",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042443",
+    "is_active": true,
+    "code": "migr_01_3016"
+  },
+  {
+    "id": 3017,
+    "title": "Уравнение с параметром #17",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 19 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.358898943540674
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 19",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042448",
+    "is_active": true,
+    "code": "migr_01_3017"
+  },
+  {
+    "id": 3018,
+    "title": "Уравнение с параметром #18",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 20 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.47213595499958
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 20",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042455",
+    "is_active": true,
+    "code": "migr_01_3018"
+  },
+  {
+    "id": 3019,
+    "title": "Уравнение с параметром #19",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 21 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.58257569495584
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 21",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042461",
+    "is_active": true,
+    "code": "migr_01_3019"
+  },
+  {
+    "id": 3020,
+    "title": "Уравнение с параметром #20",
+    "description": "Найди значение параметра a, при котором уравнение x² - 2a·x + 22 = 0 имеет один корень.",
+    "answer_type": "number",
+    "correct_answer": {
+      "type": "number",
+      "value": 4.69041575982343
+    },
+    "answer_schema": {
+      "type": "number"
+    },
+    "explanation": "Уравнение имеет один корень, если дискриминант D = 0, т.е. 4a² = 4c → a² = 22",
+    "topic_id": 1,
+    "level": "high",
+    "max_score": 1.0,
+    "created_by": 1,
+    "created_at": "2025-08-08T20:59:11.042466",
+    "is_active": true,
+    "code": "migr_01_3020"
+  }
+]

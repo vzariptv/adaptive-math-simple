@@ -1,0 +1,38 @@
+{# templates/shared/_form_macros.html #}
+{# Универсальный рендер поля WTForms с Bootstrap 5 и выводом ошибок/подсказок. #}
+{# Работает для StringField, TextAreaField, SelectField и т.п. #}
+
+{% macro render_field(field) %}
+  {# Показываем метку и «звёздочку», если поле обязательное (WTForms -> field.flags.required) #}
+  <label for="{{ field.id }}" class="form-label">
+    {{ field.label.text }}
+    {% if field.flags.required %}
+      <span class="text-danger" title="Обязательное поле">*</span>
+    {% endif %}
+  </label>
+
+  {# Базовый класс Bootstrap зависит от типа поля:
+     - SelectField / SelectMultipleField -> form-select
+     - Остальные -> form-control #}
+  {% set is_select = field.type in ['SelectField', 'SelectMultipleField'] %}
+  {% set bs_base = 'form-select' if is_select else 'form-control' %}
+
+  {# Если в render_kw уже есть class, аккуратно добавим к нему Bootstrap-класс и is-invalid #}
+  {% set render_kw_class = (field.render_kw.get('class', '') if field.render_kw else '') %}
+  {% set full_class = (render_kw_class ~ ' ' ~ bs_base ~ (' is-invalid' if field.errors else ''))|trim %}
+
+  {# Рендерим само поле, подставляя собранные классы #}
+  {{ field(class_=full_class) }}
+
+  {# Ниже — либо первая ошибка, либо description из формы #}
+  {% if field.errors %}
+    <div class="invalid-feedback">{{ field.errors[0] }}</div>
+  {% elif field.description %}
+    <div class="form-text">{{ field.description }}</div>
+  {% endif %}
+{% endmacro %}
+
+{# Алиас для обратной совместимости: старые шаблоны могут звать render_input #}
+{% macro render_input(field) %}
+  {{ render_field(field) }}
+{% endmacro %}

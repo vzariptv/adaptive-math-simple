@@ -4,12 +4,10 @@
 
 {% block nav_items %}
   {% if current_user.is_authenticated %}
-    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.demo_data' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.demo_data') }}"><i class="fas fa-chalkboard-teacher"></i> Демо-данные</a></li>
     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.users' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.users') }}"><i class="fas fa-users"></i> Пользователи</a></li>
     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.topics' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.topics') }}"><i class="fas fa-book"></i> Темы</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.settings' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.settings') }}"><i class="fas fa-cog"></i> Настройки</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.analytics' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.analytics') }}"><i class="fas fa-chart-line"></i> Аналитика</a></li>
     <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.tasks' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.tasks') }}"><i class="fas fa-tasks"></i> Задания</a></li>
+    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'admin.attempts' %}active bg-primary text-white rounded{% endif %}" href="{{ url_for('admin.attempts') }}"><i class="fas fa-list"></i> Журнал попыток</a></li>
   {% endif %}
 {% endblock %}
 
@@ -17,3 +15,7 @@
   {% block admin_content %}{% endblock %}          
 {% endblock %}
 
+{% block extra_js %}
+  {{ super() }}  
+  {% block scripts %}{% endblock %}
+{% endblock %}

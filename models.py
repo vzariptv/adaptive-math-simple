@@ -19,8 +19,33 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, default=True)
     
     # Связи
-    task_attempts = db.relationship('TaskAttempt', backref='user', lazy='dynamic')
+    task_attempts = db.relationship(
+        'TaskAttempt',
+        back_populates='user',
+        cascade='all, delete-orphan',  # удаляем попытки вместе с пользователем
+        passive_deletes=True,          # уважать ondelete='CASCADE' на уровне БД
+        lazy='selectin'                # удобно: можно len(), не нужно .all()
+    )
+    evaluation_logs = db.relationship(
+        'StudentEvaluationLog',
+        back_populates='user',
+        cascade='all, delete-orphan',
+        passive_deletes=True,
+        lazy='selectin'
+    )
+    topic_progress = db.relationship(
+        'StudentTopicProgress',
+        back_populates='user',
+        cascade='all, delete-orphan',
+        passive_deletes=True,
+        lazy='selectin'
+    )
     created_tasks = db.relationship('MathTask', backref='creator', lazy='dynamic')
+    
+    # Алиас для обратной совместимости (если где-то обращались к user.attempts)
+    @property
+    def attempts(self):
+        return self.task_attempts
     
     def set_password(self, password):
         """Установить хэш пароля (совместимый метод)"""
@@ -55,8 +80,12 @@ class Topic(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Связи
-    tasks = db.relationship('MathTask', backref='topic_ref', lazy='dynamic')
-    level_configs = db.relationship('TopicLevelConfig', backref='topic', lazy='dynamic')
+    tasks = db.relationship('MathTask', backref='topic_ref', lazy='dynamic')  # можно оставить как было
+    level_configs = db.relationship('TopicLevelConfig', backref='topic', lazy='dynamic', cascade='all, delete-orphan', passive_deletes=True)
+    
+    # чтобы back_populates в логах/прогрессе работал симметрично:
+    evaluation_logs = db.relationship('StudentEvaluationLog', back_populates='topic', lazy='selectin')
+    student_progress = db.relationship('StudentTopicProgress', back_populates='topic', lazy='selectin')
     
     def __repr__(self):
         return f'<Topic {self.name}>'
@@ -67,6 +96,8 @@ class MathTask(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
+    # Необязательный уникальный код задачи (для импорта/ссылок)
+    code = db.Column(db.String(64), unique=True)    # NEW: внешний код для импортов/интеграций
     description = db.Column(db.Text, nullable=False)
     
     # Структура ответа
@@ -87,7 +118,17 @@ class MathTask(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     
     # Связи
-    attempts = db.relationship('TaskAttempt', backref='task', lazy='dynamic')
+    attempts = db.relationship(
+        'TaskAttempt',
+        back_populates='task',
+        cascade='all, delete-orphan',
+        passive_deletes=True,
+        lazy='selectin'
+    )
+
+    __table_args__ = (
+        db.Index('ix_math_tasks_topic_level', 'topic_id', 'level'),
+    )
     
     def __repr__(self):
         return f'<MathTask {self.title}>'
@@ -97,8 +138,18 @@ class TaskAttempt(db.Model):
     __tablename__ = 'task_attempts'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey('math_tasks.id'), nullable=False)
+
+    # ВАЖНО: включаем ondelete='CASCADE'
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False
+    )
+    task_id = db.Column(
+        db.Integer,
+        db.ForeignKey('math_tasks.id', ondelete='CASCADE'),
+        nullable=False
+    )
     
     # Ответ пользователя и результаты
     user_answer = db.Column(db.JSON)                        # JSON с ответом пользователя
@@ -111,6 +162,16 @@ class TaskAttempt(db.Model):
     hints_used = db.Column(db.Integer, default=0)
     attempt_number = db.Column(db.Integer, default=1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Связи с back_populates
+    user = db.relationship('User', back_populates='task_attempts')
+    task = db.relationship('MathTask', back_populates='attempts')
+
+    __table_args__ = (
+        db.Index('ix_attempts_user_created', 'user_id', 'created_at'),
+        db.Index('ix_attempts_task_created', 'task_id', 'created_at'),
+        # В паре с FK из MathTask на topic_id это даст быстрые JOIN по теме в интервале дат
+    )
     
     def __repr__(self):
         return f'<TaskAttempt user_id={self.user_id} task_id={self.task_id}>'
@@ -120,7 +181,7 @@ class TopicLevelConfig(db.Model):
     __tablename__ = 'topic_level_configs'
     
     id = db.Column(db.Integer, primary_key=True)
-    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=False)
+    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id', ondelete='CASCADE'), nullable=False)
     level = db.Column(db.String(10), nullable=False)  # 'low', 'medium', 'high'
     
     task_count_threshold = db.Column(db.Integer, nullable=False)         # Пороговое число задач за период
@@ -137,7 +198,11 @@ class StudentEvaluationLog(db.Model):
     __tablename__ = 'student_evaluation_logs'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False
+    )
     topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=False)
     level = db.Column(db.String(10), nullable=False)  # 'low', 'medium', 'high'
     
@@ -156,8 +221,8 @@ class StudentEvaluationLog(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Связи
-    user = db.relationship('User', backref='evaluation_logs')
-    topic = db.relationship('Topic', backref='evaluation_logs')
+    user  = db.relationship('User',  back_populates='evaluation_logs')
+    topic = db.relationship('Topic', back_populates='evaluation_logs')
     
     def __repr__(self):
         return f'<StudentEvaluationLog user_id={self.user_id} topic_id={self.topic_id} {self.level}>'
@@ -167,7 +232,11 @@ class StudentTopicProgress(db.Model):
     __tablename__ = 'student_topic_progress'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False
+    )
     topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=False)
     
     current_level = db.Column(db.String(10), nullable=False)  # 'low', 'medium', 'high'
@@ -175,8 +244,8 @@ class StudentTopicProgress(db.Model):
     last_evaluated_at = db.Column(db.DateTime)
     
     # Связи
-    user = db.relationship('User', backref='topic_progress')
-    topic = db.relationship('Topic', backref='student_progress')
+    user  = db.relationship('User',  back_populates='topic_progress')
+    topic = db.relationship('Topic', back_populates='student_progress')
     
     __table_args__ = (db.UniqueConstraint('user_id', 'topic_id'),)
     

@@ -1,49 +1,195 @@
+{# templates/admin/edit_user.html #}
 {% extends "admin/base_admin.html" %}
+{% from "shared/_form_macros.html" import render_field %}
+
 {% block title %}Редактирование пользователя{% endblock %}
 
 {% block admin_content %}
-<h2 class="h4 mb-3">Редактирование: {{ user.username }}</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="text-info-emphasis"><i class="fa fa-user-pen"></i> Редактирование пользователя</h2>
+  <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Назад к пользователям
+  </a>
+</div>
 
-<form method="POST" action="{{ url_for('admin.edit_user', user_id=user.id) }}" class="row g-3">
-  {{ csrf_field() }}
-
-  <div class="col-md-6">
-    <label class="form-label">Email</label>
-    <input name="email" type="email" class="form-control" value="{{ user.email }}" required>
+{# Сводная панель ошибок всей формы #}
+{% if form.errors %}
+  <div class="alert alert-danger">
+    <h5 class="mb-2">Проверьте поля формы:</h5>
+    <ul class="mb-0">
+      {% for field_name, field_errors in form.errors.items() %}
+        {% for err in field_errors %}
+          <li>
+            <strong>{{ getattr(form, field_name).label.text if form[field_name] else field_name }}</strong>:
+            {{ err }}
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
   </div>
+{% endif %}
 
-  <div class="col-md-6">
-    <label class="form-label">Роль</label>
-    <select name="role" class="form-select" {% if user.role == 'admin' %}disabled{% endif %}>
-      <option value="student" {{ 'selected' if user.role=='student' }}>Студент</option>
-      <option value="teacher" {{ 'selected' if user.role=='teacher' }}>Преподаватель</option>
-      <option value="admin"   {{ 'selected' if user.role=='admin' }}>Админ</option>
-    </select>
-    {% if user.role == 'admin' %}
-      <div class="form-text">Роль администратора менять нельзя.</div>
-    {% endif %}
-  </div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h3 class="mb-3">Основная информация</h3>
 
-  <div class="col-md-6">
-    <label class="form-label">Имя</label>
-    <input name="first_name" class="form-control" value="{{ user.first_name or '' }}">
-  </div>
+    {# Flask-WTF: hidden_tag даст корректный CSRF и скрытые поля (например, instance_id) #}
+    <form action="{{ url_for('admin.edit_user', user_id=user.id) }}" method="post" novalidate class="user-form">
+      {{ form.hidden_tag() }}
 
-  <div class="col-md-6">
-    <label class="form-label">Фамилия</label>
-    <input name="last_name" class="form-control" value="{{ user.last_name or '' }}">
-  </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          {{ render_field(form.username) }}
+        </div>
+        <div class="col-md-6">
+          {% if form.email %}{{ render_field(form.email) }}{% endif %}
+        </div>
+      </div>
 
-  <div class="col-md-6">
-    <label class="form-label">Новый пароль (необязательно)</label>
-    <input name="new_password" type="password" class="form-control" placeholder="Оставьте пустым, чтобы не менять">
-  </div>
+      <div class="row g-3 mt-0">
+        <div class="col-md-6">
+          {% if form.first_name %}{{ render_field(form.first_name) }}{% endif %}
+        </div>
+        <div class="col-md-6">
+          {% if form.last_name %}{{ render_field(form.last_name) }}{% endif %}
+        </div>
+      </div>
 
-  <div class="col-12 d-flex gap-2 mt-4 justify-content-end">
-    <button type="submit" class="btn btn-primary">
-      <i class="fas fa-save me-1"></i> Сохранить
-    </button>
-    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Отмена</a>
+      <div class="row g-3 mt-0">
+        <div class="col-md-6">
+          {# Роль — SelectField; render_field сам подставит form-select #}
+          {{ render_field(form.role) }}
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          {# Статус — BooleanField; нарисуем корректно как чекбокс #}
+          {% if form.is_active %}
+            <div class="form-check">
+              {{ form.is_active(class_='form-check-input' + (' is-invalid' if form.is_active.errors else '')) }}
+              <label for="{{ form.is_active.id }}" class="form-check-label">
+                {{ form.is_active.label.text }}
+              </label>
+              {% if form.is_active.errors %}
+                <div class="invalid-feedback d-block">{{ form.is_active.errors[0] }}</div>
+              {% elif form.is_active.description %}
+                <div class="form-text">{{ form.is_active.description }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <h3 class="mb-3">Смена пароля</h3>
+      <div class="alert alert-secondary py-2">
+        <small class="text-muted">
+          Оставьте поля пустыми, если <strong>не нужно менять</strong> пароль.
+        </small>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          {# Имя поля может отличаться в форме. Поддержим оба варианта: new_password или password #}
+          {% set pwd_field = form.new_password if form.new_password is defined else form.password %}
+          {% if pwd_field %}
+            <div class="position-relative">
+              {{ render_field(pwd_field) }}
+              <div class="mt-2 d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="togglePwdBtn">
+                  <i class="fa fa-eye"></i> Показать
+                </button>
+                <button class="btn btn-sm btn-outline-primary" type="button" id="genPwdBtn">
+                  <i class="fa fa-wand-magic-sparkles"></i> Сгенерировать
+                </button>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          {# Подтверждение пароля — тоже поддержим разные имена #}
+          {% set conf_field = form.confirm_password if form.confirm_password is defined else form.password2 %}
+          {% if conf_field %}
+            <div class="position-relative">
+              {{ render_field(conf_field) }}
+              <div class="mt-2">
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="togglePwd2Btn">
+                  <i class="fa fa-eye"></i> Показать
+                </button>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex align-items-center gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Сохранить изменения
+        </button>
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+          <i class="fas fa-times"></i> Отмена
+        </a>
+      </div>
+    </form>
   </div>
-</form>
+</div>
+
+{# Небольшие метаданные — опционально #}
+<div class="text-muted small">
+  {% if user.created_at %}Создан: {{ user.created_at.strftime('%d.%m.%Y %H:%M') }}{% endif %}
+  {% if user.last_login %} · Последний вход: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}{% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  <script>
+    // Кнопки «показать/скрыть» и «сгенерировать» пароль.
+    (function () {
+      // Находим элементы (учитываем разные имена полей в форме)
+      const pwd   = document.getElementById('{{ (form.new_password.id if form.new_password is defined else (form.password.id if form.password is defined else ""))|e }}');
+      const pwd2  = document.getElementById('{{ (form.confirm_password.id if form.confirm_password is defined else (form.password2.id if form.password2 is defined else ""))|e }}');
+      const t1Btn = document.getElementById('togglePwdBtn');
+      const t2Btn = document.getElementById('togglePwd2Btn');
+      const genBtn= document.getElementById('genPwdBtn');
+
+      function toggleVisibility(input, btn) {
+        if (!input || !btn) return;
+        const isText = input.type === 'text';
+        input.type = isText ? 'password' : 'text';
+        btn.innerHTML = isText ? '<i class="fa fa-eye"></i> Показать' : '<i class="fa fa-eye-slash"></i> Скрыть';
+      }
+
+      function generatePassword() {
+        // простой генератор (12 символов): буквы, цифры, символы
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*';
+        const len = 12;
+        let out = '';
+        for (let i = 0; i < len; i++) {
+          out += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return out;
+      }
+
+      if (t1Btn && pwd) {
+        t1Btn.addEventListener('click', () => toggleVisibility(pwd, t1Btn));
+      }
+      if (t2Btn && pwd2) {
+        t2Btn.addEventListener('click', () => toggleVisibility(pwd2, t2Btn));
+      }
+      if (genBtn && pwd) {
+        genBtn.addEventListener('click', () => {
+          const pass = generatePassword();
+          pwd.value = pass;
+          // если есть подтверждение — заполним одинаково, чтобы не забыть
+          if (pwd2) pwd2.value = pass;
+          // показываем пароль, чтобы админ мог его скопировать
+          if (pwd.type === 'password') toggleVisibility(pwd, t1Btn);
+          if (pwd2 && pwd2.type === 'password') toggleVisibility(pwd2, t2Btn);
+          pwd.focus();
+          try { pwd.select(); } catch (_) {}
+        });
+      }
+    })();
+  </script>
 {% endblock %}

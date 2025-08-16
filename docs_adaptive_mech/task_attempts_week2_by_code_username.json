@@ -1,0 +1,26 @@
+[
+  {
+    "task_code": "migr_01_3001",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "42"
+    },
+    "is_correct": true,
+    "time_spent": 120,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-02T21:04:55.841690"
+  },
+  {
+    "task_code": "migr_01_3002",
+    "username": "petr_student",
+    "user_answer": {
+      "value": "24"
+    },
+    "is_correct": false,
+    "time_spent": 90,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-02T21:15:32.121212"
+  }
+]

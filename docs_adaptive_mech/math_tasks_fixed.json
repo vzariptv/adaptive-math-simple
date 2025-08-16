@@ -23,9 +23,10 @@
     "id": 1002,
     "title": "Low Task 2",
     "description": "Условие задачи 2 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -42,9 +43,10 @@
     "id": 1003,
     "title": "Low Task 3",
     "description": "Условие задачи 3 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -61,9 +63,10 @@
     "id": 1004,
     "title": "Low Task 4",
     "description": "Условие задачи 4 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -80,9 +83,10 @@
     "id": 1005,
     "title": "Low Task 5",
     "description": "Условие задачи 5 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -99,9 +103,10 @@
     "id": 1006,
     "title": "Low Task 6",
     "description": "Условие задачи 6 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -118,9 +123,10 @@
     "id": 1007,
     "title": "Low Task 7",
     "description": "Условие задачи 7 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -137,9 +143,10 @@
     "id": 1008,
     "title": "Low Task 8",
     "description": "Условие задачи 8 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -156,9 +163,10 @@
     "id": 1009,
     "title": "Low Task 9",
     "description": "Условие задачи 9 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -175,9 +183,10 @@
     "id": 1010,
     "title": "Low Task 10",
     "description": "Условие задачи 10 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -194,9 +203,10 @@
     "id": 1011,
     "title": "Low Task 11",
     "description": "Условие задачи 11 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -213,9 +223,10 @@
     "id": 1012,
     "title": "Low Task 12",
     "description": "Условие задачи 12 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -232,9 +243,10 @@
     "id": 1013,
     "title": "Low Task 13",
     "description": "Условие задачи 13 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -251,9 +263,10 @@
     "id": 1014,
     "title": "Low Task 14",
     "description": "Условие задачи 14 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -270,9 +283,10 @@
     "id": 1015,
     "title": "Low Task 15",
     "description": "Условие задачи 15 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -289,9 +303,10 @@
     "id": 1016,
     "title": "Low Task 16",
     "description": "Условие задачи 16 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -308,9 +323,10 @@
     "id": 1017,
     "title": "Low Task 17",
     "description": "Условие задачи 17 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -327,9 +343,10 @@
     "id": 1018,
     "title": "Low Task 18",
     "description": "Условие задачи 18 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -346,9 +363,10 @@
     "id": 1019,
     "title": "Low Task 19",
     "description": "Условие задачи 19 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -365,9 +383,10 @@
     "id": 1020,
     "title": "Low Task 20",
     "description": "Условие задачи 20 уровня low.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -384,9 +403,10 @@
     "id": 1021,
     "title": "Medium Task 1",
     "description": "Условие задачи 1 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -403,9 +423,10 @@
     "id": 1022,
     "title": "Medium Task 2",
     "description": "Условие задачи 2 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -422,9 +443,10 @@
     "id": 1023,
     "title": "Medium Task 3",
     "description": "Условие задачи 3 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -441,9 +463,10 @@
     "id": 1024,
     "title": "Medium Task 4",
     "description": "Условие задачи 4 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -460,9 +483,10 @@
     "id": 1025,
     "title": "Medium Task 5",
     "description": "Условие задачи 5 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -479,9 +503,10 @@
     "id": 1026,
     "title": "Medium Task 6",
     "description": "Условие задачи 6 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -498,9 +523,10 @@
     "id": 1027,
     "title": "Medium Task 7",
     "description": "Условие задачи 7 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -517,9 +543,10 @@
     "id": 1028,
     "title": "Medium Task 8",
     "description": "Условие задачи 8 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -536,9 +563,10 @@
     "id": 1029,
     "title": "Medium Task 9",
     "description": "Условие задачи 9 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -555,9 +583,10 @@
     "id": 1030,
     "title": "Medium Task 10",
     "description": "Условие задачи 10 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -574,9 +603,10 @@
     "id": 1031,
     "title": "Medium Task 11",
     "description": "Условие задачи 11 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -593,9 +623,10 @@
     "id": 1032,
     "title": "Medium Task 12",
     "description": "Условие задачи 12 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -612,9 +643,10 @@
     "id": 1033,
     "title": "Medium Task 13",
     "description": "Условие задачи 13 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -631,9 +663,10 @@
     "id": 1034,
     "title": "Medium Task 14",
     "description": "Условие задачи 14 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -650,9 +683,10 @@
     "id": 1035,
     "title": "Medium Task 15",
     "description": "Условие задачи 15 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -669,9 +703,10 @@
     "id": 1036,
     "title": "Medium Task 16",
     "description": "Условие задачи 16 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -688,9 +723,10 @@
     "id": 1037,
     "title": "Medium Task 17",
     "description": "Условие задачи 17 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -707,9 +743,10 @@
     "id": 1038,
     "title": "Medium Task 18",
     "description": "Условие задачи 18 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -726,9 +763,10 @@
     "id": 1039,
     "title": "Medium Task 19",
     "description": "Условие задачи 19 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -745,9 +783,10 @@
     "id": 1040,
     "title": "Medium Task 20",
     "description": "Условие задачи 20 уровня medium.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -764,9 +803,10 @@
     "id": 1041,
     "title": "High Task 1",
     "description": "Условие задачи 1 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -783,9 +823,10 @@
     "id": 1042,
     "title": "High Task 2",
     "description": "Условие задачи 2 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -802,9 +843,10 @@
     "id": 1043,
     "title": "High Task 3",
     "description": "Условие задачи 3 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -821,9 +863,10 @@
     "id": 1044,
     "title": "High Task 4",
     "description": "Условие задачи 4 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -840,9 +883,10 @@
     "id": 1045,
     "title": "High Task 5",
     "description": "Условие задачи 5 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -859,9 +903,10 @@
     "id": 1046,
     "title": "High Task 6",
     "description": "Условие задачи 6 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -878,9 +923,10 @@
     "id": 1047,
     "title": "High Task 7",
     "description": "Условие задачи 7 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -897,9 +943,10 @@
     "id": 1048,
     "title": "High Task 8",
     "description": "Условие задачи 8 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -916,9 +963,10 @@
     "id": 1049,
     "title": "High Task 9",
     "description": "Условие задачи 9 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -935,9 +983,10 @@
     "id": 1050,
     "title": "High Task 10",
     "description": "Условие задачи 10 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -954,9 +1003,10 @@
     "id": 1051,
     "title": "High Task 11",
     "description": "Условие задачи 11 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -973,9 +1023,10 @@
     "id": 1052,
     "title": "High Task 12",
     "description": "Условие задачи 12 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -992,9 +1043,10 @@
     "id": 1053,
     "title": "High Task 13",
     "description": "Условие задачи 13 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -1011,9 +1063,10 @@
     "id": 1054,
     "title": "High Task 14",
     "description": "Условие задачи 14 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -1030,9 +1083,10 @@
     "id": 1055,
     "title": "High Task 15",
     "description": "Условие задачи 15 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -1049,9 +1103,10 @@
     "id": 1056,
     "title": "High Task 16",
     "description": "Условие задачи 16 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -1068,9 +1123,10 @@
     "id": 1057,
     "title": "High Task 17",
     "description": "Условие задачи 17 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -1087,9 +1143,10 @@
     "id": 1058,
     "title": "High Task 18",
     "description": "Условие задачи 18 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
@@ -1106,38 +1163,40 @@
     "id": 1059,
     "title": "High Task 19",
     "description": "Условие задачи 19 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
     },
     "explanation": "Пояснение к задаче 19.",
     "level": 3,
-    "topic": "quadratic_equations",
     "max_score": 1.0,
     "created_by": 999,
     "created_at": "2025-08-08T20:37:57.699295",
-    "is_active": true
+    "is_active": true,
+    "topic_code": "quadratic_equations"
   },
   {
     "id": 1060,
     "title": "High Task 20",
     "description": "Условие задачи 20 уровня high.",
-    "answer_type": "single",
+    "answer_type": "number",
     "correct_answer": {
-      "value": 42
+      "value": 42,
+      "type": "number"
     },
     "answer_schema": {
       "type": "number"
     },
     "explanation": "Пояснение к задаче 20.",
     "level": 3,
-    "topic": "quadratic_equations",
     "max_score": 1.0,
     "created_by": 999,
     "created_at": "2025-08-08T20:37:57.699301",
-    "is_active": true
+    "is_active": true,
+    "topic_code": "quadratic_equations"
   }
 ]

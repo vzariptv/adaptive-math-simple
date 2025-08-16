@@ -37,7 +37,6 @@
         </thead>
         <tbody>
           {% for u in users %}
-            {% set attempts_count = attempt_counts.get(u.id, 0) %}
             <tr data-user-id="{{ u.id }}">
               <td><input type="checkbox" class="user-checkbox" value="{{ u.id }}"></td>
               <td><code>{{ u.username }}</code></td>
@@ -64,7 +63,6 @@
               </td>
               <td>{{ u.last_login.strftime('%d.%m.%Y %H:%M') if u.last_login else '—' }}</td>
               <td>{{ u.created_at.strftime('%d.%m.%Y') if u.created_at else '—' }}</td>
-              
               <td>
                 <div class="btn-group btn-group-sm">
                   <a href="{{ url_for('admin.edit_user', user_id=u.id) }}"
@@ -75,13 +73,12 @@
                   {# запретим удалять самого себя #}
                   {% if current_user.id != u.id %}
                     <a href="#"
-                      class="btn btn-outline-danger"
-                      title="Удалить"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteUserModal"
-                      data-user-id="{{ u.id }}"
-                      data-user-name="{{ u.get_full_name() }} ({{ u.username }})"
-                      data-attempts="{{ attempts_count }}">
+                       class="btn btn-outline-danger"
+                       title="Удалить"
+                       data-bs-toggle="modal"
+                       data-bs-target="#deleteUserModal"
+                       data-user-id="{{ u.id }}"
+                       data-user-name="{{ u.get_full_name() }} ({{ u.username }})">
                       <i class="fas fa-trash"></i>
                     </a>
                   {% else %}
@@ -138,23 +135,13 @@
   {% call confirm_modal(
       id='deleteUserModal',
       title='Удаление пользователя',
-      body='''Вы действительно хотите удалить пользователя <strong id="deleteUserName"></strong>?
-            <div class="alert alert-warning mt-3 mb-2 p-2 small">
-              У этого пользователя попыток: <strong id="attemptsCount">0</strong>.
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="deleteAttemptsCheck">
-              <label class="form-check-label" for="deleteAttemptsCheck">
-                Также удалить все его попытки решения задач
-              </label>
-            </div>''',
+      body='Вы действительно хотите удалить пользователя <strong id="deleteUserName"></strong>?',
       action=delete_user_url_template,
       confirm_text='Удалить навсегда',
       confirm_class='btn-danger',
       alert_note='Это действие нельзя отменить.'
   ) %}
     {{ delete_form.hidden_tag() }}
-    <input type="hidden" name="delete_attempts" id="deleteAttemptsField" value="0">
   {% endcall %}
 
   {# Модалка импорта пользователей (Flask-WTF form) #}

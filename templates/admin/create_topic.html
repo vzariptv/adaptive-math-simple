@@ -1,179 +1,169 @@
+{# templates/admin/create_topic.html #}
 {% extends "admin/base_admin.html" %}
+{% from "shared/_form_macros.html" import render_field %}
+
 {% block title %}Создание темы{% endblock %}
+
 {% block admin_content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>📚 Создание новой темы</h2>
-    <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Назад к темам
-    </a>
+  <h2><i class="fa fa-book text-info-emphasis"></i> Создание новой темы</h2>
+  <a href="{{ url_for('admin.topics') }}" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Назад к темам
+  </a>
 </div>
 
-{% if errors %}
-<div class="alert alert-danger">
-    <h5>Ошибки при создании темы:</h5>
-    <ul>
-        {% for error in errors %}
-        <li>{{ error }}</li>
+{# Сводная панель ошибок формы (удобно при нескольких ошибках сразу) #}
+{% if form.errors %}
+  <div class="alert alert-danger">
+    <h5 class="mb-2">Ошибки при создании темы:</h5>
+    <ul class="mb-0">
+      {% for field_name, field_errors in form.errors.items() %}
+        {% for err in field_errors %}
+          <li>
+            <strong>{{ getattr(form, field_name).label.text if form[field_name] else field_name }}</strong>:
+            {{ err }}
+          </li>
         {% endfor %}
+      {% endfor %}
     </ul>
-</div>
+  </div>
 {% endif %}
 
 <div class="card mb-4">
-    <div class="card-body">
-        <h3 class="mb-3">Основная информация</h3>
-        <form action="{{ url_for('admin.create_topic') }}" method="post" class="topic-form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="code" class="form-label">Код темы <span class="text-danger">*</span></label>
-                    <input type="text" id="code" name="code" class="form-control"
-                           placeholder="algebra_basics"
-                           pattern="[a-z0-9_]+"
-                           title="Только строчные буквы, цифры и подчеркивания"
-                           required>
-                    <div class="form-text">
-                        Уникальный идентификатор темы (только латинские буквы, цифры и _)
-                    </div>
-                </div>
+  <div class="card-body">
+    <h3 class="mb-3">Основная информация</h3>
 
-                <div class="col-md-6">
-                    <label for="name" class="form-label">Название темы <span class="text-danger">*</span></label>
-                    <input type="text" id="name" name="name" class="form-control"
-                           placeholder="Основы алгебры"
-                           required>
-                    <div class="form-text">
-                        Отображаемое название темы
-                    </div>
-                </div>
-            </div>
+    {# ВАЖНО: Flask-WTF форма. hidden_tag() добавит CSRF и скрытые поля. #}
+    <form action="{{ url_for('admin.create_topic') }}" method="post" class="topic-form" novalidate>
+      {{ form.hidden_tag() }}
 
-            <div class="mb-3 mt-3">
-                <label for="description" class="form-label">Описание темы</label>
-                <textarea id="description" name="description" class="form-control" rows="5"
-                          placeholder="Подробное описание темы и её содержания..."></textarea>
-                <div class="form-text">
-                    Опциональное описание темы для преподавателей и студентов
-                </div>
-            </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          {{ render_field(form.name) }}
+        </div>
+        <div class="col-md-6">
+            {{ render_field(form.code) }}
+        </div>
+      </div>
 
-            <div class="alert alert-info">
-                <h6><i class="fas fa-info-circle"></i> Автоматические настройки</h6>
-                <p>
-                    При создании темы автоматически будут созданы конфигурации для всех уровней сложности 
-                    (низкий, средний, высокий) с базовыми параметрами. Вы сможете настроить их позже 
-                    в разделе редактирования темы.
-                </p>
-            </div>
+      <div class="mt-3">
+        {{ render_field(form.description) }}
+      </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Создать тему
-                </button>
-                <a href="{{ url_for('admin.topics') }}" class="btn btn-outline-secondary ms-2">
-                    <i class="fas fa-times"></i> Отмена
-                </a>
-            </div>
-        </form>
-    </div>
+      <div class="alert alert-info mt-3">
+        <h6 class="mb-2"><i class="fas fa-info-circle"></i> Автоматические настройки</h6>
+        <p class="mb-0">
+          После создания темы автоматически добавятся конфигурации для уровней сложности
+          (низкий, средний, высокий) с базовыми параметрами. Их можно изменить в редактировании темы.
+        </p>
+      </div>
+
+      <div class="mt-3 d-flex align-items-center gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Создать тему
+        </button>
+        <a href="{{ url_for('admin.topics') }}" class="btn btn-outline-secondary">
+          <i class="fas fa-times"></i> Отмена
+        </a>
+      </div>
+    </form>
+  </div>
 </div>
 
+{# Информационный блок-превью уровней (без логики; просто UI) #}
 <div class="card">
-    <div class="card-body">
-        <h3 class="mb-3">Предварительные конфигурации уровней</h3>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="level-preview level-low">
-                    <h6>🟢 Низкий уровень</h6>
-                    <ul class="list-unstyled">
-                        <li><strong>Пороговое количество задач:</strong> 10</li>
-                        <li><strong>Эталонное время:</strong> 15 мин</li>
-                        <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="level-preview level-medium">
-                    <h6>🟡 Средний уровень</h6>
-                    <ul class="list-unstyled">
-                        <li><strong>Пороговое количество задач:</strong> 10</li>
-                        <li><strong>Эталонное время:</strong> 15 мин</li>
-                        <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="level-preview level-high">
-                    <h6>🔴 Высокий уровень</h6>
-                    <ul class="list-unstyled">
-                        <li><strong>Пороговое количество задач:</strong> 10</li>
-                        <li><strong>Эталонное время:</strong> 15 мин</li>
-                        <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
-                    </ul>
-                </div>
-            </div>
+  <div class="card-body">
+    <h3 class="mb-3">Предварительные конфигурации уровней</h3>
+
+    <div class="row gy-3">
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded border-start border-4 border-success">
+          <h6 class="mb-2">🟢 Низкий уровень</h6>
+          <ul class="list-unstyled mb-0 small text-muted">
+            <li><strong>Пороговое количество задач:</strong> 10</li>
+            <li><strong>Эталонное время:</strong> 15 мин</li>
+            <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
+          </ul>
         </div>
-        <div class="alert alert-secondary mt-3">
-            <small>
-                <i class="fas fa-lightbulb"></i> 
-                Эти параметры можно будет изменить после создания темы в разделе редактирования.
-            </small>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded border-start border-4 border-warning">
+          <h6 class="mb-2">🟡 Средний уровень</h6>
+          <ul class="list-unstyled mb-0 small text-muted">
+            <li><strong>Пороговое количество задач:</strong> 10</li>
+            <li><strong>Эталонное время:</strong> 15 мин</li>
+            <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
+          </ul>
         </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded border-start border-4 border-danger">
+          <h6 class="mb-2">🔴 Высокий уровень</h6>
+          <ul class="list-unstyled mb-0 small text-muted">
+            <li><strong>Пороговое количество задач:</strong> 10</li>
+            <li><strong>Эталонное время:</strong> 15 мин</li>
+            <li><strong>Штрафы за попытки:</strong> [0.7, 0.4]</li>
+          </ul>
+        </div>
+      </div>
     </div>
+
+    <div class="alert alert-secondary mt-3 mb-0 small">
+      <i class="fas fa-lightbulb"></i>
+      Эти параметры можно будет изменить после создания темы в разделе редактирования.
+    </div>
+  </div>
 </div>
+{% endblock %}
 
-<script>
-document.getElementById('name').addEventListener('input', function() {
-    const codeField = document.getElementById('code');
-    if (!codeField.value) {
-        const name = this.value.toLowerCase()
-            .replace(/[а-яё]/g, function(match) {
-                const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
-                const en = 'abvgdeejzijklmnoprstufhccss_y_eua';
-                return en[ru.indexOf(match)] || '';
-            })
-            .replace(/[^a-z0-9]/g, '_')
-            .replace(/_+/g, '_')
-            .replace(/^_|_$/g, '');
-        codeField.value = name;
-    }
-});
+{# Скрипт кладём в extra_js, чтобы он загрузился в самом конце <body> #}
+{% block extra_js %}
+  {{ super() }}
+  <script>
+  // Автогенерация "code" из "name" работает пока пользователь сам не менял поле code.
+  (function () {
+      const nameInput = document.getElementById('{{ form.name.id }}');
+      const codeInput = document.getElementById('{{ form.code.id }}');
+      if (!nameInput || !codeInput) return;
 
-document.querySelector('.topic-form').addEventListener('submit', function(e) {
-    const code = document.getElementById('code').value;
-    const name = document.getElementById('name').value;
-    
-    if (!code.match(/^[a-z0-9_]+$/)) {
-        e.preventDefault();
-        alert('Код темы может содержать только строчные латинские буквы, цифры и подчеркивания');
-        return;
-    }
-    if (code.length < 3) {
-        e.preventDefault();
-        alert('Код темы должен содержать минимум 3 символа');
-        return;
-    }
-    if (name.length < 3) {
-        e.preventDefault();
-        alert('Название темы должно содержать минимум 3 символа');
-        return;
-    }
-});
-</script>
+      // Флажок: пользователь вручную правил поле "code"?
+      let codeDirty = false;
 
-<style>
-.level-preview {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-left: 4px solid #6c757d;
-}
-.level-preview.level-low { border-left-color: #28a745; }
-.level-preview.level-medium { border-left-color: #ffc107; }
-.level-preview.level-high { border-left-color: #dc3545; }
-.level-preview h6 { margin-bottom: 10px; color: #495057; }
-.level-preview ul li { margin-bottom: 5px; font-size: 0.9rem; color: #6c757d; }
-.form-text { font-size: 0.875rem; }
-</style>
+      // Если пользователь что-то вводил в поле кода — выключаем автогенерацию
+      codeInput.addEventListener('input', function () {
+        codeDirty = true;
+      });
+
+      // Транслитерация RU→EN
+      function translitRuToEn(s) {
+        const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+        const en = ['a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o',
+                    'p','r','s','t','u','f','h','ts','ch','sh','sch','','y','','e','yu','ya'];
+        return s.replace(/[А-ЯЁа-яё]/g, ch => {
+          const lower = ch.toLowerCase();
+          const idx = ru.indexOf(lower);
+          const tr = idx >= 0 ? en[idx] : '';
+          return ch === lower ? tr : tr.toUpperCase();
+        });
+      }
+
+      // Пока пользователь НЕ правил поле кода — обновляем его на каждый ввод названия
+      nameInput.addEventListener('input', function () {
+        if (codeDirty) return;  // пользователь уже правил код — не трогаем
+        const draft = translitRuToEn(this.value)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '_')
+          .replace(/_+/g, '_')
+          .replace(/^_|_$/g, '');
+        codeInput.value = draft;
+      });
+
+      // Дополнительно: если пользователь очистил поле кода, снова разрешим автогенерацию
+      codeInput.addEventListener('blur', function () {
+        if (!codeInput.value) codeDirty = false;
+      });
+    })();
+  </script>
 {% endblock %}

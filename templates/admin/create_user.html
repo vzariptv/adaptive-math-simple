@@ -1,40 +1,188 @@
+{# templates/admin/create_user.html #}
 {% extends "admin/base_admin.html" %}
+{% from "shared/_form_macros.html" import render_field %}
+
+{% block title %}Создание пользователя{% endblock %}
 
 {% block admin_content %}
-<h2>Создать пользователя</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}  {# CSRF и скрытые поля #}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="text-info-emphasis"><i class="fa fa-user-plus"></i> Создание нового пользователя</h2>
+  <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Назад к пользователям
+  </a>
+</div>
 
-    <div class="mb-3">
-        {{ form.username.label(class="form-label") }}
-        {{ form.username(class="form-control") }}
-        {% for error in form.username.errors %}
-            <div class="text-danger small">{{ error }}</div>
+{# Сводная панель ошибок формы (если есть) #}
+{% if form.errors %}
+  <div class="alert alert-danger">
+    <h5 class="mb-2">Проверьте поля формы:</h5>
+    <ul class="mb-0">
+      {% for field_name, field_errors in form.errors.items() %}
+        {% for err in field_errors %}
+          <li>
+            <strong>{{ getattr(form, field_name).label.text if form[field_name] else field_name }}</strong>:
+            {{ err }}
+          </li>
         {% endfor %}
-    </div>
-    
-    <div class="mb-3">
-        {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-control") }}
-        {% for error in form.email.errors %}
-            <div class="text-danger small">{{ error }}</div>
-        {% endfor %}
-    </div>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
-    <div class="mb-3">
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-control") }}
-        {% for error in form.password.errors %}
-            <div class="text-danger small">{{ error }}</div>
-        {% endfor %}
-    </div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h3 class="mb-3">Основная информация</h3>
 
-    <div class="mb-3">
-        {{ form.role.label(class="form-label") }}
-        {{ form.role(class="form-select") }}
-    </div>
+    {# Важно: используем Flask-WTF (hidden_tag даст корректный CSRF) #}
+    <form action="{{ url_for('admin.create_user') }}" method="post" novalidate class="user-form">
+      {{ form.hidden_tag() }}
 
-    {{ form.submit(class="btn btn-primary") }}
-    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Отмена</a>
-</form>
+      <div class="row g-3">
+        <div class="col-md-6">
+          {# Логин #}
+          {{ render_field(form.username) }}
+        </div>
+
+        <div class="col-md-6">
+          {# Email (если есть в форме) #}
+          {% if form.email %}
+            {{ render_field(form.email) }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row g-3 mt-0">
+        <div class="col-md-6">
+          {# Имя (если есть в форме) #}
+          {% if form.first_name %}
+            {{ render_field(form.first_name) }}
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          {# Фамилия (если есть в форме) #}
+          {% if form.last_name %}
+            {{ render_field(form.last_name) }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row g-3 mt-0">
+        <div class="col-md-6">
+          {# Пароль (в Create обычно обязателен) #}
+          {% if form.password %}
+            {{ render_field(form.password) }}
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          {# Подтверждение пароля — если такое поле есть в форме #}
+          {% if form.password2 or form.confirm_password %}
+            {{ render_field(form.password2 if form.password2 else form.confirm_password) }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row g-3 mt-0">
+        <div class="col-md-6">
+          {# Роль #}
+          {{ render_field(form.role) }}
+        </div>
+
+        <div class="col-md-6 d-flex align-items-end">
+          {# Статус (BooleanField) — рисуем чекбокс по Bootstrap 5 #}
+          {% if form.is_active %}
+            <div class="form-check">
+              {{ form.is_active(class_='form-check-input' + (' is-invalid' if form.is_active.errors else '')) }}
+              <label for="{{ form.is_active.id }}" class="form-check-label">
+                {{ form.is_active.label.text }}
+              </label>
+              {% if form.is_active.errors %}
+                <div class="invalid-feedback d-block">{{ form.is_active.errors[0] }}</div>
+              {% elif form.is_active.description %}
+                <div class="form-text">{{ form.is_active.description }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="alert alert-info mt-3">
+        <i class="fas fa-info-circle"></i>
+        После создания пользователь сможет войти в систему в соответствии со своей ролью.
+      </div>
+
+      <div class="mt-3 d-flex align-items-center gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Создать пользователя
+        </button>
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+          <i class="fas fa-times"></i> Отмена
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Подсказка по ролям (не обязательно, но полезно) #}
+<div class="card">
+  <div class="card-body">
+    <h5 class="mb-2"><i class="fas fa-shield-alt"></i> Роли и права</h5>
+    <ul class="small text-muted mb-0">
+      <li><strong>Админ</strong> — полное управление системой</li>
+      <li><strong>Преподаватель</strong> — создание задач, просмотр статистики</li>
+      <li><strong>Студент</strong> — решение задач, просмотр прогресса</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  <script>
+    // Небольшой сахар: генерируем username из имени/фамилии, пока пользователь сам не менял логин
+    document.addEventListener('DOMContentLoaded', function() {
+      const userInput = document.getElementById('{{ form.username.id }}');
+      const firstNameEl = document.getElementById('{% if form.first_name and form.first_name.id %}{{ form.first_name.id }}{% endif %}');
+      const lastNameEl = document.getElementById('{% if form.last_name and form.last_name.id %}{{ form.last_name.id }}{% endif %}');
+      
+      if (!userInput) return;
+
+      let userDirty = false;
+      userInput.addEventListener('input', () => userDirty = true);
+
+      function translitRuToEn(s) {
+        const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+        const en = ['a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o',
+                    'p','r','s','t','u','f','h','ts','ch','sh','sch','','y','','e','yu','ya'];
+        return (s || '').replace(/[А-ЯЁа-яё]/g, ch => {
+          const lower = ch.toLowerCase();
+          const idx = ru.indexOf(lower);
+          const tr = idx >= 0 ? en[idx] : '';
+          return ch === lower ? tr : tr.toUpperCase();
+        });
+      }
+
+      function updateUsername() {
+        if (userDirty) return;
+        const f = firstNameEl ? firstNameEl.value.trim() : '';
+        const l = lastNameEl ? lastNameEl.value.trim() : '';
+        let base = '';
+        if (f || l) {
+          const fx = translitRuToEn(f).toLowerCase().replace(/[^a-z0-9]+/g, '');
+          const lx = translitRuToEn(l).toLowerCase().replace(/[^a-z0-9]+/g, '');
+          base = (fx ? fx[0] : '') + (lx || '');
+        }
+        userInput.value = base;
+      }
+
+      if (firstNameEl) firstNameEl.addEventListener('input', updateUsername);
+      if (lastNameEl) lastNameEl.addEventListener('input', updateUsername);
+
+      // Если пользователь очистил логин и ушёл из поля — снова разрешаем автогенерацию
+      userInput.addEventListener('blur', () => {
+        if (!userInput.value) userDirty = false;
+      });
+    });
+  </script>
 {% endblock %}

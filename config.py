@@ -11,3 +11,4 @@ class Config:
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = False   # True в проде (HTTPS)
     WTF_CSRF_TIME_LIMIT = None
+    WTF_CSRF_HEADERS = ["X-CSRFToken"]  # твой фронт шлёт именно так

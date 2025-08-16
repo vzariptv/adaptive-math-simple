@@ -1,0 +1,164 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Добавить попытку{% endblock %}
+
+{% block admin_content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-info-emphasis"><i class="fas fa-plus"></i> Добавить попытку</h2>
+    <div>
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.attempts') }}">
+        <i class="fas fa-arrow-left"></i> К журналу попыток
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post" action="{{ url_for('admin.create_attempt') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="row g-3 mb-2">
+          <div class="col-lg-6">
+            <label for="{{ form.user_id.id }}" class="form-label">{{ form.user_id.label.text }} <span class="text-danger">*</span></label>
+            {{ form.user_id(class="form-select" + (" is-invalid" if form.user_id.errors else "")) }}
+            {% if form.user_id.errors %}
+              <div class="invalid-feedback">{% for e in form.user_id.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+          <div class="col-lg-6">
+            <label for="{{ form.task_id.id }}" class="form-label">{{ form.task_id.label.text }} <span class="text-danger">*</span></label>
+            {{ form.task_id(id="task_id", class="form-select" + (" is-invalid" if form.task_id.errors else "")) }}
+            <div class="form-text">Весы для подсчёта балла берутся из темы и уровня задачи.</div>
+            {% if form.task_id.errors %}
+              <div class="invalid-feedback">{% for e in form.task_id.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row g-3 mb-2">
+          <div class="col-sm-4 col-md-3">
+            <label for="{{ form.attempt_number.id }}" class="form-label">{{ form.attempt_number.label.text }}</label>
+            {{ form.attempt_number(id="attempt_number", class="form-control" + (" is-invalid" if form.attempt_number.errors else "")) }}
+            <div class="form-text">Если оставить пустым — номер вычислится автоматически.</div>
+            {% if form.attempt_number.errors %}
+              <div class="invalid-feedback">{% for e in form.attempt_number.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+          <div class="col-sm-4 col-md-3">
+            <label for="{{ form.partial_score.id }}" class="form-label">{{ form.partial_score.label.text }}</label>
+            {{ form.partial_score(id="partial_score", class="form-control" + (" is-invalid" if form.partial_score.errors else "")) }}
+            <div class="form-text">
+              Считается автоматически по весам темы и номеру попытки.
+              <span id="weightsPreview" class="ms-1"></span>
+            </div>
+            {% if form.partial_score.errors %}
+              <div class="invalid-feedback">{% for e in form.partial_score.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+          <div class="col-sm-4 col-md-3">
+            <label for="{{ form.time_spent.id }}" class="form-label">{{ form.time_spent.label.text }}</label>
+            {{ form.time_spent(class="form-control" + (" is-invalid" if form.time_spent.errors else "")) }}
+            <div class="form-text">В секундах.</div>
+            {% if form.time_spent.errors %}
+              <div class="invalid-feedback">{% for e in form.time_spent.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+          <div class="col-sm-4 col-md-3">
+            <label for="{{ form.hints_used.id }}" class="form-label">{{ form.hints_used.label.text }}</label>
+            {{ form.hints_used(class="form-control" + (" is-invalid" if form.hints_used.errors else "")) }}
+            {% if form.hints_used.errors %}
+              <div class="invalid-feedback">{% for e in form.hints_used.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row g-3 mb-2">
+          <div class="col-sm-4 col-md-3 d-flex align-items-end">
+            <div class="form-check">
+              {{ form.is_correct(id="is_correct", class="form-check-input") }}
+              <label for="{{ form.is_correct.id }}" class="form-check-label">{{ form.is_correct.label.text }}</label>
+            </div>
+          </div>
+          <div class="col-sm-8 col-md-5">
+            <label for="{{ form.created_at.id }}" class="form-label">{{ form.created_at.label.text }}</label>
+            {{ form.created_at(class="form-control" + (" is-invalid" if form.created_at.errors else ""), placeholder="YYYY-MM-DD HH:MM:SS") }}
+            <div class="form-text">Если пусто — поставится текущее время (UTC).</div>
+            {% if form.created_at.errors %}
+              <div class="invalid-feedback">{% for e in form.created_at.errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.user_answer.id }}" class="form-label">{{ form.user_answer.label.text }}</label>
+          {{ form.user_answer(rows=6, class="form-control font-monospace" + (" is-invalid" if form.user_answer.errors else "")) }}
+          <div class="form-text">
+            Можно вставить JSON или обычный текст. Пример JSON: <code>{"type":"number","value":42}</code>
+          </div>
+          {% if form.user_answer.errors %}
+            <div class="invalid-feedback">{% for e in form.user_answer.errors %}{{ e }}{% endfor %}</div>
+          {% endif %}
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          {{ form.prefill_from_task(class="btn btn-outline-secondary", formaction=url_for('admin.create_attempt')) }}
+          {{ form.submit(class="btn btn-primary") }}
+          <a class="btn btn-outline-secondary" href="{{ url_for('admin.attempts') }}">Отмена</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  <script defer src="{{ url_for('static', filename='js/admin_attempts.js') }}"></script>
+  <script>
+    (function(){
+      function fetchWeights(taskId){
+        if(!taskId) return Promise.resolve([]);
+        return fetch('/admin/api/tasks/' + taskId + '/weights', {credentials:'same-origin'})
+          .then(function(r){return r.ok ? r.json() : {penalty_weights:[]};})
+          .then(function(d){return Array.isArray(d.penalty_weights)? d.penalty_weights : [];})
+          .catch(function(){return []});
+      }
+      function computePartial(isCorrect, attemptNumber, weights){
+        if(!isCorrect) return 0.0;
+        if(!attemptNumber || attemptNumber <= 1) return 1.0;
+        var idx = Math.max(0, attemptNumber - 2);
+        var val = (Array.isArray(weights) && idx < weights.length) ? parseFloat(weights[idx]) : 0.0;
+        return isNaN(val) ? 0.0 : val;
+      }
+      function update(){
+        var t = document.getElementById('task_id');
+        var n = document.getElementById('attempt_number');
+        var c = document.getElementById('is_correct');
+        var p = document.getElementById('partial_score');
+        var wPrev = document.getElementById('weightsPreview');
+        if(!t || !n || !c || !p) return;
+        var taskId = parseInt(t.value||'0',10);
+        var num = parseInt(n.value||'1',10);
+        var ok = !!c.checked;
+        fetchWeights(taskId).then(function(w){
+          if (wPrev) {
+            if (Array.isArray(w) && w.length) {
+              wPrev.innerHTML = 'Веса: 2-я → ' + (w[0] ?? 0) + (w.length>1 ? ', 3-я → ' + (w[1] ?? 0) : '') + (w.length>2 ? ', …' : '');
+            } else {
+              wPrev.innerHTML = '(веса не заданы)';
+            }
+          }
+          var val = computePartial(ok, num, w);
+          p.value = (Math.round(val*1000)/1000).toString();
+        });
+      }
+      document.addEventListener('DOMContentLoaded', function(){
+        var t = document.getElementById('task_id');
+        var n = document.getElementById('attempt_number');
+        var c = document.getElementById('is_correct');
+        if(t) t.addEventListener('change', update);
+        if(n){ ['change','keyup','input'].forEach(function(e){ n.addEventListener(e, update); }); }
+        if(c) c.addEventListener('change', update);
+        update();
+      });
+    })();
+  </script>
+{% endblock %}

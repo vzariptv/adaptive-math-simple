@@ -1,0 +1,170 @@
+{# 
+    Справочная информация по заданиям
+    Параметры:
+    - show_types (bool, default=True) - показывать типы ответов
+    - show_levels (bool, default=True) - показывать уровни сложности  
+    - show_admin_warning (bool, default=False) - показывать предупреждения для админов
+    - show_student_tips (bool, default=False) - показывать советы для студентов
+    - show_teacher_tips (bool, default=False) - показывать советы для преподавателей
+  #}
+  
+  {% macro task_help_card(
+      show_types=True, 
+      show_levels=True, 
+      show_admin_warning=False,
+      show_student_tips=False,
+      show_teacher_tips=False,
+      card_title="Справка"
+  ) %}
+  <div class="card">
+    <div class="card-header">
+      <h6 class="mb-0"><i class="fas fa-question-circle"></i> {{ card_title }}</h6>
+    </div>
+    <div class="card-body">
+      {% if show_types %}
+      <h6>Типы ответов:</h6>
+      <ul class="small">
+        <li><strong>Число</strong> — простое числовое значение</li>
+        <li><strong>Переменные</strong> — система уравнений с несколькими неизвестными</li>
+        <li><strong>Интервал</strong> — промежуток значений</li>
+        <li><strong>Последовательность</strong> — упорядоченный список значений</li>
+      </ul>
+      {% endif %}
+  
+      {% if show_levels %}
+      <h6 class="mt-3">Уровни сложности:</h6>
+      <ul class="small">
+        <li><span class="badge bg-success">Низкий</span> — базовые задачи</li>
+        <li><span class="badge bg-warning text-dark">Средний</span> — стандартные задачи</li>
+        <li><span class="badge bg-danger">Высокий</span> — сложные задачи</li>
+      </ul>
+      {% endif %}
+  
+      {% if show_admin_warning %}
+      <div class="alert alert-warning small mt-3">
+        <strong>Внимание:</strong> Изменение типа ответа может сделать задание несовместимым с существующими попытками решения.
+      </div>
+      {% endif %}
+  
+      {% if show_student_tips %}
+      <div class="alert alert-info small mt-3">
+        <strong>Совет для студентов:</strong> Внимательно читайте условие и проверяйте формат ответа перед отправкой.
+      </div>
+      {% endif %}
+  
+      {% if show_teacher_tips %}
+      <div class="alert alert-info small mt-3">
+        <strong>Совет:</strong> Сначала создайте тему в разделе "Темы", затем добавляйте к ней задания.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endmacro %}
+  
+  {# Макрос для JSON примеров - тоже часто используется #}
+  {% macro json_examples_help() %}
+  <div class="form-text">
+    <strong>Примеры:</strong><br>
+    • Число: <code>{"type": "number", "value": 42}</code><br>
+    • Переменные: <code>{"type": "variables", "variables": [{"name": "x", "value": 2}, {"name": "y", "value": 3}]}</code><br>
+    • Интервал: <code>{"type": "interval", "start": 1, "end": 5, "start_inclusive": true, "end_inclusive": false}</code><br>
+    • Последовательность: <code>{"type": "sequence", "sequence_values": [1, 2, 3, 5, 8]}</code>
+  </div>
+  {% endmacro %}
+  
+  {# Макрос для кнопки форматирования JSON #}
+  {% macro format_json_button(field_id, text="Форматировать") %}
+  <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="formatJSON('{{ field_id }}')">
+    <i class="fas fa-code"></i> {{ text }}
+  </button>
+  {% endmacro %}
+
+  {% macro json_examples_by_type(selected_type="") %}
+<div id="answerTypeHints" class="mt-2">
+  <div data-answer-type="number" style="display: {{ 'block' if selected_type=='number' else 'none' }};">
+    <div class="form-text mb-1">Пример для типа <strong>number</strong>:</div>
+    <pre class="p-2 bg-light border rounded" style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em;">{
+  "type": "number",
+  "value": 42
+}</pre>
+  </div>
+  <div data-answer-type="variables" style="display: {{ 'block' if selected_type=='variables' else 'none' }};">
+    <div class="form-text mb-1">Пример для типа <strong>variables</strong>:</div>
+    <pre class="p-2 bg-light border rounded" style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em;">{
+  "type": "variables",
+  "variables": [
+    { "name": "x", "value": 2 },
+    { "name": "y", "value": 3 }
+  ]
+}</pre>
+  </div>
+  <div data-answer-type="interval" style="display: {{ 'block' if selected_type=='interval' else 'none' }};">
+    <div class="form-text mb-1">Пример для типа <strong>interval</strong>:</div>
+    <pre class="p-2 bg-light border rounded" style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em;">{
+  "type": "interval",
+  "start": 1,
+  "end": 5,
+  "start_inclusive": true,
+  "end_inclusive": false
+}</pre>
+  </div>
+  <div data-answer-type="sequence" style="display: {{ 'block' if selected_type=='sequence' else 'none' }};">
+    <div class="form-text mb-1">Пример для типа <strong>sequence</strong>:</div>
+    <pre class="p-2 bg-light border rounded" style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em;">{
+  "type": "sequence",
+  "sequence_values": [1, 2, 3, 5, 8]
+}</pre>
+  </div>
+</div>
+{% endmacro %}
+
+  {# Макрос для отображения информации о задании #}
+{% macro task_info_card(task) %}
+{% if task %}
+<div class="card mb-3">
+  <div class="card-header">
+    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Информация о задании</h6>
+  </div>
+  <div class="card-body">
+    <table class="table table-sm table-borderless mb-0">
+      <tr>
+        <td class="text-muted">ID:</td>
+        <td><code>#{{ task.id }}</code></td>
+      </tr>
+      <tr>
+        <td class="text-muted">Создано:</td>
+        <td>{{ task.created_at.strftime('%d.%m.%Y %H:%M') if task.created_at else '—' }}</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Автор:</td>
+        <td>{{ task.creator.username if task.creator else '—' }}</td>
+      </tr>
+      <tr>
+        <td class="text-muted">Попыток:</td>
+        <td>
+          <span class="badge bg-info">{{ task.attempts|length if task.attempts else 0 }}</span>
+        </td>
+      </tr>
+      {% if task.topic_ref %}
+      <tr>
+        <td class="text-muted">Тема:</td>
+        <td>{{ task.topic_ref.name }} <small class="text-muted">({{ task.topic_ref.code }})</small></td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td class="text-muted">Уровень:</td>
+        <td>
+          <span class="badge bg-{{ 'success' if task.level == 'low' else 'warning' if task.level == 'medium' else 'danger' }}">
+            {{ task.level|title }}
+          </span>
+        </td>
+      </tr>
+    </table>
+    <!-- Кнопка перехода к журналу попыток по этой задаче -->
+    <a href="{{ url_for('admin.attempts', task_id=task.id) }}" class="btn btn-sm btn-primary mt-3">
+      <i class="fas fa-list"></i> Посмотреть попытки
+    </a>
+  </div>
+</div>
+{% endif %}
+{% endmacro %}

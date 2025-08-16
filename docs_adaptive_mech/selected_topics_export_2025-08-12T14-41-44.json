@@ -1,0 +1,64 @@
+[
+  {
+    "code": "quadratic_equations",
+    "name": "Квадратные уравнения",
+    "description": "Решение квадратных уравнений различными методами",
+    "level_configs": {
+      "high": {
+        "task_count_threshold": 10,
+        "reference_time": 180,
+        "penalty_weights": [
+          0.7,
+          0.4
+        ]
+      },
+      "low": {
+        "task_count_threshold": 5,
+        "reference_time": 300,
+        "penalty_weights": [
+          0.7,
+          0.4
+        ]
+      },
+      "medium": {
+        "task_count_threshold": 7,
+        "reference_time": 240,
+        "penalty_weights": [
+          0.7,
+          0.4
+        ]
+      }
+    }
+  },
+  {
+    "code": "geometry_triangles",
+    "name": "Геометрия треугольников",
+    "description": "",
+    "level_configs": {
+      "high": {
+        "task_count_threshold": 10,
+        "reference_time": 180,
+        "penalty_weights": [
+          0.7,
+          0.4
+        ]
+      },
+      "low": {
+        "task_count_threshold": 5,
+        "reference_time": 300,
+        "penalty_weights": [
+          0.7,
+          0.4
+        ]
+      },
+      "medium": {
+        "task_count_threshold": 7,
+        "reference_time": 240,
+        "penalty_weights": [
+          0.7,
+          0.4
+        ]
+      }
+    }
+  }
+]

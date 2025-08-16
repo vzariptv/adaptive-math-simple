@@ -1,0 +1,257 @@
+{% from "shared/modals.html" import confirm_modal, upload_modal %}
+{% extends "admin/base_admin.html" %}
+{% block title %}Журнал попыток{% endblock %}
+
+{% block admin_content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-info-emphasis"><i class="fas fa-clipboard-list"></i> Журнал попыток</h2>
+    <div class="btn-group" role="group">
+      {% if can_manage %}
+      <a href="{{ url_for('admin.create_attempt') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Добавить попытку
+      </a>
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importAttemptsModal">
+        <i class="fas fa-upload"></i> Импорт
+      </button>
+      {% endif %}
+      <a href="{{ url_for('admin.export_attempts',
+                          student_id=form.student_id.data,
+                          task_id=form.task_id.data,
+                          topic_id=form.topic_id.data,
+                          date_from=form.date_from.data,
+                          date_to=form.date_to.data) }}"
+         class="btn btn-info">
+        <i class="fas fa-download"></i> Экспорт
+      </a>
+    </div>
+  </div>
+
+  <!-- Фильтры -->
+  <form class="row g-2 align-items-end mb-3" method="get" action="{{ url_for('admin.attempts') }}">
+    <div class="col-md-3">
+      <label class="form-label mb-1" for="{{ form.student_id.id }}">{{ form.student_id.label.text }}</label>
+      {{ form.student_id(class="form-select") }}
+    </div>
+    <div class="col-md-3">
+      <label class="form-label mb-1" for="{{ form.task_id.id }}">{{ form.task_id.label.text }}</label>
+      {{ form.task_id(class="form-select") }}
+    </div>
+    <div class="col-md-2">
+      <label class="form-label mb-1" for="{{ form.topic_id.id }}">{{ form.topic_id.label.text }}</label>
+      {{ form.topic_id(class="form-select") }}
+    </div>
+    <div class="col-md-2">
+      <label class="form-label mb-1" for="{{ form.date_from.id }}">{{ form.date_from.label.text }}</label>
+      {{ form.date_from(class="form-control", placeholder="ГГГГ-ММ-ДД") }}
+    </div>
+    <div class="col-md-2">
+      <label class="form-label mb-1" for="{{ form.date_to.id }}">{{ form.date_to.label.text }}</label>
+      {{ form.date_to(class="form-control", placeholder="ГГГГ-ММ-ДД") }}
+    </div>
+    <div class="col-md-2">
+      <label class="form-label mb-1" for="{{ form.per_page.id }}">{{ form.per_page.label.text }}</label>
+      {{ form.per_page(class="form-select") }}
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-outline-primary">Показать</button>
+    </div>
+    {% if request.args %}
+    <div class="col-auto">
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.attempts') }}">Сбросить</a>
+    </div>
+    {% endif %}
+
+    <!-- Быстрые пресеты дат -->
+    <div class="col-12 mt-2">
+      <div class="btn-group btn-group-sm" role="group" aria-label="date-presets">
+        <button type="button" class="btn btn-outline-secondary" data-date-preset="today">Сегодня</button>
+        <button type="button" class="btn btn-outline-secondary" data-date-preset="7d">7 дней</button>
+        <button type="button" class="btn btn-outline-secondary" data-date-preset="30d">30 дней</button>
+        <button type="button" class="btn btn-outline-secondary" data-date-preset="week">Текущая неделя</button>
+        <button type="button" class="btn btn-outline-secondary" data-date-preset="month">Текущий месяц</button>
+      </div>
+    </div>
+  </form>
+
+  {% if attempts and attempts|length %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          {% if can_manage %}<th style="width:36px;"><input type="checkbox" id="selectAllAttempts"></th>{% endif %}
+          <th>Дата</th>
+          <th>Студент</th>
+          <th>Задача</th>
+          <th>Тема</th>
+          <th>#</th>
+          <th>Результат</th>
+          <th>Част. балл</th>
+          <th>Время</th>
+          <th>Подск.</th>
+          {% if can_manage %}<th>Действия</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+      {% for a in attempts %}
+        <tr>
+          {% if can_manage %}
+          <td><input type="checkbox" class="attempt-checkbox" value="{{ a.id }}"></td>
+          {% endif %}
+
+          <td>{{ a.created_at.strftime('%Y-%m-%d %H:%M') if a.created_at else '—' }}</td>
+          <td>{{ a.user.username if a.user else a.user_id }}</td>
+          <td>
+            {{ a.task.title if a.task else a.task_id }}
+            {% if a.task and a.task.code %}
+              <div class="small text-muted"><code>{{ a.task.code }}</code></div>
+            {% endif %}
+          </td>
+          <td>
+            {% if a.task and a.task.topic_ref %}
+              {{ a.task.topic_ref.name }}
+              {% if a.task.topic_ref.code %}
+              <div class="small text-muted"><code>{{ a.task.topic_ref.code }}</code></div>
+              {% endif %}
+            {% else %} — {% endif %}
+          </td>
+          <td>{{ a.attempt_number or 1 }}</td>
+          <td>
+            {% if a.is_correct %}
+              <span class="badge bg-success">верно</span>
+            {% else %}
+              <span class="badge bg-secondary">неверно</span>
+            {% endif %}
+          </td>
+          <td>{{ a.partial_score or 0 }}</td>
+          <td>{{ a.time_spent or 0 }}с</td>
+          <td>{{ a.hints_used or 0 }}</td>
+          {% if can_manage %}
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a href="{{ url_for('admin.edit_attempt', attempt_id=a.id) }}" class="btn btn-outline-primary" title="Редактировать">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a href="#"
+                 class="btn btn-outline-danger"
+                 title="Удалить"
+                 data-bs-toggle="modal"
+                 data-bs-target="#deleteAttemptModal"
+                 data-attempt-id="{{ a.id }}"
+                 data-attempt-title="{{ a.user.username if a.user else a.user_id }} – {{ a.task.title if a.task else a.task_id }} #{{ a.attempt_number }}"
+                 data-delete-url="{{ url_for('admin.delete_attempt', attempt_id=a.id) }}">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Массовые действия (только админ) -->
+  {% if can_manage %}
+  <div class="mt-2 d-flex align-items-center gap-2">
+    <button type="button"
+            id="bulkDeleteAttemptsBtn"
+            class="btn btn-danger btn-sm"
+            data-action="{{ url_for('admin.bulk_delete_attempts') }}"
+            disabled>
+      <i class="fas fa-trash"></i> Удалить выбранные
+    </button>
+    <span class="text-muted">Выбрано: <span id="attemptsSelectedCount">0</span></span>
+  </div>
+  {% endif %}
+
+  <!-- Пагинация -->
+  <nav aria-label="pagination" class="mt-3">
+    <ul class="pagination">
+      <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('admin.attempts',
+    page=pagination.prev_num,
+    student_id=request.args.get('student_id'),
+    task_id=request.args.get('task_id'),
+    topic_id=request.args.get('topic_id'),
+    date_from=request.args.get('date_from'),
+    date_to=request.args.get('date_to'),
+    per_page=request.args.get('per_page')) }}">«</a>
+      </li>
+      {% for p in range(1, pagination.pages + 1) %}
+      <li class="page-item {% if p == pagination.page %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('admin.attempts',
+    page=p,
+    student_id=request.args.get('student_id'),
+    task_id=request.args.get('task_id'),
+    topic_id=request.args.get('topic_id'),
+    date_from=request.args.get('date_from'),
+    date_to=request.args.get('date_to'),
+    per_page=request.args.get('per_page')) }}">{{ p }}</a>
+      </li>
+      {% endfor %}
+      <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('admin.attempts',
+    page=pagination.next_num,
+    student_id=request.args.get('student_id'),
+    task_id=request.args.get('task_id'),
+    topic_id=request.args.get('topic_id'),
+    date_from=request.args.get('date_from'),
+    date_to=request.args.get('date_to'),
+    per_page=request.args.get('per_page')) }}">»</a>
+      </li>
+    </ul>
+  </nav>
+  {% else %}
+    <div class="alert alert-info">Попытки не найдены.</div>
+  {% endif %}
+
+  {% if can_manage %}
+    {% call confirm_modal(
+      id='deleteAttemptModal',
+      title='Удаление попытки',
+      body='Вы действительно хотите удалить <strong id="deleteAttemptTitle"></strong>?',
+      action=url_for('admin.delete_attempt', attempt_id=0),
+      confirm_text='Удалить навсегда',
+      confirm_class='btn-danger',
+      alert_note='Это действие нельзя отменить.'
+    ) %}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% endcall %}
+
+    {% set attempts_format_note %}
+      <div class="alert alert-info small mb-3">
+        <strong>Формат JSON для импорта:</strong>
+<pre class="mb-0">[
+  {
+    "user_id": 12,                // или "username": "ivanov"
+    "task_id": 345,               // или "task_code": "migr_01_345"
+    "attempt_number": 1,          // опционально; если нет — вычислим автоматически
+    "is_correct": true,
+    "partial_score": 1.0,
+    "time_spent": 120,
+    "hints_used": 0,
+    "created_at": "2025-08-15T12:00:00",
+    "user_answer": {"value": 42}  // или строка
+  }
+]</pre>
+      </div>
+    {% endset %}
+
+    {{ upload_modal(
+      id='importAttemptsModal',
+      title='Импорт попыток',
+      action=url_for('admin.import_attempts'),
+      input_name='file',
+      accept='.json',
+      submit_text='Импортировать',
+      method='post',
+      csrf_html='<input type="hidden" name="csrf_token" value="' + csrf_token() + '">',
+      header_note=attempts_format_note
+    ) }}
+  {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin_attempts.js') }}"></script>
+{% endblock %}

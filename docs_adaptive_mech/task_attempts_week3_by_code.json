@@ -1,0 +1,1502 @@
+[
+  {
+    "task_code": "migr_01_3001",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 50,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3002",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 50,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T11:00:00"
+  },
+  {
+    "task_code": "migr_01_3003",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 46,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T12:00:00"
+  },
+  {
+    "task_code": "migr_01_3004",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 45,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3005",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 60,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T11:00:00"
+  },
+  {
+    "task_code": "migr_01_3006",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 50,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-02T12:00:00"
+  },
+  {
+    "task_code": "migr_01_3007",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 48,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-03T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3008",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 46,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T11:00:00"
+  },
+  {
+    "task_code": "migr_01_3009",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 59,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T12:00:00"
+  },
+  {
+    "task_code": "migr_01_3010",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 47,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3011",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 57,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T11:00:00"
+  },
+  {
+    "task_code": "migr_01_3012",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 55,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T12:00:00"
+  },
+  {
+    "task_code": "migr_01_3013",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 54,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-02T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3014",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 45,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-03T11:00:00"
+  },
+  {
+    "task_code": "migr_01_3015",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 55,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T12:00:00"
+  },
+  {
+    "task_code": "migr_01_3016",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 57,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3017",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 70,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T11:00:00"
+  },
+  {
+    "task_code": "migr_01_3018",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 68,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T12:00:00"
+  },
+  {
+    "task_code": "migr_01_3019",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 63,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T10:00:00"
+  },
+  {
+    "task_code": "migr_01_3020",
+    "username": "ivan_zachetniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 55,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-02T11:00:00"
+  },
+  {
+    "task_code": "migr_01_1001",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 161,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1001",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 164,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1001",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 120,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-28T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1002",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 190,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1002",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 193,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1002",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 169,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-29T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1003",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 200,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1003",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 196,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1003",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 121,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-30T18:00:00"
+  },
+  {
+    "task_code": "migr_01_1004",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 182,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1004",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 195,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1004",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 120,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-31T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1005",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 203,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1005",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 126,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1005",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 157,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-08-01T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1006",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 178,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1006",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 139,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1006",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 151,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-28T18:00:00"
+  },
+  {
+    "task_code": "migr_01_1007",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 164,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1007",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 134,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1007",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 152,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-29T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1008",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 213,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1008",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 147,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1008",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 191,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-30T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1009",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 185,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1009",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 123,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1009",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 121,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-31T18:00:00"
+  },
+  {
+    "task_code": "migr_01_1010",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 206,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1010",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 132,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1010",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 133,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-08-01T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1011",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 184,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1011",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 135,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1011",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 171,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-28T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1012",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 154,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1012",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 126,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1012",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 150,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-29T18:00:00"
+  },
+  {
+    "task_code": "migr_01_1013",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 197,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1013",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 145,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1013",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 139,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-30T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1014",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 216,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1014",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 199,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1014",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 194,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-31T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1015",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 204,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1015",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 200,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1015",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 183,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-08-01T18:00:00"
+  },
+  {
+    "task_code": "migr_01_1016",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 184,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1016",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 171,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1016",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 155,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-28T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1017",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 203,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1017",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 172,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1017",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 153,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-29T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1018",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 220,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1018",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 183,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T17:00:00"
+  },
+  {
+    "task_code": "migr_01_1018",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 143,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-30T18:00:00"
+  },
+  {
+    "task_code": "migr_01_1019",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 194,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T14:00:00"
+  },
+  {
+    "task_code": "migr_01_1019",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 133,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1019",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 192,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-07-31T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1020",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess1"
+    },
+    "is_correct": false,
+    "time_spent": 166,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T15:00:00"
+  },
+  {
+    "task_code": "migr_01_1020",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "type": "number",
+      "value": "guess2"
+    },
+    "is_correct": false,
+    "time_spent": 142,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T16:00:00"
+  },
+  {
+    "task_code": "migr_01_1020",
+    "username": "petr_zaletniy",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 182,
+    "hints_used": 1,
+    "attempt_number": 3,
+    "created_at": "2025-08-01T17:00:00"
+  },
+  {
+    "task_code": "migr_01_2001",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 97,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T11:00:00"
+  },
+  {
+    "task_code": "migr_01_2001",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 89,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2002",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 107,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2002",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 80,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2003",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 94,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2003",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 102,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2004",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 111,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2004",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 84,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T15:00:00"
+  },
+  {
+    "task_code": "migr_01_2005",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 115,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T11:00:00"
+  },
+  {
+    "task_code": "migr_01_2005",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 88,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2006",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 119,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-02T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2006",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 90,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-08-02T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2007",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 99,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2007",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 100,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2008",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 108,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2008",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 87,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T15:00:00"
+  },
+  {
+    "task_code": "migr_01_2009",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 99,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T11:00:00"
+  },
+  {
+    "task_code": "migr_01_2009",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 84,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2010",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 110,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2010",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 105,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2011",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 112,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2011",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 97,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2012",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 97,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2012",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 95,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T15:00:00"
+  },
+  {
+    "task_code": "migr_01_2013",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 94,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-03T11:00:00"
+  },
+  {
+    "task_code": "migr_01_2013",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 104,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-08-03T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2014",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 103,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2014",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 98,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2015",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 90,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-08-01T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2015",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 80,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-08-01T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2016",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 93,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-28T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2016",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 92,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-07-28T15:00:00"
+  },
+  {
+    "task_code": "migr_01_2017",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 115,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-29T11:00:00"
+  },
+  {
+    "task_code": "migr_01_2017",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 97,
+    "hints_used": 1,
+    "attempt_number": 2,
+    "created_at": "2025-07-29T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2018",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 104,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-07-30T12:00:00"
+  },
+  {
+    "task_code": "migr_01_2018",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 98,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-07-30T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2019",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 92,
+    "hints_used": 0,
+    "attempt_number": 1,
+    "created_at": "2025-07-31T13:00:00"
+  },
+  {
+    "task_code": "migr_01_2019",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 103,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-07-31T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2020",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "type": "number",
+      "value": "first_try"
+    },
+    "is_correct": false,
+    "time_spent": 116,
+    "hints_used": 1,
+    "attempt_number": 1,
+    "created_at": "2025-08-03T14:00:00"
+  },
+  {
+    "task_code": "migr_01_2020",
+    "username": "vitia_srednyachok",
+    "user_answer": {
+      "value": "test"
+    },
+    "is_correct": true,
+    "time_spent": 85,
+    "hints_used": 0,
+    "attempt_number": 2,
+    "created_at": "2025-08-03T15:00:00"
+  }
+]

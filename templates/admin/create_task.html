@@ -1,0 +1,211 @@
+{% extends "admin/base_admin.html" %}
+{% from "shared/task_help.html" import task_help_card, format_json_button %}
+
+{% block title %}Создание задания{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="text-info-emphasis"><i class="fas fa-plus"></i> Создание задания</h2>
+      <a href="{{ url_for('admin.tasks') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> К заданиям
+      </a>
+    </div>
+  
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <form method="POST" novalidate>
+              {{ form.hidden_tag() }}
+              
+              <!-- Основная информация -->
+              <div class="row mb-3">
+                <div class="col-md-8">
+                  <label for="{{ form.title.id }}" class="form-label">{{ form.title.label.text }} <span class="text-danger">*</span></label>
+                  {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                  {% if form.title.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.title.errors %}{{ error }}{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label for="{{ form.max_score.id }}" class="form-label">{{ form.max_score.label.text }} <span class="text-danger">*</span></label>
+                  {{ form.max_score(class="form-control" + (" is-invalid" if form.max_score.errors else ""), value="1.0") }}
+                  {% if form.max_score.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.max_score.errors %}{{ error }}{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+  
+              <!-- Описание/условие -->
+              <div class="mb-3">
+                <label for="{{ form.description.id }}" class="form-label">{{ form.description.label.text }} <span class="text-danger">*</span></label>
+                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="4", placeholder="Подробное условие задачи...") }}
+                {% if form.description.errors %}
+                  <div class="invalid-feedback">
+                    {% for error in form.description.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+  
+              <!-- Правильный ответ -->
+              {% from "shared/answer_forms.html" import render_answer_forms %}
+
+              <!-- Тема, уровень, тип ответа -->
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="{{ form.topic_id.id }}" class="form-label">{{ form.topic_id.label.text }} <span class="text-danger">*</span></label>
+                  {{ form.topic_id(class="form-select" + (" is-invalid" if form.topic_id.errors else "")) }}
+                  {% if form.topic_id.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.topic_id.errors %}{{ error }}{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label for="{{ form.level.id }}" class="form-label">{{ form.level.label.text }} <span class="text-danger">*</span></label>
+                  {{ form.level(class="form-select" + (" is-invalid" if form.level.errors else "")) }}
+                  {% if form.level.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.level.errors %}{{ error }}{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label for="{{ form.answer_type.id }}" class="form-label">{{ form.answer_type.label.text }} <span class="text-danger">*</span></label>
+                  {{ form.answer_type(class="form-select" + (" is-invalid" if form.answer_type.errors else "")) }}
+                  {% if form.answer_type.errors %}
+                    <div class="invalid-feedback">
+                      {% for error in form.answer_type.errors %}{{ error }}{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <!-- Динамические формы ответов -->
+              {{ render_answer_forms(form) }}
+              
+              <!-- Скрытое поле для JSON (заполняется автоматически) -->
+              {{ form.correct_answer() }}
+  
+              <!-- Схема ответа (опционально) -->
+              <div class="mb-3">
+                <label for="{{ form.answer_schema.id }}" class="form-label">
+                  {{ form.answer_schema.label.text }}
+                  {{ format_json_button(form.answer_schema.id) }}
+                </label>
+                {{ form.answer_schema(class="form-control font-monospace" + (" is-invalid" if form.answer_schema.errors else ""), rows="3", placeholder='{"fields": [...]}') }}
+                {% if form.answer_schema.errors %}
+                  <div class="invalid-feedback">
+                    {% for error in form.answer_schema.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+                <div class="form-text">Опционально: JSON-схема для интерфейса ввода ответа</div>
+              </div>
+  
+              <!-- Объяснение -->
+              <div class="mb-3">
+                <label for="{{ form.explanation.id }}" class="form-label">{{ form.explanation.label.text }}</label>
+                {{ form.explanation(class="form-control" + (" is-invalid" if form.explanation.errors else ""), rows="3", placeholder="Подсказка или объяснение решения...") }}
+                {% if form.explanation.errors %}
+                  <div class="invalid-feedback">
+                    {% for error in form.explanation.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+  
+              <!-- Активность -->
+              <div class="mb-4">
+                <div class="form-check">
+                  {{ form.is_active(class="form-check-input") }}
+                  <label class="form-check-label" for="{{ form.is_active.id }}">
+                    {{ form.is_active.label.text }}
+                  </label>
+                </div>
+              </div>
+  
+              <!-- Кнопки -->
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Создать задание
+                </button>
+                <a href="{{ url_for('admin.tasks') }}" class="btn btn-outline-secondary">
+                  <i class="fas fa-times"></i> Отмена
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Боковая панель с подсказками -->
+      <div class="col-lg-4">
+        {{ task_help_card(show_teacher_tips=True, card_title="Справка по созданию заданий") }}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Функция форматирования JSON
+    window.formatJSON = function(fieldId) {
+      const field = document.getElementById(fieldId);
+      if (!field) return;
+      
+      try {
+        if (field.value.trim()) {
+          const parsed = JSON.parse(field.value);
+          field.value = JSON.stringify(parsed, null, 2);
+          field.classList.remove('is-invalid');
+        }
+      } catch (e) {
+        field.classList.add('is-invalid');
+        alert('Ошибка форматирования JSON: ' + e.message);
+      }
+    };
+  
+    // Автоматическое форматирование при потере фокуса
+    const jsonFields = document.querySelectorAll('textarea[id$="_answer"], textarea[id$="_schema"]');
+    
+    jsonFields.forEach(field => {
+      field.addEventListener('blur', function() {
+        try {
+          if (this.value.trim()) {
+            const parsed = JSON.parse(this.value);
+            this.value = JSON.stringify(parsed, null, 2);
+            this.classList.remove('is-invalid');
+          }
+        } catch (e) {
+          // Не форматируем невалидный JSON, просто оставляем как есть
+        }
+      });
+    });
+  
+    // Подсказки по типу ответа
+    const answerTypeField = document.getElementById('{{ form.answer_type.id }}');
+    const correctAnswerField = document.getElementById('{{ form.correct_answer.id }}');
+    
+    if (answerTypeField && correctAnswerField) {
+      answerTypeField.addEventListener('change', function() {
+        const examples = {
+          'number': '{"type": "number", "value": 42}',
+          'variables': '{"type": "variables", "variables": [{"name": "x", "value": 2}, {"name": "y", "value": 3}]}',
+          'interval': '{"type": "interval", "start": 1, "end": 5, "start_inclusive": true, "end_inclusive": false}',
+          'sequence': '{"type": "sequence", "sequence_values": [1, 2, 3, 5, 8]}'
+        };
+        
+        if (examples[this.value] && !correctAnswerField.value.trim()) {
+          correctAnswerField.value = examples[this.value];
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

@@ -6,6 +6,7 @@ from . import auth_bp
 from .forms import LoginForm, RegistrationForm
 from models import User
 
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:

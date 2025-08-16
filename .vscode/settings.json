@@ -1,0 +1,26 @@
+{
+  // Use Tectonic as the LaTeX engine
+  "latex-workshop.latex.tools": [
+    {
+      "name": "tectonic",
+      "command": "tectonic",
+      "args": [
+        "-X",
+        "compile",
+        "%DOC%"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "tectonic",
+      "tools": ["tectonic"]
+    }
+  ],
+  // Make Tectonic the default recipe
+  "latex-workshop.latex.recipes.default": ["tectonic"],
+  // Optional: always build in the project root
+  "latex-workshop.latex.outDir": "./docs",
+  // Reduce noisy warnings if desired
+  "latex-workshop.message.warning.show": false
+}

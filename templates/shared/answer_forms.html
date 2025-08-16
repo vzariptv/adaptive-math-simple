@@ -1,0 +1,223 @@
+{% macro render_answer_forms(form) %}
+
+<div id="answer-forms-container">
+  <!-- Number Form -->
+  <div id="number-form" class="answer-form" style="display: none;">
+    <div class="border rounded p-3 bg-light mb-3">
+      <h6><i class="fas fa-calculator"></i> Числовой ответ</h6>
+      {{ form.number_answer.value.label(class="form-label") }}
+      {{ form.number_answer.value(class="form-control") }}
+      <div class="form-text">Введите числовое значение правильного ответа</div>
+    </div>
+  </div>
+
+  <!-- Variables Form -->
+  <div id="variables-form" class="answer-form" style="display: none;">
+    <div class="border rounded p-3 bg-light mb-3">
+      <h6><i class="fas fa-x"></i> Переменные</h6>
+      <div id="variables-container" data-prefix="{{ form.variables_answer.variables.id }}">
+        {% if form.variables_answer.variables.entries %}
+          {% set total_vars = form.variables_answer.variables.entries|length %}
+          <p class="text-info">Найдено {{ total_vars }} переменных</p>
+          {% for var_field in form.variables_answer.variables.entries %}
+            <div class="row mb-2 variable-row" data-index="{{ loop.index0 }}">
+              <div class="col-4">
+                <label class="form-label small">Переменная {{ loop.index }}</label>
+                {{ var_field.form.name(class="form-control", placeholder="x") }}
+              </div>
+              <div class="col-1 text-center pt-4">=</div>
+              <div class="col-5">
+                <label class="form-label small">Значение</label>
+                {{ var_field.form.value(class="form-control", placeholder="0", step="any") }}
+              </div>
+              <div class="col-2 pt-4">
+                {% if total_vars > 1 %}
+                  <button type="submit"
+                          name="{{ form.variables_answer.id }}-variables-{{ loop.index0 }}-DELETE"
+                          value="1"
+                          class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                {% else %}
+                  <button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Нельзя удалить единственную переменную">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-warning">Нет переменных для отображения (entries пустой)</p>
+        {% endif %}
+      </div>
+      <div class="mt-2">
+        {{ form.variables_answer.add_variable(class="btn btn-sm btn-outline-primary") }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Sequence Form -->
+  <div id="sequence-form" class="answer-form" style="display: none;">
+    <div class="border rounded p-3 bg-light mb-3">
+      <h6><i class="fas fa-list-ol"></i> Последовательность</h6>
+      {{ form.sequence_answer.sequence_input.label(class="form-label") }}
+      {{ form.sequence_answer.sequence_input(class="form-control", rows="2") }}
+      <div class="form-text">
+        Введите числа через запятую или точку с запятой. Порядок важен.
+      </div>
+    </div>
+  </div>
+
+  <!-- Interval Form -->
+  <div id="interval-form" class="answer-form" style="display: none;">
+    <div class="border rounded p-3 bg-light mb-3">
+      <h6><i class="fas fa-arrows-alt-h"></i> Интервал</h6>
+      
+      <div class="row mb-3">
+        <div class="col-5">
+          {{ form.interval_answer.start.label(class="form-label small") }}
+          {{ form.interval_answer.start(class="form-control") }}
+        </div>
+        <div class="col-2 text-center pt-4">до</div>
+        <div class="col-5">
+          {{ form.interval_answer.end.label(class="form-label small") }}
+          {{ form.interval_answer.end(class="form-control") }}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="form-check">
+            {{ form.interval_answer.start_inclusive(class="form-check-input") }}
+            {{ form.interval_answer.start_inclusive.label(class="form-check-label") }}
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check">
+            {{ form.interval_answer.end_inclusive(class="form-check-input") }}
+            {{ form.interval_answer.end_inclusive.label(class="form-check-label") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-text">Простой интервал</div>
+    </div>
+  </div>
+
+  <!-- JSON Fallback Form -->
+  <div id="json-form" class="answer-form" style="display: none;">
+    <div class="border rounded p-3 bg-light mb-3">
+      <h6><i class="fas fa-code"></i> JSON режим</h6>
+      {{ form.correct_answer_json.label(class="form-label") }}
+      {{ form.correct_answer_json(class="form-control font-monospace", rows="6") }}
+      <div class="form-text">
+        Введите JSON вручную. Примеры в документации.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Скрытое поле для финального JSON -->
+{{ form.correct_answer() }}
+
+<!-- Переключатель между режимами -->
+<div class="mb-3">
+  <div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="jsonModeToggle">
+    <label class="form-check-label" for="jsonModeToggle">
+      Режим JSON (для опытных пользователей)
+    </label>
+  </div>
+</div>
+
+<div class="mb-3 d-flex align-items-center gap-2">
+  <button type="button" id="showJsonPreviewBtn" class="btn btn-sm btn-outline-secondary">
+    Показать JSON из формы
+  </button>
+  <small class="text-muted">Предпросмотр JSON на основе текущих полей</small>
+</div>
+<div id="jsonPreviewBox" class="mb-3" style="display:none;">
+  <label class="form-label small">Предпросмотр JSON</label>
+  <pre id="jsonPreview" class="p-2 bg-light border rounded" style="white-space: pre-wrap; word-break: break-word; font-family: monospace; font-size: 0.9em;"></pre>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const answerTypeSelect = document.getElementById('{{ form.answer_type.id }}');
+  const jsonModeToggle = document.getElementById('jsonModeToggle');
+  
+  function showAnswerForm() {
+    // Скрываем все формы
+    document.querySelectorAll('.answer-form').forEach(form => {
+      form.style.display = 'none';
+    });
+    
+    // Определяем какую форму показать
+    let formToShow;
+    if (jsonModeToggle && jsonModeToggle.checked) {
+      formToShow = 'json-form';
+    } else {
+      const selectedType = answerTypeSelect ? answerTypeSelect.value : '';
+      if (selectedType) {
+        formToShow = selectedType + '-form';
+      }
+    }
+    
+    // Показываем нужную форму
+    if (formToShow) {
+      const targetForm = document.getElementById(formToShow);
+      if (targetForm) {
+        targetForm.style.display = 'block';
+      }
+    }
+  }
+  
+  async function showJsonPreview() {
+    const box = document.getElementById('jsonPreviewBox');
+    const pre = document.getElementById('jsonPreview');
+    if (!box || !pre) return;
+
+    const formEl = document.querySelector('form');
+    if (!formEl) return;
+
+    try {
+      const fd = new FormData(formEl);
+      const resp = await fetch('/admin/tasks/preview_answer_json', {
+        method: 'POST',
+        body: fd,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const payload = await resp.json();
+      if (payload && payload.ok) {
+        pre.textContent = JSON.stringify(payload.data, null, 2);
+      } else {
+        pre.textContent = (payload && payload.error) ? String(payload.error) : 'Не удалось построить JSON';
+      }
+    } catch (e) {
+      pre.textContent = 'Ошибка предпросмотра: ' + e;
+    }
+    box.style.display = 'block';
+  }
+
+  const showBtn = document.getElementById('showJsonPreviewBtn');
+  if (showBtn) {
+    showBtn.addEventListener('click', showJsonPreview);
+  }
+
+  function maybeRefreshPreview() {
+    const box = document.getElementById('jsonPreviewBox');
+    if (box && box.style.display !== 'none') {
+      showJsonPreview();
+    }
+  }
+  if (answerTypeSelect) answerTypeSelect.addEventListener('change', showAnswerForm);
+  if (jsonModeToggle) jsonModeToggle.addEventListener('change', showAnswerForm);
+  if (answerTypeSelect) answerTypeSelect.addEventListener('change', maybeRefreshPreview);
+  if (jsonModeToggle) jsonModeToggle.addEventListener('change', maybeRefreshPreview);
+  document.getElementById('answer-forms-container')?.addEventListener('input', maybeRefreshPreview);
+
+  // Инициализация
+  showAnswerForm();
+});
+</script>
+{% endmacro %}

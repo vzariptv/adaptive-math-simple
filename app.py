@@ -5,7 +5,7 @@ from flask import Flask, render_template
 from flask_wtf.csrf import generate_csrf
 
 from config import Config
-from extensions import db, csrf, login_manager
+from extensions import db, csrf, login_manager, migrate
 
 load_dotenv()  # подтягиваем .env при старте
 
@@ -40,6 +40,8 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
     login_manager.login_message_category = "warning"
+    # Flask-Migrate
+    migrate.init_app(app, db)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -55,7 +57,7 @@ def create_app():
     app.register_blueprint(main_bp)
     app.register_blueprint(tasks_bp, url_prefix="/tasks")
     app.register_blueprint(auth_bp,  url_prefix="/auth")
-    app.register_blueprint(admin_bp, url_prefix="/admin")
+    app.register_blueprint(admin_bp)
 
     # Jinja: csrf_token() во все шаблоны
     @app.context_processor
@@ -85,10 +87,7 @@ def create_app():
         create_default_admin()
         print("Admin created")
 
-    # Создание таблиц на первом старте
-    with app.app_context():
-        db.create_all()
-        print("Database tables created")
+    # Используем миграции (flask db upgrade) вместо автоматического create_all()
 
     return app
 
