@@ -166,7 +166,10 @@ def list_tasks():
 @login_required
 def view_task(task_id):
     """Просмотр конкретного задания"""
-    task = MathTask.query.get_or_404(task_id)
+    task = db.session.get(MathTask, task_id)
+    if task is None:
+        from flask import abort
+        abort(404)
     
     # Получаем статистику попыток для текущего пользователя
     user_attempts = TaskAttempt.query.filter_by(
@@ -189,7 +192,10 @@ def view_task(task_id):
 @login_required
 def solve_task(task_id):
     """Отправка решения задания"""
-    task = MathTask.query.get_or_404(task_id)
+    task = db.session.get(MathTask, task_id)
+    if task is None:
+        from flask import abort
+        abort(404)
     
     if current_user.role != 'student':
         flash('Только студенты могут решать задания', 'error')
@@ -279,7 +285,7 @@ def create_task():
             if max_score <= 0:
                 errors.append('Максимальный балл должен быть больше 0')
             # Проверяем существование темы
-            topic = Topic.query.get(topic_id)
+            topic = db.session.get(Topic, topic_id)
             if not topic:
                 errors.append('Выбранная тема не существует')
         except ValueError:

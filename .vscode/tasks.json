@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Tests: Run All (unittest)",
+      "type": "shell",
+      "command": "venv/bin/python -m unittest discover -v -s tests -p 'test_*.py'",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Tests: Run Current File (unittest)",
+      "type": "shell",
+      "command": "venv/bin/python -m unittest -v ${relativeFile} || venv/bin/python -m unittest -v tests/${fileBasename}",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

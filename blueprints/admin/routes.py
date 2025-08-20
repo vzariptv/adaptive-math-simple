@@ -10,11 +10,12 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-from extensions import db
+from extensions import db, csrf
 from sqlalchemy import func
-from models import User, Topic, MathTask, TopicLevelConfig, TaskAttempt
+from models import User, Topic, MathTask, TopicLevelConfig, TaskAttempt, EvaluationSystemConfig
 from . import admin_bp
-from .forms import CreateUserForm, EditUserForm, CreateTopicForm, EditTopicForm, TaskForm, ImportFileForm, ConfirmDeleteForm, LevelConfigForm, LEVEL_CHOICES, AttemptFilterForm, CreateAttemptForm, EditAttemptForm
+from .forms import CreateUserForm, EditUserForm, CreateTopicForm, EditTopicForm, TaskForm, ImportFileForm, ConfirmDeleteForm, LevelConfigForm, LEVEL_CHOICES, AttemptFilterForm, CreateAttemptForm, EditAttemptForm, EvaluationPreviewForm, ANSWER_TYPE_CHOICES
+from services.evaluation import preview as eval_preview
 
 
 
@@ -148,7 +149,10 @@ def api_task_weights(task_id: int):
     """Возвращает JSON с penalty_weights и level/topic для выбранной задачи.
     Поддерживаем форматы хранения penalty_weights: list/tuple, JSON-строка, CSV-строка.
     """
-    task = MathTask.query.get_or_404(task_id)
+    task = db.session.get(MathTask, task_id)
+    if task is None:
+        from flask import abort
+        abort(404)
     cfg = TopicLevelConfig.query.filter_by(topic_id=task.topic_id, level=task.level).first()
 
     def _is_number(x):
@@ -197,7 +201,252 @@ def api_task_weights(task_id: int):
         'penalty_weights': weights
     })
 
+# =============================================================================
+#           Admin API: EvaluationSystemConfig (GET/POST JSON)
+# =============================================================================
+
+@admin_bp.route('/api/evaluation_config', methods=['GET', 'POST'])
+@csrf.exempt
+@login_required
+@admin_required
+def api_evaluation_config():
+    """Returns or updates global EvaluationSystemConfig as JSON.
+    GET: returns latest row or defaults
+    POST: accepts JSON with fields and saves (creates row if none)
+    """
+    def _row_to_dict(row: EvaluationSystemConfig):
+        return {
+            'id': row.id,
+            'evaluation_period_days': row.evaluation_period_days,
+            'engagement_weight_alpha': row.engagement_weight_alpha,
+            'weight_accuracy': row.weight_accuracy,
+            'weight_time': row.weight_time,
+            'weight_progress': row.weight_progress,
+            'weight_motivation': row.weight_motivation,
+            'min_threshold_low': row.min_threshold_low,
+            'max_threshold_low': row.max_threshold_low,
+            'min_threshold_medium': row.min_threshold_medium,
+            'max_threshold_medium': row.max_threshold_medium,
+            'created_at': row.created_at.isoformat() if row.created_at else None,
+            'updated_at': row.updated_at.isoformat() if row.updated_at else None,
+        }
+
+    row = EvaluationSystemConfig.query.order_by(EvaluationSystemConfig.id.desc()).first()
+    if request.method == 'GET':
+        if row is None:
+            # Create defaults in-memory (do not persist on mere GET)
+            row = EvaluationSystemConfig()
+        return jsonify({'ok': True, 'data': _row_to_dict(row)})
+
+    # POST (JSON)
+    try:
+        payload = request.get_json(silent=True) or {}
+        if row is None:
+            row = EvaluationSystemConfig()
+            db.session.add(row)
+
+        def _flt(name, default=None, lo=None, hi=None):
+            val = payload.get(name, default)
+            try:
+                if val is None:
+                    return default
+                v = float(val)
+                if lo is not None:
+                    v = max(lo, v)
+                if hi is not None:
+                    v = min(hi, v)
+                return v
+            except Exception:
+                return default
+
+        def _int(name, default=None, lo=None, hi=None):
+            val = payload.get(name, default)
+            try:
+                if val is None:
+                    return default
+                v = int(val)
+                if lo is not None:
+                    v = max(lo, v)
+                if hi is not None:
+                    v = min(hi, v)
+                return v
+            except Exception:
+                return default
+
+        row.evaluation_period_days = _int('evaluation_period_days', row.evaluation_period_days or 7, 1, 365)
+        row.engagement_weight_alpha = _flt('engagement_weight_alpha', row.engagement_weight_alpha or 0.667, 0.0, 1.0)
+        row.weight_accuracy = _flt('weight_accuracy', row.weight_accuracy or 0.3, 0.0, 1.0)
+        row.weight_time = _flt('weight_time', row.weight_time or 0.2, 0.0, 1.0)
+        row.weight_progress = _flt('weight_progress', row.weight_progress or 0.3, 0.0, 1.0)
+        row.weight_motivation = _flt('weight_motivation', row.weight_motivation or 0.2, 0.0, 1.0)
+        row.min_threshold_low = _flt('min_threshold_low', row.min_threshold_low or 0.3, 0.0, 1.0)
+        row.max_threshold_low = _flt('max_threshold_low', row.max_threshold_low or 0.7, 0.0, 1.0)
+        row.min_threshold_medium = _flt('min_threshold_medium', row.min_threshold_medium or 0.4, 0.0, 1.0)
+        row.max_threshold_medium = _flt('max_threshold_medium', row.max_threshold_medium or 0.8, 0.0, 1.0)
+
+        # Enforce simple consistency: min <= max for each band
+        if row.min_threshold_low > row.max_threshold_low:
+            row.min_threshold_low, row.max_threshold_low = row.max_threshold_low, row.min_threshold_low
+        if row.min_threshold_medium > row.max_threshold_medium:
+            row.min_threshold_medium, row.max_threshold_medium = row.max_threshold_medium, row.min_threshold_medium
+
+        db.session.commit()
+        return jsonify({'ok': True, 'data': _row_to_dict(row)})
+    except Exception as e:
+        current_app.logger.exception(e)
+        db.session.rollback()
+        return jsonify({'ok': False, 'errors': [str(e)]}), 400
+
 # ---------- панель ----------
+
+# =============================================================================
+#                 Admin: Evaluation preview (JSON API)
+# =============================================================================
+
+@admin_bp.route('/evaluation/preview', methods=['POST'])
+@csrf.exempt
+@login_required
+@admin_required
+def evaluation_preview():
+    """Compute a non-persistent evaluation preview for selected users/topics and period.
+    Input: JSON body with {"user_ids": [..], "topic_ids": [..], "period_start": "YYYY-MM-DD", "period_end": "YYYY-MM-DD"}
+    If dates are omitted, uses EvaluationSystemConfig.evaluation_period_days ending today.
+    """
+    try:
+        payload = request.get_json(silent=True) or {}
+        user_ids = payload.get('user_ids') or []
+        # Accept both topic_id (single) and topic_ids (array)
+        topic_ids = payload.get('topic_ids')
+        topic_id_single = payload.get('topic_id')
+        if not topic_ids and topic_id_single is not None:
+            try:
+                topic_ids = [int(topic_id_single)]
+            except Exception:
+                topic_ids = []
+        if topic_ids is None:
+            topic_ids = []
+        p_start = payload.get('period_start')
+        p_end = payload.get('period_end')
+
+        # Validate via form (server-side); for JSON we pass formdata=None so WTForms
+        # doesn't try to read request.form and process DateFields with None
+        form = EvaluationPreviewForm(formdata=None, meta={'csrf': False})
+        # For JSON API usage we don't set choices, so disable choice validation to avoid "Not a valid choice"
+        try:
+            form.user_ids.validate_choice = False
+            form.topic_id.validate_choice = False
+        except Exception:
+            pass
+        try:
+            form.user_ids.data = [int(x) for x in user_ids]
+        except Exception:
+            form.user_ids.data = []
+        try:
+            # pick first topic id if provided
+            form.topic_id.data = int(topic_ids[0]) if topic_ids else None
+        except Exception:
+            form.topic_id.data = None
+
+        def _parse_date(s):
+            if not s:
+                return None
+            try:
+                # Prefer ISO YYYY-MM-DD
+                return datetime.fromisoformat(s).date()
+            except Exception:
+                try:
+                    return datetime.strptime(s, '%Y-%m-%d').date()
+                except Exception:
+                    return None
+
+        form.period_start.data = _parse_date(p_start)
+        form.period_end.data = _parse_date(p_end)
+
+        # Basic presence checks
+        errors = []
+        if not form.validate():
+            # collect form errors
+            for f_name, field in form._fields.items():
+                for e in field.errors or []:
+                    errors.append(f"{getattr(field.label, 'text', f_name)}: {e}")
+        if not form.user_ids.data:
+            errors.append('Нужно выбрать хотя бы одного студента')
+        if not form.topic_id.data:
+            errors.append('Нужно выбрать тему')
+        if errors:
+            return jsonify({'ok': False, 'errors': errors}), 400
+
+        # Load system config for period (weights used inside service)
+        sys_cfg_row = EvaluationSystemConfig.query.order_by(EvaluationSystemConfig.id.desc()).first()
+        # Defaults if not present
+        eval_days = int(getattr(sys_cfg_row, 'evaluation_period_days', 7) or 7)
+
+        # Determine period
+        if form.period_start.data and form.period_end.data:
+            period_start = form.period_start.data
+            period_end = form.period_end.data
+        else:
+            # defaults: last N days ending today
+            today = datetime.utcnow().date()
+            period_end = today
+            period_start = today - timedelta(days=max(1, eval_days) - 1)
+
+        results = eval_preview(
+            db.session,
+            form.user_ids.data,
+            [form.topic_id.data],
+            period_start,
+            period_end,
+        )
+
+        return jsonify({
+            'ok': True,
+            'meta': {
+                'user_count': len(form.user_ids.data),
+                'topic_count': 1 if form.topic_id.data else 0,
+                'period_start': period_start.isoformat(),
+                'period_end': period_end.isoformat(),
+            },
+            'results': results,
+        })
+    except Exception as e:
+        current_app.logger.exception(e)
+        return jsonify({'ok': False, 'errors': [str(e)]}), 500
+@admin_bp.route('/evaluation', methods=['GET'])
+@login_required
+@admin_required
+def evaluation_page():
+    # Populate choices for multiselects
+    form = EvaluationPreviewForm(meta={'csrf': False})
+
+    # Only students, display "First Last" if present, else username
+    students = User.query.filter(User.role == 'student').order_by(User.last_name.asc(), User.first_name.asc(), User.username.asc()).all()
+
+    def _display_name(u: User) -> str:
+        fn = (u.first_name or '').strip()
+        ln = (u.last_name or '').strip()
+        full = f"{fn} {ln}".strip()
+        return full if full else u.username
+
+    form.user_ids.choices = [(u.id, _display_name(u)) for u in students]
+
+    # Only topics that have at least one task
+    topics_with_tasks = (
+        db.session.query(Topic)
+        .join(MathTask, MathTask.topic_id == Topic.id)
+        .group_by(Topic.id)
+        .having(func.count(MathTask.id) > 0)
+        .order_by(Topic.name.asc())
+        .all()
+    )
+    form.topic_id.choices = [(t.id, t.name) for t in topics_with_tasks]
+
+    # Meta maps for client rendering
+    user_map = {u.id: _display_name(u) for u in students}
+    topic_map = {t.id: t.name for t in topics_with_tasks}
+
+    # Defaults: select none; dates empty to use backend default period
+    return render_template('admin/evaluation.html', form=form, user_map=user_map, topic_map=topic_map)
 @admin_bp.route("/")
 @login_required
 @admin_required
@@ -265,7 +514,10 @@ def create_topic():
 @login_required
 @admin_required
 def edit_topic(topic_id):
-    topic = Topic.query.get_or_404(topic_id)
+    topic = db.session.get(Topic, topic_id)
+    if topic is None:
+        from flask import abort
+        abort(404)
 
     # Собираем словарь конфигов по уровням, чтобы было легко обращаться
     existing_cfgs = {cfg.level: cfg for cfg in (topic.level_configs or [])}
@@ -334,7 +586,10 @@ def edit_topic(topic_id):
 @login_required
 @admin_required
 def delete_topic(topic_id):
-    topic = Topic.query.get_or_404(topic_id)
+    topic = db.session.get(Topic, topic_id)
+    if topic is None:
+        from flask import abort
+        abort(404)
     form = ConfirmDeleteForm()
     if not form.validate_on_submit():
         flash("Неверный запрос", "error")
@@ -505,6 +760,15 @@ def preview_answer_json():
     form = TaskForm()
     # choices для SelectField, чтобы форма корректно инициализировалась
     form.topic_id.choices = [(t.id, f"{t.name} ({t.code})") for t in Topic.query.order_by(Topic.name).all()]
+    # Явная проверка типа ответа: для неизвестных типов возвращаем 400
+    try:
+        at = (form.answer_type.data or "").strip()
+        valid_types = {t for t, _ in ANSWER_TYPE_CHOICES}
+        if at and at not in valid_types:
+            return jsonify({"ok": False, "error": "Unknown answer_type"}), 400
+    except Exception:
+        # На случай, если что-то не так с полем — пусть обработается ниже
+        pass
     try:
         data = form.build_answer_json()
         return jsonify({"ok": True, "data": data})
@@ -572,7 +836,10 @@ def create_task():
 @login_required
 @admin_required
 def edit_task(task_id):
-    task = MathTask.query.get_or_404(task_id)
+    task = db.session.get(MathTask, task_id)
+    if task is None:
+        from flask import abort
+        abort(404)
     form = TaskForm(obj=task)
     form.topic_id.choices = [(t.id, f"{t.name} ({t.code})") for t in Topic.query.order_by(Topic.name).all()]
     delete_form = ConfirmDeleteForm()
@@ -654,7 +921,10 @@ def edit_task(task_id):
 @login_required
 @admin_required
 def delete_task(task_id):
-    task = MathTask.query.get_or_404(task_id)
+    task = db.session.get(MathTask, task_id)
+    if task is None:
+        from flask import abort
+        abort(404)
     form = ConfirmDeleteForm()
     if not form.validate_on_submit():
         flash("Неверный запрос", "error")
@@ -705,7 +975,7 @@ def import_tasks():
             if topic_code:
                 topic = Topic.query.filter_by(code=topic_code).first()
             if not topic and topic_id:
-                topic = Topic.query.get(topic_id)
+                topic = db.session.get(Topic, topic_id)
             if not topic:
                 raise ValueError(f"Задание {i}: тема не найдена (topic_code/topic_id)")
 
@@ -768,13 +1038,8 @@ def export_tasks():
         else:
             tasks = MathTask.query.all()
 
-        export = {
-            "exported_at": datetime.utcnow().isoformat(),
-            "exported_by": getattr(current_user, "username", "admin"),
-            "total_tasks": len(tasks),
-            "tasks": [_serialize_task(t) for t in tasks],
-        }
-        resp = make_response(json.dumps(export, ensure_ascii=False, indent=2))
+        export_data = [_serialize_task(t) for t in tasks]
+        resp = make_response(json.dumps(export_data, ensure_ascii=False, indent=2))
         resp.headers["Content-Type"] = "application/json; charset=utf-8"
         fname = ("selected_tasks_export_" if request.method == "POST" else "all_tasks_export_") \
                 + datetime.now().strftime("%Y%m%d_%H%M%S") + ".json"
@@ -822,6 +1087,8 @@ def create_user():
         u = User(
             username=form.username.data.strip(),
             email=(form.email.data or "").strip() or None,
+            first_name=(form.first_name.data or "").strip() or None,
+            last_name=(form.last_name.data or "").strip() or None,
             role=form.role.data,
             is_active=bool(form.is_active.data),
         )
@@ -836,16 +1103,23 @@ def create_user():
 @login_required
 @admin_required
 def edit_user(user_id):
-    u = User.query.get_or_404(user_id)
+    u = db.session.get(User, user_id)
+    if u is None:
+        from flask import abort
+        abort(404)
     form = EditUserForm(obj=u, instance=u)
     if form.validate_on_submit():
         # Проверим уникальность (исключая текущего)
         u.username = form.username.data.strip()
         u.email = form.email.data.strip() if form.email.data else None
+        # Новые поля: имя и фамилия
+        u.first_name = (form.first_name.data or "").strip() or None
+        u.last_name = (form.last_name.data or "").strip() or None
         u.role = form.role.data
         u.is_active = bool(form.is_active.data)
-        if form.password.data:
-            _set_user_password(u, form.password.data)
+        # В EditUserForm нет поля `password`, используем `new_password`
+        if getattr(form, 'new_password', None) and form.new_password.data:
+            _set_user_password(u, form.new_password.data)
         db.session.commit()
         flash("Пользователь обновлён", "success")
         return redirect(url_for("admin.users"))
@@ -861,7 +1135,10 @@ def delete_user(user_id):
         flash("Неверный запрос удаления.", "danger")
         return redirect(url_for("admin.users"))
 
-    user = User.query.get_or_404(user_id)
+    user = db.session.get(User, user_id)
+    if user is None:
+        from flask import abort
+        abort(404)
 
     # защита: не удаляем себя
     if current_user.id == user.id:
@@ -1059,7 +1336,7 @@ def create_attempt():
 
     if form.task_id.data and not form.user_answer.data:
         try:
-            task_obj = MathTask.query.get(form.task_id.data)
+            task_obj = db.session.get(MathTask, form.task_id.data)
             if task_obj and getattr(task_obj, 'correct_answer', None) is not None:
                 ca = task_obj.correct_answer
                 if isinstance(ca, str):
@@ -1073,7 +1350,7 @@ def create_attempt():
 
     # Нажатие кнопки «Подставить ответ задачи» — просто подставляем и рендерим форму без создания записи
     if request.method == 'POST' and 'prefill_from_task' in request.form:
-        task_obj = MathTask.query.get(form.task_id.data) if form.task_id.data else None
+        task_obj = db.session.get(MathTask, form.task_id.data) if form.task_id.data else None
         if task_obj and getattr(task_obj, 'correct_answer', None) is not None:
             ca = task_obj.correct_answer
             try:
@@ -1110,7 +1387,7 @@ def create_attempt():
                 ua_val = ua_raw
 
         # Получим объект задачи для расчёта
-        task_obj_for_scoring = MathTask.query.get(form.task_id.data)
+        task_obj_for_scoring = db.session.get(MathTask, form.task_id.data)
 
         # partial_score по политике (0..1) с учётом успешности и номера попытки
         computed_partial = _compute_partial_score(
@@ -1155,7 +1432,10 @@ def edit_attempt(attempt_id):
         from flask import abort
         abort(403)
 
-    att = TaskAttempt.query.get_or_404(attempt_id)
+    att = db.session.get(TaskAttempt, attempt_id)
+    if att is None:
+        from flask import abort
+        abort(404)
 
     form = EditAttemptForm(obj=att)
     form.user_id.choices = [(u.id, u.username) for u in User.query.order_by(User.username.asc()).all()]
@@ -1213,7 +1493,10 @@ def delete_attempt(attempt_id):
     if not form.validate_on_submit():
         flash('Неверный запрос', 'warning')
         return redirect(url_for('admin.attempts'))
-    att = TaskAttempt.query.get_or_404(attempt_id)
+    att = db.session.get(TaskAttempt, attempt_id)
+    if att is None:
+        from flask import abort
+        abort(404)
     db.session.delete(att)
     db.session.commit()
     flash('Попытка удалена', 'success')
@@ -1327,7 +1610,7 @@ def import_attempts():
             if not task and item.get('task_id'):
                 # fallback для старых файлов
                 try:
-                    task = MathTask.query.get(int(item['task_id']))
+                    task = db.session.get(MathTask, int(item['task_id']))
                 except Exception:
                     task = None
             if not task:
@@ -1342,7 +1625,7 @@ def import_attempts():
             if not user and item.get('user_id'):
                 # fallback для старых файлов
                 try:
-                    user = User.query.get(int(item['user_id']))
+                    user = db.session.get(User, int(item['user_id']))
                 except Exception:
                     user = None
             if not user:

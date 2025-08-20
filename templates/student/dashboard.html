@@ -1,33 +1,30 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель студента - Система адаптивного обучения</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>🎓 Панель студента</h1>
-        
-        <div class="status">
-            🚀 Добро пожаловать, {{ current_user.username }}!
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="color: #495057; margin-top: 0;">📊 Ваша статистика:</h3>
-            <p><strong>Роль:</strong> {{ current_user.role.title() }}</p>
-            <p><strong>Последний вход:</strong> {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}</p>
-        </div>
-        
-        <div style="text-align: center; margin: 30px 0;">
-            <h3 style="color: #495057;">📚 Математические задания</h3>
-            <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-success">📈 Посмотреть задания</a>
-        </div>
-        
-        <div style="text-align: center;">
-            <a href="{{ url_for('auth.logout') }}" class="btn">🚺 Выйти из системы</a>
-        </div>
-    </div>
-</body>
-</html>
+{% extends 'shared/base.html' %}
+
+{% block title %}Панель студента {% endblock %}
+
+{% block nav_items %}
+  {% if current_user.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'student.tasks' %}active bg-primary text-white rounded{% endif %}"
+        href="{{ url_for('student.tasks') }}">
+        <i class="fas fa-list-check"></i> Задания
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if request.endpoint == 'student.profile' %}active bg-primary text-white rounded{% endif %}"
+        aria-current="page" href="{{ url_for('student.profile') }}">
+        <i class="fas fa-user-graduate"></i> Профиль
+      </a>
+    </li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% block student_content %}{% endblock %}          
+{% endblock %}
+
+{% block extra_js %}
+    {{ super() }}
+    {% block scripts %}{% endblock %}
+{% endblock %}
+

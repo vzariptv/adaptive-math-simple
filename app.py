@@ -21,7 +21,7 @@ def create_default_admin():
         admin = User(
             username=admin_email.split("@")[0],
             email=admin_email,
-            password_hash=generate_password_hash(admin_password),
+            password_hash=generate_password_hash(admin_password, method='pbkdf2:sha256'),
             role="admin",
             is_active=True,
         )
@@ -33,6 +33,11 @@ def create_app():
 
     # Конфиг из класса + возможность переопределять через env
     app.config.from_object(Config)
+    # ВАЖНО: повторно читаем DATABASE_URL из окружения на момент вызова create_app,
+    # чтобы фикстуры тестов могли подменить БД до инициализации расширений
+    env_db = os.getenv("DATABASE_URL")
+    if env_db:
+        app.config["SQLALCHEMY_DATABASE_URI"] = env_db
 
     # Расширения
     db.init_app(app)
@@ -46,16 +51,18 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         from models import User
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
 
     # Блюпринты
     from blueprints.main import main_bp
     from blueprints.tasks import tasks_bp
+    from blueprints.student import student_bp
     from blueprints.admin import admin_bp
     from blueprints.auth import auth_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(tasks_bp, url_prefix="/tasks")
+    app.register_blueprint(student_bp)
     app.register_blueprint(auth_bp,  url_prefix="/auth")
     app.register_blueprint(admin_bp)
 
@@ -91,11 +98,9 @@ def create_app():
 
     return app
 
-# Создаем экземпляр приложения для Render/Gunicorn
-app = create_app()
-
 # Локальный запуск (python app.py)
 if __name__ == "__main__":
+    app = create_app()
     app.run(
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 8083)),

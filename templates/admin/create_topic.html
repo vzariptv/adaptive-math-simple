@@ -18,9 +18,10 @@
     <h5 class="mb-2">Ошибки при создании темы:</h5>
     <ul class="mb-0">
       {% for field_name, field_errors in form.errors.items() %}
+        {% set field = form[field_name] if field_name in form else None %}
         {% for err in field_errors %}
           <li>
-            <strong>{{ getattr(form, field_name).label.text if form[field_name] else field_name }}</strong>:
+            <strong>{{ field.label.text if field else field_name }}</strong>:
             {{ err }}
           </li>
         {% endfor %}

@@ -1,7 +1,7 @@
 import json 
 
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, FileField,StringField, TextAreaField, BooleanField, SelectField, FloatField, PasswordField, HiddenField, DateField, DateTimeField
+from wtforms import SubmitField, FileField,StringField, TextAreaField, BooleanField, SelectField, SelectMultipleField, FloatField, PasswordField, HiddenField, DateField, DateTimeField
 from wtforms.validators import EqualTo, DataRequired, InputRequired, Length, Optional, Regexp, ValidationError, NumberRange, Email
 
 from wtforms import IntegerField, StringField, FieldList
@@ -673,6 +673,40 @@ class ConfirmDeleteForm(FlaskForm):
 # ---------- ATTEMPTS ----------
 class AttemptFilterForm(FlaskForm):
     """Фильтры журнала попыток (просмотр для админа/преподавателя)."""
+    student_id = SelectField("Студент", coerce=int, validators=[Optional()])
+    task_id    = SelectField("Задача",  coerce=int, validators=[Optional()])
+    topic_id   = SelectField("Тема",    coerce=int, validators=[Optional()])
+    date_from  = DateField("С", validators=[Optional()])
+    date_to    = DateField("По", validators=[Optional()])
+    per_page   = SelectField(
+        "На странице",
+        coerce=int,
+        choices=[(20, "20"), (50, "50"), (100, "100")],
+        default=20,
+        validators=[Optional()],
+    )
+
+class EvaluationPreviewForm(FlaskForm):
+    """Форма фильтров для предпросмотра оценивания.
+    Используется для серверной валидации входных данных (даже если приходит JSON).
+    """
+    user_ids = SelectMultipleField("Студенты", coerce=int, validators=[Optional()])
+    topic_id = SelectField("Тема", coerce=int, validators=[Optional()])
+    period_start = DateField("Начало периода", validators=[Optional()])
+    period_end = DateField("Конец периода", validators=[Optional()])
+
+    def validate(self, extra_validators=None):
+        if not super().validate(extra_validators):
+            return False
+        # Если заданы даты — проверим порядок
+        if self.period_start.data and self.period_end.data:
+            if self.period_start.data > self.period_end.data:
+                self.period_end.errors.append("Конец периода должен быть не раньше начала")
+                return False
+        return True
+
+class EvaluationFilterForm(FlaskForm):
+    """Фильтры журнала оценок (просмотр для админа/преподавателя)."""
     student_id = SelectField("Студент", coerce=int, validators=[Optional()])
     task_id    = SelectField("Задача",  coerce=int, validators=[Optional()])
     topic_id   = SelectField("Тема",    coerce=int, validators=[Optional()])

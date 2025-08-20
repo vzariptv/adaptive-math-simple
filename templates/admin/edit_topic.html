@@ -19,7 +19,7 @@
       {% for field_name, field_errors in form.errors.items() %}
         {% for err in field_errors %}
           <li>
-            <strong>{{ getattr(form, field_name).label.text if form[field_name] else field_name }}</strong>: {{ err }}
+            <strong>{{ form[field_name].label.text if form[field_name] else field_name }}</strong>: {{ err }}
           </li>
         {% endfor %}
       {% endfor %}

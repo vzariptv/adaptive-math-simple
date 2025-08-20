@@ -1,0 +1,193 @@
+# Перечень правок для реализации engagement_weight_alpha
+
+## 1. Обновление модели EvaluationSystemConfig
+
+**Файл:** `models.py`
+
+**Изменения:**
+- Переименовать поле `weekend_bonus_multiplier` в `engagement_weight_alpha`
+- Обновить значение по умолчанию
+
+```python
+class EvaluationSystemConfig(db.Model):
+    # ... остальные поля без изменений ...
+    
+    # УДАЛИТЬ эту строку:
+    # weekend_bonus_multiplier = db.Column(db.Float, default=1.5)
+    
+    # ДОБАВИТЬ эту строку:
+    engagement_weight_alpha = db.Column(db.Float, default=0.667)  # 2/3
+```
+
+## 2. Обновление SystemConfig dataclass
+
+**Файл:** `evaluation.py`
+
+**Изменения:** Заменить поле в dataclass
+
+```python
+@dataclass(frozen=True)
+class SystemConfig:
+    weight_accuracy: float
+    weight_time: float
+    weight_progress: float
+    weight_motivation: float
+    engagement_weight_alpha: float  # ЗАМЕНИТЬ weekend_bonus_multiplier на это
+    working_weekdays: Sequence[int] = (0, 1, 2, 3, 4)  # Mon..Fri
+```
+
+## 3. Новая функция расчета мотивации
+
+**Файл:** `evaluation.py`
+
+**ЗАМЕНИТЬ** функции `count_active_days` и `compute_motivation` на:
+
+```python
+def count_activity_details(attempts: Iterable[Attempt], working_weekdays: Sequence[int]) -> Tuple[int, int, int, int]:
+    """
+    Подсчитывает детали активности для новой формулы мотивации
+    
+    Returns:
+        (active_working_days, weekend_days, total_attempts, unique_days_total)
+    """
+    days = {a.created_at.date() for a in attempts}
+    active_working_days = sum(1 for d in days if d.weekday() in working_weekdays)
+    weekend_days = sum(1 for d in days if d.weekday() not in working_weekdays)
+    total_attempts = len(list(attempts))
+    unique_days_total = len(days)
+    
+    return active_working_days, weekend_days, total_attempts, unique_days_total
+
+
+def compute_motivation_v3(
+    active_working_days: int,
+    weekend_days: int, 
+    attempts_count: int,
+    unique_days_count: int,
+    engagement_weight_alpha: float
+) -> float:
+    """
+    Чистая поведенческая модель мотивации с параметризованными весами
+    
+    Формула: Motivation = w_cons×Consistency + w_eng×Engagement
+    где w_cons = 1/(1+α), w_eng = α/(1+α)
+    """
+    
+    # Вычисляем веса на основе alpha
+    w_consistency = 1.0 / (1.0 + engagement_weight_alpha)
+    w_engagement = engagement_weight_alpha / (1.0 + engagement_weight_alpha)
+    
+    # 1. Consistency: регулярность работы
+    consistency = min(active_working_days / 5.0, 1.0)
+    
+    # 2. Engagement: вовлеченность
+    # 2a. Выходная работа
+    gamma_weekend = 0.4 if weekend_days > 0 else 0.0
+    
+    # 2b. Интенсивность попыток  
+    if active_working_days > 0:
+        gamma_intensity = min(0.4, attempts_count / (active_working_days * 15.0))
+    else:
+        gamma_intensity = 0.0
+    
+    # 2c. Распределение активности
+    gamma_distribution = min(0.2, unique_days_count / 7.0)
+    
+    engagement = min(1.0, gamma_weekend + gamma_intensity + gamma_distribution)
+    
+    # Итоговая формула
+    return w_consistency * consistency + w_engagement * engagement
+```
+
+## 4. Обновление функции preview
+
+**Файл:** `evaluation.py`
+
+**ЗАМЕНИТЬ** блок кода в функции `preview` (примерно строки 260-270):
+
+```python
+# СТАРЫЙ КОД - удалить:
+# active_working, weekend_days = count_active_days(attempts, system_cfg.working_weekdays)
+# working_days_in_period = _working_weekdays_in_period(period_start, period_end, system_cfg.working_weekdays)
+# motivation_score = compute_motivation(active_working, working_days_in_period, weekend_days, system_cfg.weekend_bonus_multiplier)
+
+# НОВЫЙ КОД - добавить:
+active_working, weekend_days, total_attempts, unique_days = count_activity_details(attempts, system_cfg.working_weekdays)
+motivation_score = compute_motivation_v3(
+    active_working, 
+    weekend_days, 
+    total_attempts, 
+    unique_days,
+    system_cfg.engagement_weight_alpha
+)
+```
+
+## 5. Обновление загрузки конфигурации
+
+**Файл:** `evaluation.py`
+
+**ЗАМЕНИТЬ** часть функции `preview` где загружается system_cfg:
+
+```python
+def preview(
+    db_session,
+    user_ids: Sequence[int],
+    topic_ids: Sequence[int],
+    period_start: date,
+    period_end: date,
+    system_cfg: SystemConfig,  # УДАЛИТЬ этот параметр из сигнатуры
+) -> List[Dict]:
+    
+    # ДОБАВИТЬ в начало функции:
+    # Загружаем системную конфигурацию из БД
+    eval_config = db_session.query(EvaluationSystemConfig).first()
+    if not eval_config:
+        # Создаем конфигурацию по умолчанию
+        eval_config = EvaluationSystemConfig()
+        db_session.add(eval_config)
+        db_session.commit()
+    
+    system_cfg = SystemConfig(
+        weight_accuracy=eval_config.weight_accuracy,
+        weight_time=eval_config.weight_time,
+        weight_progress=eval_config.weight_progress,
+        weight_motivation=eval_config.weight_motivation,
+        engagement_weight_alpha=eval_config.engagement_weight_alpha,
+    )
+    
+    # ... остальной код без изменений ...
+```
+
+## 6. Миграция базы данных
+
+**Создать новый файл миграции:**
+
+```python
+# migrations/versions/xxx_rename_weekend_bonus_to_engagement_alpha.py
+
+def upgrade():
+    # Переименовать колонку
+    op.alter_column('evaluation_system_config', 
+                   'weekend_bonus_multiplier',
+                   new_column_name='engagement_weight_alpha',
+                   existing_type=sa.Float(),
+                   existing_nullable=True)
+    
+    # Обновить значения по умолчанию (1.5 -> 0.667)
+    op.execute("UPDATE evaluation_system_config SET engagement_weight_alpha = 0.667 WHERE engagement_weight_alpha = 1.5")
+
+def downgrade():
+    op.alter_column('evaluation_system_config',
+                   'engagement_weight_alpha', 
+                   new_column_name='weekend_bonus_multiplier',
+                   existing_type=sa.Float(),
+                   existing_nullable=True)
+```
+
+## Итого изменений:
+- ✅ 1 переименование поля в модели
+- ✅ 1 обновление dataclass
+- ✅ 2 новые функции (детализация активности + новая мотивация) 
+- ✅ 1 обновление вызова в preview
+- ✅ 1 автозагрузка конфигурации
+- ✅ 1 миграция БД

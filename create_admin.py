@@ -28,7 +28,7 @@ def main():
         admin = User(
             username=admin_email.split("@")[0],
             email=admin_email,
-            password_hash=generate_password_hash(admin_password),
+            password_hash=generate_password_hash(admin_password, method='pbkdf2:sha256'),
             role="admin",
             is_active=True,
             first_name="Admin",

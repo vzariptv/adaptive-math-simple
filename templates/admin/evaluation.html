@@ -1,0 +1,200 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Оценивание — предпросмотр{% endblock %}
+
+{% block admin_content %}
+  <!-- Конфигурация системы (collapsing block) -->
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#cfgBlock" aria-expanded="false" aria-controls="cfgBlock">
+      <span><i class="fas fa-sliders-h"></i> Конфигурация системы</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div class="collapse mt-2" id="cfgBlock">
+      <div class="card card-body">
+        <!-- Engagement α: between Regularity and Engagement -->
+        <div class="mb-3">
+          <label class="form-label">Вес между регулярностью и вовлечённостью (α)</label>
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted small">Регулярность</span>
+            <input id="cfg_alpha" type="range" min="0" max="1" step="0.01" class="form-range flex-grow-1" />
+            <span class="text-muted small">Вовлечённость</span>
+            <span class="ms-2 badge bg-light text-dark" id="cfg_alpha_val">0.67</span>
+          </div>
+        </div>
+
+        <!-- Weights sum to 1 -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-end">
+            <label class="form-label">Весовые коэффициенты (сумма = <span id="cfg_weights_sum">1.00</span>)</label>
+            <small class="text-muted">При изменении одного, сумма сохраняется равной 1</small>
+          </div>
+          <div class="row g-2">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Точность <span class="badge bg-light text-dark" id="cfg_w_acc_val">0.30</span></label>
+              <input id="cfg_w_acc" type="range" min="0" max="1" step="0.01" class="form-range" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Скорость <span class="badge bg-light text-dark" id="cfg_w_time_val">0.20</span></label>
+              <input id="cfg_w_time" type="range" min="0" max="1" step="0.01" class="form-range" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Прогресс <span class="badge bg-light text-dark" id="cfg_w_prog_val">0.30</span></label>
+              <input id="cfg_w_prog" type="range" min="0" max="1" step="0.01" class="form-range" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Мотивация <span class="badge bg-light text-dark" id="cfg_w_mot_val">0.20</span></label>
+              <input id="cfg_w_mot" type="range" min="0" max="1" step="0.01" class="form-range" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Threshold ranges (two handles per level via two inputs) -->
+        <div class="mb-2">
+          <label class="form-label">Пороги переходов уровня (0..1)</label>
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-6">
+              <div class="mb-1 d-flex justify-content-between"><strong>Нижний уровень (low)</strong> <span class="small text-muted">min/max</span></div>
+              <div class="d-flex align-items-center gap-2">
+                <input id="cfg_low_min" type="range" min="0" max="1" step="0.01" class="form-range" />
+                <input id="cfg_low_max" type="range" min="0" max="1" step="0.01" class="form-range" />
+                <span class="badge bg-light text-dark" id="cfg_low_vals">0.30–0.70</span>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="mb-1 d-flex justify-content-between"><strong>Средний уровень (medium)</strong> <span class="small text-muted">min/max</span></div>
+              <div class="d-flex align-items-center gap-2">
+                <input id="cfg_med_min" type="range" min="0" max="1" step="0.01" class="form-range" />
+                <input id="cfg_med_max" type="range" min="0" max="1" step="0.01" class="form-range" />
+                <span class="badge bg-light text-dark" id="cfg_med_vals">0.40–0.80</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <button id="cfg_save" type="button" class="btn btn-primary"><i class="fas fa-save"></i> Сохранить</button>
+          <button id="cfg_reload" type="button" class="btn btn-outline-secondary">Сбросить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-info-emphasis"><i class="fas fa-chart-line"></i> Предпросмотр оценивания</h2>
+    <div class="btn-group" role="group">
+      <button id="previewRunBtn" type="button" class="btn btn-primary">
+        <i class="fas fa-play"></i> Предпросмотр
+      </button>
+      <button id="applyRunBtn" type="button" class="btn btn-outline-secondary" disabled title="Фактический запуск будет доступен после реализации backend-ручки">
+        <i class="fas fa-rocket"></i> Запустить (скоро)
+      </button>
+    </div>
+  </div>
+
+  <form id="evalFilters" class="mb-3" onsubmit="return false;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <!-- Hidden storage for selected students (keeps API contract) -->
+    <div class="d-none">
+      {{ form.user_ids(class="form-select", multiple=True) }}
+    </div>
+
+    <!-- Top row: student picker, topic, week (with presets underneath) -->
+    <div class="row g-2 align-items-start">
+      <div class="col-12 col-md-4">
+        <label class="form-label mb-1" for="studentPicker">Студенты</label>
+        <select id="studentPicker" class="form-select" aria-label="Выбор студента">
+          <option value="" selected>Выберите студента…</option>
+          {% for val, label in form.user_ids.choices %}
+            <option value="{{ val }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+        <div class="form-text">Добавляйте студентов по одному, выбранные появятся ниже как теги.</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label mb-1" for="{{ form.topic_id.id }}">Тема</label>
+        {{ form.topic_id(class="form-select") }}
+      </div>
+      <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+        <label class="form-label mb-1" for="period_week">Неделя</label>
+        <input id="period_week" name="period_week" type="week" class="form-control" />
+        <div class="mt-2 d-flex flex-column gap-1 flex-sm-row">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-week-preset="current">Текущая</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-week-preset="prev">Прошедшая</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom row: selected students as tags -->
+    <div class="row mt-2">
+      <div class="col-12">
+        <div class="form-label mb-1">Выбранные студенты</div>
+        <div id="selectedStudents" class="d-flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+  </form>
+
+
+  <div class="table-responsive d-none" id="resultsWrap">
+    <table class="table table-hover align-middle" id="resultsTable">
+      <thead class="table-light">
+        <tr>
+          <th rowspan="2">Студент</th>
+          <th rowspan="2">Текущий уровень</th>
+          <th rowspan="2">Следующий уровень</th>
+          <th rowspan="2">Точность</th>
+          <th rowspan="2">Скорость решения</th>
+          <th rowspan="2">Прогресс</th>
+          <th rowspan="2">Мотивация</th>
+          <th rowspan="2">Итог</th>
+          <th colspan="3" class="text-center">Попытки</th>
+          <th rowspan="2">Решено</th>
+          <th rowspan="2">Медианное время решения, с</th>
+        </tr>
+        <tr>
+          <th>П1</th>
+          <th>П2</th>
+          <th>П3</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Charts: рейтинги студентов ниже таблицы -->
+  <div id="chartsWrap" class="mt-4 d-none">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Визуализация рейтингов студентов</h5>
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <div class="chart-container" style="position: relative; height: 360px;">
+              <canvas id="chartGrouped"></canvas>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="chart-container" style="position: relative; height: 360px;">
+              <canvas id="chartRadar"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Heatmaps: паттерны активности по дням недели -->
+  <div id="heatmapsWrap" class="mt-3 d-none">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Паттерны активности по дням недели</h5>
+        <div id="heatmapsGrid" class="row g-3"></div>
+      </div>
+    </div>
+  </div>
+  <script id="eval-meta" type="application/json">{{ {'users': user_map, 'topics': topic_map} | tojson }}</script>
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  <!-- Chart.js for charts below the results table -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoVZ8loy7V0w7Z0pX2UYkfs0q8M5m2g5f0XJ0mOQdYx6t1S9QYc5rGk8sH3iKHw3tqQh3c7QwI6p+o5bK2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="{{ url_for('static', filename='js/admin_evaluation.js') }}"></script>
+{% endblock %}

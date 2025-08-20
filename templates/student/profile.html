@@ -1,0 +1,112 @@
+{% extends 'student/dashboard.html' %}
+
+{% block title %}Профиль — Студент{% endblock %}
+
+{% block student_content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h1 class="h4 mb-0"><i class="fas fa-user-graduate text-primary"></i> Профиль</h1>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white"><h5 class="card-title mb-0">Данные профиля</h5></div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('student.profile') }}">
+          {{ profile_form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label">Имя</label>
+            {{ profile_form.first_name(class='form-control') }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Фамилия</label>
+            {{ profile_form.last_name(class='form-control') }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            {{ profile_form.email(class='form-control') }}
+          </div>
+          <button name="submit_profile" value="1" type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> {{ profile_form.submit_profile.label.text }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white"><h5 class="card-title mb-0">Смена пароля</h5></div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('student.profile') }}">
+          {{ password_form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label">Текущий пароль</label>
+            {{ password_form.current_password(class='form-control') }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Новый пароль</label>
+            {{ password_form.new_password(class='form-control') }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Подтверждение пароля</label>
+            {{ password_form.confirm_password(class='form-control') }}
+          </div>
+          <button name="submit_password" value="1" type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-key"></i> {{ password_form.submit_password.label.text }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">Изучаемые темы</h5>
+  </div>
+  <div class="card-body">
+    {% if studied_topics|length == 0 %}
+      <div class="alert alert-secondary mb-0">Пока нет данных. Решите хотя бы одну задачу, чтобы увидеть прогресс по темам.</div>
+    {% else %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Тема</th>
+              <th class="text-center">Прогресс (решено/порог)</th>
+              <th class="text-center">Уровень</th>
+              <th class="text-end">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in studied_topics %}
+              <tr>
+                <td>{{ row.topic.name }}</td>
+                <td class="text-center">
+                  <span class="badge text-bg-light">{{ row.solved_total }}/{{ row.limit_total }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="badge text-bg-info text-uppercase">{{ row.current_level }}</span>
+                </td>
+                <td class="text-end">
+                  <a class="btn btn-sm btn-primary" href="{{ url_for('student.tasks', topic_id=row.topic.id) }}">
+                    <i class="fas fa-tasks"></i> К задачам
+                  </a>
+                  <button type="button" class="btn btn-sm btn-outline-secondary ms-1">
+                    <i class="fas fa-chart-line"></i> Подробнее
+                  </button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {{ super() }}
+  {% block scripts %}{% endblock %}
+{% endblock %}

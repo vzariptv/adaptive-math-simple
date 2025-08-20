@@ -43,7 +43,12 @@
                             {% else %}<i class="fas fa-user"></i>
                             {% endif %}
                             {{ current_user.get_full_name() }}
-                            <br><small class="text-info">Вход: {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}</small>
+                            <br>
+                            {% if current_user.last_login %}
+                                <small class="text-info">Вход: {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}</small>
+                            {% else %}
+                                <small class="text-muted">Вход: —</small>
+                            {% endif %}
                         </span>
                     </li>
                     <div class="vr me-2 ms-2"></div>

@@ -3,12 +3,14 @@
   "latex-workshop.latex.tools": [
     {
       "name": "tectonic",
-      "command": "tectonic",
+      "command": "/bin/bash",
       "args": [
-        "-X",
-        "compile",
-        "%DOC%"
-      ]
+        "-lc",
+        "cd \"%DIR%\" && out=\"%OUTDIR%\"; mkdir -p \"$out\"; f=\"%DOCFILE%\"; [[ $f == *.tex ]] || f=\"$f.tex\"; tectonic -X compile \"$f\" --synctex --keep-intermediates --outdir \"$out\""
+      ],
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+      }
     }
   ],
   "latex-workshop.latex.recipes": [
@@ -18,9 +20,29 @@
     }
   ],
   // Make Tectonic the default recipe
-  "latex-workshop.latex.recipes.default": ["tectonic"],
-  // Optional: always build in the project root
-  "latex-workshop.latex.outDir": "./docs",
+  "latex-workshop.latex.recipe.default": "tectonic",
+  // Put outputs next to the source in a build folder
+  "latex-workshop.latex.outDir": "%DIR%/build",
   // Reduce noisy warnings if desired
-  "latex-workshop.message.warning.show": false
+  "latex-workshop.message.warning.show": false,
+  // Suppress MCP schema warnings
+  "json.schemaDownload.enable": false,
+  // Python testing configuration
+  "python.defaultInterpreterPath": "venv/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.testing.pytestArgs": [
+    "-v",
+    "tests"
+  ],
+  // Ensure VS Code loads env vars (PYTHONPATH=.) from .env
+  "python.envFile": "${workspaceFolder}/.env",
+  // Ensure test discovery/execution uses workspace cwd and env
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.envFile": "${workspaceFolder}/.env",
+  // Help language server resolve imports in editor too
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}"
+  ]
 }
