@@ -31,6 +31,9 @@ def create_default_admin():
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
+    # Ensure instance directory exists (needed for SQLite and other runtime files)
+    os.makedirs(app.instance_path, exist_ok=True)
+
     # Конфиг из класса + возможность переопределять через env
     app.config.from_object(Config)
     # ВАЖНО: повторно читаем DATABASE_URL из окружения на момент вызова create_app,
