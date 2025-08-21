@@ -101,9 +101,11 @@ def create_app():
 
     return app
 
+# Expose module-level WSGI app so that 'gunicorn app:app' works too
+app = create_app()
+
 # Локальный запуск (python app.py)
 if __name__ == "__main__":
-    app = create_app()
     app.run(
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 8083)),
