@@ -1,0 +1,182 @@
+{% extends 'student/dashboard.html' %}
+
+{% block title %}Задача — {{ task.title }}{% endblock %}
+
+{% block student_content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h1 class="h4 mb-0"><i class="fas fa-square-root-alt text-primary"></i> {{ task.title }}</h1>
+  <a href="{{ url_for('student.tasks', topic_id=task.topic_id) }}" class="btn btn-outline-secondary btn-sm">
+    <i class="fas fa-arrow-left"></i> К списку задач
+  </a>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="d-flex flex-wrap gap-3 align-items-center mb-2">
+      <div class="badge text-bg-info"><i class="fas fa-book-open"></i> Тема: {{ task.topic_ref.name }}</div>
+      <div class="badge text-bg-secondary"><i class="fas fa-signal"></i> Уровень: {{ task.level }}</div>
+      <div class="badge text-bg-light"><i class="fas fa-stopwatch"></i> Попыток: {{ total_attempts }}/3</div>
+      {% if solved %}
+        <div class="badge text-bg-success"><i class="fas fa-check-circle"></i> Решено</div>
+      {% elif blocked %}
+        <div class="badge text-bg-danger"><i class="fas fa-lock"></i> Заблокирована</div>
+      {% endif %}
+    </div>
+
+    <div class="mt-2">
+      {{ task.description | safe }}
+    </div>
+  </div>
+</div>
+
+{% if blocked and not solved %}
+  <div class="alert alert-warning"><i class="fas fa-lock"></i> Задача заблокирована после 3 неудачных попыток.</div>
+{% elif solved %}
+  <div class="alert alert-success d-flex align-items-center justify-content-between">
+    <div><i class="fas fa-check-circle"></i> Верно! Отличная работа.</div>
+    {% if next_task %}
+      <a href="{{ url_for('student.view_task', task_id=next_task.id) }}" class="btn btn-success btn-sm">
+        <i class="fas fa-forward"></i> Следующая задача
+      </a>
+    {% endif %}
+  </div>
+{% else %}
+  {% if hint_available and task.explanation %}
+    <div class="alert alert-info"><i class="fas fa-lightbulb"></i> Подсказка: {{ task.explanation | safe }}</div>
+  {% endif %}
+
+  <div class="card mb-3">
+    <div class="card-header">Ваш ответ</div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('student.view_task', task_id=task.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% if task.answer_type == 'number' %}
+          <div class="border rounded p-3 bg-light mb-3">
+            <h6><i class="fas fa-calculator"></i> Числовой ответ</h6>
+            <label class="form-label" for="answer">Значение</label>
+            <input id="answer" type="text" name="answer" class="form-control" autocomplete="off" required>
+            <div class="form-text">Введите числовое значение правильного ответа</div>
+          </div>
+        {% elif task.answer_type == 'variables' %}
+          <div class="border rounded p-3 bg-light mb-3" id="variables-form">
+            <h6><i class="fas fa-x"></i> Переменные</h6>
+            <div id="variables-container">
+              {% if task.correct_answer is mapping and 'type' in task.correct_answer and task.correct_answer.type == 'variables' %}
+                {% for item in task.correct_answer.variables %}
+                  {% set name = item.name %}
+                  <div class="row mb-2 variable-row">
+                    <div class="col-5">
+                      <label class="form-label small">Переменная</label>
+                      <input type="text" class="form-control" value="{{ name }}" readonly>
+                    </div>
+                    <div class="col-1 text-center pt-4">=</div>
+                    <div class="col-5">
+                      <label class="form-label small">Значение</label>
+                      <input type="text" class="form-control" name="{{ name }}" placeholder="0" autocomplete="off">
+                    </div>
+                  </div>
+                {% endfor %}
+              {% elif task.correct_answer is mapping %}
+                {% for k, v in task.correct_answer.items() %}
+                  <div class="row mb-2 variable-row">
+                    <div class="col-5">
+                      <label class="form-label small">Переменная</label>
+                      <input type="text" class="form-control" value="{{ k }}" readonly>
+                    </div>
+                    <div class="col-1 text-center pt-4">=</div>
+                    <div class="col-5">
+                      <label class="form-label small">Значение</label>
+                      <input type="text" class="form-control" name="{{ k }}" placeholder="0" autocomplete="off">
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="text-warning">Нет определенных переменных для этой задачи.</div>
+              {% endif %}
+            </div>
+          </div>
+        {% elif task.answer_type == 'sequence' %}
+          <div class="border rounded p-3 bg-light mb-3">
+            <h6><i class="fas fa-list-ol"></i> Последовательность</h6>
+            <label class="form-label" for="sequence_input">Последовательность</label>
+            <input id="sequence_input" type="text" name="sequence_input" class="form-control" placeholder="1.0, 2.0, 3.0, 4.0, 5.0" autocomplete="off" required>
+            <div class="form-text">Введите числа через запятую или точку с запятой. Порядок важен.</div>
+          </div>
+        {% elif task.answer_type == 'interval' %}
+          <div class="border rounded p-3 bg-light mb-3">
+            <h6><i class="fas fa-arrows-alt-h"></i> Интервал</h6>
+            <div class="row mb-3">
+              <div class="col-5">
+                <label class="form-label small" for="start">Начало интервала</label>
+                <input id="start" type="text" name="start" class="form-control" autocomplete="off">
+              </div>
+              <div class="col-2 text-center pt-4">до</div>
+              <div class="col-5">
+                <label class="form-label small" for="end">Конец интервала</label>
+                <input id="end" type="text" name="end" class="form-control" autocomplete="off">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="start_inclusive" name="start_inclusive">
+                  <label class="form-check-label" for="start_inclusive">Включая начало</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="end_inclusive" name="end_inclusive">
+                  <label class="form-check-label" for="end_inclusive">Включая конец</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-text">Простой интервал</div>
+          </div>
+        {% endif %}
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Отправить</button>
+          <a href="{{ url_for('student.tasks', topic_id=task.topic_id) }}" class="btn btn-outline-secondary">К списку</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header">История попыток</div>
+  <div class="card-body p-0">
+    {% if user_attempts|length == 0 %}
+      <div class="p-3 text-muted">Попыток пока нет.</div>
+    {% else %}
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Дата</th>
+              <th>Ответ</th>
+              <th>Результат</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in user_attempts %}
+              <tr>
+                <td>{{ a.attempt_number }}</td>
+                <td>{{ a.created_at.strftime('%Y-%m-%d %H:%M:%S') if a.created_at else '' }}</td>
+                <td><code>{{ a.user_answer }}</code></td>
+                <td>
+                  {% if a.is_correct %}
+                    <span class="text-success"><i class="fas fa-check"></i> верно</span>
+                  {% else %}
+                    <span class="text-danger"><i class="fas fa-times"></i> неверно</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

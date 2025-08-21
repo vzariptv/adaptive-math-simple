@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy import func, case
+from datetime import datetime, date, time, timedelta
 
 from extensions import db
 from models import Topic, MathTask, TaskAttempt, StudentTopicProgress, TopicLevelConfig
@@ -156,7 +157,7 @@ def profile():
     # Соберем по темам агрегаты попыток пользователя
     attempts_agg = (db.session.query(MathTask.topic_id,
                                      func.count(func.distinct(TaskAttempt.task_id)).label('tasks_attempted'),
-                                     func.sum(func.case((TaskAttempt.is_correct == True, 1), else_=0)).label('solved_attempts'))
+                                     func.sum(case((TaskAttempt.is_correct == True, 1), else_=0)).label('solved_attempts'))
                     .join(MathTask, MathTask.id == TaskAttempt.task_id)
                     .filter(TaskAttempt.user_id == current_user.id)
                     .group_by(MathTask.topic_id)
@@ -202,6 +203,8 @@ def profile():
 def _normalize_value(val):
     if isinstance(val, str):
         s = val.strip()
+        # поддержим запятую как разделитель дробной части
+        s = s.replace(',', '.') if s else s
         # попробуем к числу
         try:
             if s.isdigit() or (s.startswith('-') and s[1:].isdigit()):
@@ -221,34 +224,177 @@ def _normalize_answer(raw):
 
 
 def _extract_user_answer(task: MathTask, form):
-    # Простое сопоставление по типу
-    if task.answer_type == 'number':
-        return _normalize_value(form.get('answer'))
-    # variables: ключи фиксированы по correct_answer
-    if task.answer_type == 'variables' and isinstance(task.correct_answer, dict):
-        out = {}
-        for k in task.correct_answer.keys():
-            out[k] = _normalize_value(form.get(k))
-        return out
-    # sequence: ожидаем поля item_0..item_N или используем answer_schema.length
-    if task.answer_type == 'sequence':
-        items = []
-        # попытаемся считать по длине правильного ответа
-        length = 0
-        if isinstance(task.correct_answer, list):
-            length = len(task.correct_answer)
-        for i in range(length):
-            items.append(_normalize_value(form.get(f'item_{i}')))
-        return items
-    # interval и прочие: пробуем собрать как словарь известных ключей correct_answer
-    if isinstance(task.correct_answer, dict):
-        return {k: _normalize_value(form.get(k)) for k in task.correct_answer.keys()}
-    return _normalize_value(form.get('answer'))
+    """Build student answer JSON mirroring admin TaskForm.build_answer_json()."""
+    at = task.answer_type
+
+    # helper to coerce numeric inputs (supports comma)
+    def _num(v):
+        if v is None:
+            return None
+        if isinstance(v, str):
+            v = v.strip()
+            if v == "":
+                return None
+            v = v.replace(',', '.')
+        try:
+            return float(v)
+        except Exception:
+            return None
+
+    if at == 'number':
+        val = _num(form.get('answer'))
+        return {"type": "number", "value": val}
+
+    if at == 'variables':
+        # Build canonical list of {name, value}
+        variables = []
+        # 1) Preferred: dynamic rows name_i/value_i or WTForms-style variables_answer-variables-i-name
+        indices = set()
+        for key in form.keys():
+            if key.startswith('name_'):
+                try:
+                    indices.add(int(key.split('_', 1)[1]))
+                except Exception:
+                    pass
+            elif '-variables-' in key and key.endswith('-name'):
+                try:
+                    idx = int(key.split('-')[-2])
+                    indices.add(idx)
+                except Exception:
+                    pass
+        if indices:
+            for i in sorted(indices):
+                name = (form.get(f'name_{i}') or form.get(f'variables_answer-variables-{i}-name') or '').strip()
+                val_raw = form.get(f'value_{i}') or form.get(f'variables_answer-variables-{i}-value')
+                val = _num(val_raw)
+                if name:
+                    variables.append({"name": name, "value": val})
+        else:
+            # 2) Back-compat:
+            # 2a) If correct_answer is canonical dict with list of variables, use their names as field names
+            ca = task.correct_answer
+            if isinstance(ca, dict) and ca.get('type') == 'variables' and isinstance(ca.get('variables'), list):
+                for item in ca['variables']:
+                    name = str(item.get('name')) if item and 'name' in item else None
+                    if name:
+                        v = _num(form.get(name))
+                        variables.append({"name": name, "value": v})
+            # 2b) Or if it's a plain mapping like {x: 1, y: 2}, fields are named by key
+            elif isinstance(ca, dict):
+                for k in ca.keys():
+                    v = _num(form.get(k))
+                    if k:
+                        variables.append({"name": str(k), "value": v})
+        return {"type": "variables", "variables": variables}
+
+    if at == 'interval':
+        # Field names from shared template
+        start_inf = bool(form.get('start_infinity'))
+        end_inf = bool(form.get('end_infinity'))
+        start = None if start_inf else _num(form.get('start'))
+        end = None if end_inf else _num(form.get('end'))
+        start_inclusive = bool(form.get('start_inclusive'))
+        end_inclusive = bool(form.get('end_inclusive'))
+        return {
+            "type": "interval",
+            "start": start,
+            "end": end,
+            "start_inclusive": start_inclusive,
+            "end_inclusive": end_inclusive,
+        }
+
+    if at == 'sequence':
+        nums = []
+        raw = form.get('sequence_input')
+        if raw is not None:
+            parts = [p.strip() for p in (raw or '').replace(';', ',').split(',') if p.strip()]
+            for p in parts:
+                n = _num(p)
+                if n is not None:
+                    nums.append(n)
+        else:
+            # Back-compat: fields item_0..item_N based on correct_answer length
+            length = 0
+            if isinstance(task.correct_answer, list):
+                length = len(task.correct_answer)
+            i = 0
+            # if length unknown, read until missing
+            if length == 0:
+                while True:
+                    key = f'item_{i}'
+                    if key not in form:
+                        break
+                    n = _num(form.get(key))
+                    if n is not None:
+                        nums.append(n)
+                    i += 1
+            else:
+                for i in range(length):
+                    n = _num(form.get(f'item_{i}'))
+                    if n is not None:
+                        nums.append(n)
+        return {"type": "sequence", "sequence_values": nums}
+
+    # Fallback — try generic single field
+    return _normalize_answer(form.get('answer'))
 
 
 def _answers_equal(expected, given):
-    # Порядок сохраняем (форма контролирует структуру), пробелы уже тримим, типы приводим
+    # Точное сравнение по структуре, но допускаем случай: expected = {k: v}, given = v
+    if isinstance(expected, dict) and len(expected) == 1 and not isinstance(given, dict):
+        # завернём scalar в dict по тому же ключу
+        only_key = next(iter(expected.keys()))
+        given_wrapped = {only_key: given}
+        return expected == given_wrapped
+    # И обратный случай: expected scalar, given single-key dict
+    if not isinstance(expected, dict) and isinstance(given, dict) and len(given) == 1:
+        only_key = next(iter(given.keys()))
+        return expected == given[only_key]
     return expected == given
+
+
+def _canonical_expected(task: MathTask):
+    """Return expected answer in canonical admin JSON for given task.answer_type.
+    Keeps backward compatibility with legacy scalar/list/dict formats in DB.
+    """
+    at = task.answer_type
+    ca = task.correct_answer
+
+    if at == 'number':
+        if isinstance(ca, dict) and ca.get('type') == 'number':
+            return ca
+        return {"type": "number", "value": _normalize_value(ca)}
+
+    if at == 'variables':
+        if isinstance(ca, dict) and ca.get('type') == 'variables':
+            return ca
+        if isinstance(ca, dict):
+            vars_list = []
+            for k, v in ca.items():
+                vars_list.append({"name": str(k), "value": _normalize_value(v)})
+            return {"type": "variables", "variables": vars_list}
+        return {"type": "variables", "variables": []}
+
+    if at == 'interval':
+        if isinstance(ca, dict) and ca.get('type') == 'interval':
+            return ca
+        # No solid legacy mapping -> default empty interval structure
+        return {
+            "type": "interval",
+            "start": None,
+            "end": None,
+            "start_inclusive": False,
+            "end_inclusive": False,
+        }
+
+    if at == 'sequence':
+        if isinstance(ca, dict) and ca.get('type') == 'sequence':
+            return ca
+        if isinstance(ca, list):
+            return {"type": "sequence", "sequence_values": [_normalize_value(x) for x in ca]}
+        return {"type": "sequence", "sequence_values": []}
+
+    return ca
 
 
 def _user_task_stats(user_id: int, task_id: int):
@@ -292,7 +438,7 @@ def view_task(task_id: int):
             return redirect(url_for('student.view_task', task_id=task.id))
 
         user_answer = _extract_user_answer(task, request.form)
-        expected = _normalize_answer(task.correct_answer)
+        expected = _normalize_answer(_canonical_expected(task))
         given = _normalize_answer(user_answer)
 
         # Определяем попытку
@@ -383,3 +529,158 @@ def view_task(task_id: int):
                            hint_available=hint_available,
                            user_attempts=user_attempts,
                            next_task=next_task)
+
+
+# ---------- Profile stats (weekly JSON) ----------
+@student_bp.route('/profile/stats.json', methods=['GET'])
+@login_required
+def profile_stats():
+    """Return weekly stats for current and previous week (Mon..Sun) for the current user.
+    Aggregates per topic: attempts, solved, solved_tasks_count, success_rate.
+    """
+    if current_user.role != 'student':
+        return jsonify({"error": "forbidden"}), 403
+
+    # Helper to compute week boundaries (Mon..Sun) for a given anchor date
+    def week_range(anchor: date):
+        # Monday = 0
+        start = anchor - timedelta(days=anchor.weekday())  # Monday
+        end = start + timedelta(days=6)                     # Sunday (label only)
+        start_dt = datetime.combine(start, time.min)
+        # Exclusive end: next Monday 00:00 to avoid microsecond issues in SQLite
+        end_exclusive_dt = datetime.combine(end + timedelta(days=1), time.min)
+        return start, end, start_dt, end_exclusive_dt
+
+    today = datetime.utcnow().date()
+    curr_w_start, curr_w_end, curr_start_dt, curr_end_excl_dt = week_range(today)
+    prev_anchor = today - timedelta(days=7)
+    prev_w_start, prev_w_end, prev_start_dt, prev_end_excl_dt = week_range(prev_anchor)
+
+    def aggregate_week(start_dt: datetime, end_excl_dt: datetime):
+        # Pull attempts joined with tasks within range for current user
+        q = (db.session.query(TaskAttempt.id,
+                              TaskAttempt.is_correct,
+                              MathTask.topic_id,
+                              MathTask.id.label('task_id'))
+             .join(MathTask, MathTask.id == TaskAttempt.task_id)
+             .filter(TaskAttempt.user_id == current_user.id,
+                     TaskAttempt.created_at >= start_dt,
+                     TaskAttempt.created_at < end_excl_dt))
+        rows = q.all()
+
+        by_topic = {}
+        solved_tasks_sets = {}
+        for rid, is_correct, topic_id, task_id in rows:
+            info = by_topic.setdefault(topic_id, {"attempts": 0, "solved": 0})
+            info["attempts"] += 1
+            if bool(is_correct):
+                info["solved"] += 1
+                solved_set = solved_tasks_sets.setdefault(topic_id, set())
+                solved_set.add(task_id)
+
+        topic_ids = list(by_topic.keys())
+        names = {}
+        if topic_ids:
+            for t in Topic.query.filter(Topic.id.in_(topic_ids)).all():
+                names[t.id] = t.name
+
+        result_list = []
+        totals_attempts = 0
+        totals_solved = 0
+        totals_solved_tasks = 0
+
+        for tid, agg in by_topic.items():
+            solved_tasks_cnt = len(solved_tasks_sets.get(tid, set()))
+            attempts = int(agg["attempts"])
+            solved = int(agg["solved"])
+            sr = (solved / attempts) if attempts > 0 else 0.0
+            result_list.append({
+                "topic_id": int(tid),
+                "topic_name": names.get(tid, str(tid)),
+                "attempts": attempts,
+                "solved": solved,
+                "solved_tasks_count": int(solved_tasks_cnt),
+                "success_rate": sr,
+            })
+            totals_attempts += attempts
+            totals_solved += solved
+            totals_solved_tasks += solved_tasks_cnt
+
+        # Sort topics by name for stable order
+        result_list.sort(key=lambda x: x["topic_name"].lower())
+
+        totals = {
+            "attempts": int(totals_attempts),
+            "solved": int(totals_solved),
+            "solved_tasks_count": int(totals_solved_tasks),
+            "success_rate": (totals_solved / totals_attempts) if totals_attempts > 0 else 0.0,
+        }
+        # Top-5 by solved_tasks_count
+        top5 = sorted(result_list, key=lambda x: (-x["solved_tasks_count"], x["topic_name"].lower()))[:5]
+        return result_list, totals, top5
+
+    prev_list, prev_totals, prev_top5 = aggregate_week(prev_start_dt, prev_end_excl_dt)
+    curr_list, curr_totals, curr_top5 = aggregate_week(curr_start_dt, curr_end_excl_dt)
+
+    payload = {
+        "weeks": {
+            "prev": {"start": prev_w_start.isoformat(), "end": prev_w_end.isoformat()},
+            "curr": {"start": curr_w_start.isoformat(), "end": curr_w_end.isoformat()},
+        },
+        "by_topic": {
+            "prev": prev_list,
+            "curr": curr_list,
+        },
+        "totals": {
+            "prev": prev_totals,
+            "curr": curr_totals,
+        },
+        "top5_by_solved_tasks": {
+            "prev": prev_top5,
+            "curr": curr_top5,
+        }
+    }
+
+    # Optional debug info
+    if request.args.get('debug') in ('1', 'true', 'yes'):
+        # Return UTC datetime boundaries used for filtering and quick counts
+        def fmt_dt(dt):
+            try:
+                return dt.isoformat() + 'Z'
+            except Exception:
+                return str(dt)
+        # Counts in raw table (no grouping)
+        prev_cnt = (db.session.query(func.count(TaskAttempt.id))
+                    .filter(TaskAttempt.user_id == current_user.id,
+                            TaskAttempt.created_at >= prev_start_dt,
+                            TaskAttempt.created_at < prev_end_excl_dt)
+                    ).scalar() or 0
+        curr_cnt = (db.session.query(func.count(TaskAttempt.id))
+                    .filter(TaskAttempt.user_id == current_user.id,
+                            TaskAttempt.created_at >= curr_start_dt,
+                            TaskAttempt.created_at < curr_end_excl_dt)
+                    ).scalar() or 0
+        # Max timestamps for quick sanity
+        prev_max = (db.session.query(func.max(TaskAttempt.created_at))
+                    .filter(TaskAttempt.user_id == current_user.id,
+                            TaskAttempt.created_at >= prev_start_dt,
+                            TaskAttempt.created_at < prev_end_excl_dt)
+                    ).scalar()
+        curr_max = (db.session.query(func.max(TaskAttempt.created_at))
+                    .filter(TaskAttempt.user_id == current_user.id,
+                            TaskAttempt.created_at >= curr_start_dt,
+                            TaskAttempt.created_at < curr_end_excl_dt)
+                    ).scalar()
+        payload["_debug"] = {
+            "boundaries_utc": {
+                "prev": {"start": fmt_dt(prev_start_dt), "end_exclusive": fmt_dt(prev_end_excl_dt)},
+                "curr": {"start": fmt_dt(curr_start_dt), "end_exclusive": fmt_dt(curr_end_excl_dt)},
+            },
+            "raw_attempt_counts": {"prev": int(prev_cnt), "curr": int(curr_cnt)},
+            "last_attempt_ts": {
+                "prev": fmt_dt(prev_max) if prev_max else None,
+                "curr": fmt_dt(curr_max) if curr_max else None,
+            }
+        }
+
+    return jsonify(payload)

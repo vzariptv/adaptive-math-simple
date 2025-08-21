@@ -64,6 +64,14 @@
 <div class="card shadow-sm">
   <div class="card-header bg-white d-flex justify-content-between align-items-center">
     <h5 class="card-title mb-0">Изучаемые темы</h5>
+    <div class="d-flex gap-2">
+      <button id="statsToggleBtn" type="button" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-chart-line"></i> Показать статистику
+      </button>
+      <button id="statsRefreshBtn" type="button" class="btn btn-sm btn-outline-primary" style="display:none;">
+        <i class="fas fa-rotate"></i> Обновить
+      </button>
+    </div>
   </div>
   <div class="card-body">
     {% if studied_topics|length == 0 %}
@@ -93,9 +101,6 @@
                   <a class="btn btn-sm btn-primary" href="{{ url_for('student.tasks', topic_id=row.topic.id) }}">
                     <i class="fas fa-tasks"></i> К задачам
                   </a>
-                  <button type="button" class="btn btn-sm btn-outline-secondary ms-1">
-                    <i class="fas fa-chart-line"></i> Подробнее
-                  </button>
                 </td>
               </tr>
             {% endfor %}
@@ -104,9 +109,57 @@
       </div>
     {% endif %}
   </div>
+</div>
+
+<!-- Inline Weekly Stats Section (collapsed by default) -->
+<div id="weeklyStatsSection" class="card mt-3 shadow-sm" style="display:none;">
+  <div class="card-header bg-white">
+    <h5 class="card-title mb-0">Статистика за 2 недели</h5>
+  </div>
+  <div class="card-body">
+    <style>
+      /* Compact grid and fixed heights for performance */
+      .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .stats-grid .full { grid-column: 1 / -1; }
+      .chart-box { height: 260px; }
+      .chart-box.small { height: 200px; }
+    </style>
+    <div class="mb-2 d-flex gap-2 align-items-center">
+      <span class="badge text-bg-light" id="week-prev-label">Прошлая неделя</span>
+      <span class="badge text-bg-light" id="week-curr-label">Текущая неделя</span>
+    </div>
+    <div class="stats-grid">
+      <div>
+        <h6 class="mb-2">Теплокарта: попытки</h6>
+        <div class="chart-box"><canvas id="heatAttempts"></canvas></div>
+      </div>
+      <div>
+        <h6 class="mb-2">Теплокарта: решено</h6>
+        <div class="chart-box"><canvas id="heatSolved"></canvas></div>
+      </div>
+      <div>
+        <h6 class="mb-2">Топ‑5 — прошлая неделя</h6>
+        <div class="chart-box"><canvas id="barTopPrev"></canvas></div>
+      </div>
+      <div>
+        <h6 class="mb-2">Топ‑5 — текущая неделя</h6>
+        <div class="chart-box"><canvas id="barTopCurr"></canvas></div>
+      </div>
+      <div class="full">
+        <h6 class="mb-2">Успешность (success_rate)</h6>
+        <div class="chart-box small"><canvas id="lineSuccessRate"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
   {{ super() }}
-  {% block scripts %}{% endblock %}
+  {% block scripts %}
+  <!-- Chart.js and matrix plugin (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/dist/chartjs-chart-matrix.min.js"></script>
+  <script src="{{ url_for('static', filename='js/student_profile_stats.js') }}"></script>
+  {% endblock %}
 {% endblock %}

@@ -332,12 +332,12 @@ Use these checkboxes to track progress. Refer to tasks by ID (e.g., T1). I will 
   - Do: `POST /admin/evaluation/preview`; add `EvaluationFilterForm`.
   - Accept: validated input; JSON rows with flags.
 
-- [ ] T4 – Admin page: preview UI [Frontend]
+- [x] T4 – Admin page: preview UI [Frontend]
   - Files: `templates/admin/evaluation.html`, `static/js/admin_evaluation.js`
   - Do: filters, AJAX preview, table, badges, Run button (guard-aware).
   - Accept: end-to-end preview works.
 
-- [ ] T5 – Backfill partial_score: route + form + UI [Fullstack]
+- [wan't] T5 – Backfill partial_score: route + form + UI [Fullstack]
   - Files: `blueprints/admin/routes.py`, `blueprints/admin/forms.py`, `templates/admin/evaluation.html`, `static/js/admin_evaluation.js`
   - Do: `POST /admin/evaluation/backfill-partial-scores` with dry-run/apply + modal.
   - Accept: counts and reasons shown; apply updates rows.

@@ -491,7 +491,7 @@ def create_topic():
         topic = Topic(
             code=form.code.data.strip(),
             name=form.name.data.strip(),
-            description=form.description.data.strip() or None
+            description=(form.description.data or "").strip() or None
         )
         db.session.add(topic)
         db.session.flush()
