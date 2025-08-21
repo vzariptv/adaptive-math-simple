@@ -41,6 +41,10 @@ def create_app():
     env_db = os.getenv("DATABASE_URL")
     if env_db:
         app.config["SQLALCHEMY_DATABASE_URI"] = env_db
+    else:
+        # Гарантируем валидный путь SQLite в записываемом каталоге instance
+        db_path = os.path.join(app.instance_path, "math_learning.db")
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:////{db_path}"
 
     # Расширения
     db.init_app(app)
