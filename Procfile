@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app
+web: bash bin/start.sh
